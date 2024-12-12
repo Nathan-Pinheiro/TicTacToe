@@ -1,9 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
 
+from modules.GUI.pages.welcome import Welcome
+
 # Class #
 class App(tk.Tk):
-    def __init__(self, title : str, firstPage : str, geometry : str | None = None) -> None:
+    def __init__(self, title : str, firstPage : str = "Welcome", geometry : str | None = None) -> None:
         """Constructor for the App class.
         
         Args:
@@ -19,10 +21,10 @@ class App(tk.Tk):
         self.title(title)
         if geometry is not None : self.geometry(geometry)
         else : 
-            width = self.winfo_screenwidth()
-            height = self.winfo_screenheight()
-            self.geometry(f"{width}x{height}")
-            self.attributes("-fullscreen", True)
+            self.attributes("-fullscreen", False)
+            self.state("zoomed")
+            
+        self.bind("<Escape>", self.close_window)
         self.frames = {}
 
         container = ttk.Frame(self)
@@ -35,8 +37,11 @@ class App(tk.Tk):
         
         return None
 
+    def close_window(self, event=None):
+        self.destroy()
+
     def create_frames(self, container : ttk.Frame) -> None:
-        for F in (MainMenu, GameScreen, Settings):
+        for F in [Welcome]:
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -50,39 +55,6 @@ class App(tk.Tk):
         
         return None
 
-class MainMenu(ttk.Frame):
-    def __init__(self, parent, controller):
-        super().__init__(parent)
-        self.controller = controller
-        label = ttk.Label(self, text="Main Menu")
-        label.pack(side="top", fill="x", pady=10)
-
-        start_button = ttk.Button(self, text="Start Game", command=lambda: controller.show_frame("GameScreen"))
-        start_button.pack()
-
-        settings_button = ttk.Button(self, text="Settings", command=lambda: controller.show_frame("Settings"))
-        settings_button.pack()
-
-class GameScreen(ttk.Frame):
-    def __init__(self, parent, controller):
-        super().__init__(parent)
-        self.controller = controller
-        label = ttk.Label(self, text="Game Screen")
-        label.pack(side="top", fill="x", pady=10)
-
-        back_button = ttk.Button(self, text="Back to Main Menu", command=lambda: controller.show_frame("MainMenu"))
-        back_button.pack()
-
-class Settings(ttk.Frame):
-    def __init__(self, parent, controller):
-        super().__init__(parent)
-        self.controller = controller
-        label = ttk.Label(self, text="Settings")
-        label.pack(side="top", fill="x", pady=10)
-
-        back_button = ttk.Button(self, text="Back to Main Menu", command=lambda: controller.show_frame("MainMenu"))
-        back_button.pack()
-
 if __name__ == "__main__":
-    app = App("TicTacToe", "MainMenu")
+    app = App("TicTacToe")
     app.mainloop()
