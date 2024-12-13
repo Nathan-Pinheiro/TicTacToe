@@ -6,30 +6,36 @@ Case Module
 This module provides a class to represent a case on a board.
 
 Classes:
+
     Case: Represents a case on a board.
     
     Attributes:
+    
         coordinate (Coordinate): The coordinate of the case.
-        pawn (Pawn): The pawn on the case.
+        entity (Entity): The entity on the case.
 
 Methods:
+
     getCoordinate() -> Coordinate:
+    
         Get the coordinate of the case.
         
         Returns:
             Coordinate: The coordinate of the case.
     
-    getPawn() -> Pawn:
-        Get the pawn on the case.
+    getEntity() -> Entity:
+    
+        Get the entity on the case.
         
         Returns:
-            Pawn: The pawn on the case.
+            Entity: The entity on the case.
     
-    setPawn(pawn: Pawn) -> None:
-        Set the pawn on the case.
+    setEntity(entity: Entity) -> None:
+    
+        Set the entity on the case.
         
         Args:
-            pawn (Pawn): The pawn on the case.
+            entity (Entity): The entity on the case.
         
         Returns:
             None
@@ -41,17 +47,17 @@ Methods:
 
 # Import #
 from modules.models.coordinate import Coordinate
-from modules.models.pawn import Pawn
+from modules.models.entities.entity import Entity
 
 # Class #
 class Case:
     
-    def __init__(self, coordinate : Coordinate, pawn : Pawn = None, isBlocked = False) -> None:
+    def __init__(self, coordinate : Coordinate, entity : Entity = None, isBlocked = False) -> None:
         """Constructor for the Case class.
 
         Args:
             coordinate (Coordinate): The coordinate of the case.
-            pawn (Pawn, optional): The pawn on the case. Defaults to None.
+            entity (Entity, optional): The entity on the case. Defaults to None.
             isBlocked (boolean, default => False): The blocked state of a case 
             
         Returns:
@@ -60,7 +66,7 @@ class Case:
         
         self.__isBlocked__ = isBlocked
         self.__coordinate__ = coordinate
-        self.__pawn__ = pawn
+        self.__entity__ = entity
         
         return None
         
@@ -73,30 +79,30 @@ class Case:
         
         return self.__coordinate__
     
-    def getPawn(self) -> Pawn :
-        """Get the pawn on the case.
+    def getEntity(self) -> Entity :
+        """Get the entity on the case.
 
         Returns:
-            int: The pawn on the case.
+            int: The entity on the case.
         """
         
-        return self.__pawn__
+        return self.__entity__
     
-    def setPawn(self, pawn : Pawn) -> None :
-        """Set the pawn on the case.
+    def setPawn(self, entity : Entity) -> None :
+        """Set the entity on the case.
 
         Args:
-            column (int): The pawn on the case.
+            column (int): The entity on the case.
 
         Returns:
             None
         """
         
-        self.__pawn__ = pawn
+        self.__entity__ = entity
         
         return None
     
-    def isBlocked(self, isBlocked : bool) -> None:
+    def isBlocked(self) -> None:
         """Get the blocked state of the case.
 
         Returns:

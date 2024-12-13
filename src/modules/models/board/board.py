@@ -36,7 +36,7 @@ Methods:
 ## Implementation
 
 # Import #
-from modules.models.case import Case
+from modules.models.board.case import Case
 from modules.models.coordinate import Coordinate
 from modules.utils.decorator import private_method
 
@@ -73,6 +73,25 @@ class Board:
         
         return None
         
+    def getAvaillableCases(self) -> list[Case] :
+
+        availlable_cases = []        
+
+        for line in range(0, self.getHeight()):
+            
+            for column in range(0, self.getWidth()):
+
+                if(self.getCase(line, column)):
+                    
+                    case : Case = self.getCase(line, column)
+                    
+                    isCaseBlocked : bool = case.isBlocked()
+                    isCaseEmpty : bool = case.getEntity() == None
+                    
+                    if(not isCaseBlocked and isCaseEmpty): availlable_cases.append(case)
+                    
+        return availlable_cases
+
     def getCase(self, line : int, column : int) -> Case :
         """Get the case at the given line and column.
 
@@ -83,5 +102,13 @@ class Board:
         Returns:
             Case: The case at the given line and column.
         """
-        
+        if(line < 0 or line > self.getHeight()) : return None
+        if(column < 0 or column > self.getWidth()) : return None     
+
         return self.__cases__[line][column]
+    
+    def getWidth(self) -> int:
+        return self.__width__
+
+    def getHeight(self) -> int:
+        return self.__height__
