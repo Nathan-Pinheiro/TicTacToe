@@ -15,6 +15,9 @@ Methods:
     __init__(parent: ttk.Frame, controller: App) -> None:
         Constructor for the Welcome class.
         
+    debounce_resize(event: Event) -> None:
+        Debounce the resize event to improve performance.
+        
     on_resize(event: Event) -> None:
         Adjust the font size based on the window size.
 """
@@ -26,11 +29,11 @@ Methods:
 # Import #
 import tkinter as tk
 from tkinter import ttk
-from typing import Any
+import sv_ttk
 
 # Class #
 class Welcome(ttk.Frame):
-    def __init__(self, parent: ttk.Frame, controller: Any) -> None:
+    def __init__(self, parent: ttk.Frame, controller: 'App') -> None:
         """Constructor for the Welcome class.
 
         Args:
@@ -50,12 +53,13 @@ class Welcome(ttk.Frame):
         self.grid_rowconfigure(3, weight=1)
         self.grid_rowconfigure(4, weight=1)
         self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
         
         self.label = ttk.Label(self, text="Tic Tac Toe", font=("Arial", 64))
-        self.label.grid(row=0, column=0, pady=100, sticky="n")
+        self.label.grid(row=0, column=0, columnspan=2, pady=100, sticky="n")
 
         self.button_frame = ttk.Frame(self)
-        self.button_frame.grid(row=1, column=0, rowspan=4, sticky="n")
+        self.button_frame.grid(row=1, column=0, rowspan=4, sticky="nsew")
 
         self.start_button = ttk.Button(self.button_frame, text="Start Game", command=lambda: controller.show_frame("GameScreen"), style="TButton")
         self.start_button.grid(row=0, column=0, pady=15, padx=20, sticky="ew")
@@ -68,21 +72,31 @@ class Welcome(ttk.Frame):
 
         # Apply the font size to the buttons
         self.style = ttk.Style()
-        self.style.configure("TButton", font=("Arial", 52))
+        self.style.configure("TButton", font=("Arial", 20))
 
         # Make the button frame responsive
         self.button_frame.grid_rowconfigure(0, weight=1)
         self.button_frame.grid_rowconfigure(1, weight=1)
         self.button_frame.grid_rowconfigure(2, weight=1)
         self.button_frame.grid_columnconfigure(0, weight=1)
+        
+        sv_ttk.set_theme("dark")
 
         # Bind the configure event to update fonts
-        self.bind("<Configure>", self.on_resize)
+        self.bind("<Configure>", self.debounce_resize)
+        
+        self._resize_id = None
         
         return None
 
-    def on_resize(self, event : tk.Event) -> None:
-        """Adjust the font size based on the window size.
+    def debounce_resize(self, event):
+        """Debounce the resize event to improve performance."""
+        if self._resize_id is not None:
+            self.after_cancel(self._resize_id)
+        self._resize_id = self.after(300, self.on_resize, event)
+
+    def on_resize(self, event):
+        """Adjust the layout based on the window size.
 
         Args:
             event (Event): The resize event.
@@ -90,9 +104,9 @@ class Welcome(ttk.Frame):
         Returns:
             None
         """
-        
-        new_size = min(event.width // 20, event.height // 20)
-        self.label.config(font=("Arial", new_size))
-        self.style.configure("TButton", font=("Arial", new_size // 2))
+        if event.width < 600:
+            self.button_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
+        else:
+            self.button_frame.grid(row=1, column=0, rowspan=4, sticky="nsew")
         
         return None
