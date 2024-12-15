@@ -12,13 +12,25 @@ Methods:
     __init__(self, parent: Any, controller: Any) -> None:
         Initialize the welcome page with the given parent and controller.
     
-    __draw_grid(self, size: int) -> None:
+    __drawGrid__(self, size: int) -> None:
         Private method.
         Draw the tic-tac-toe grid with symbols.
     
-    __on_resize(self, event: Any) -> None:
+    __onResize__(self, event: Any) -> None:
         Private method.
-        Redraw the tic-tac-toe grid responsively when the window is resized.
+        Redraw widgets responsively when the window is resized.
+    
+    __adjustFontSizes__(self, width: int) -> None:
+        Private method.
+        Adjust the font sizes of the title and text labels based on the window size.
+    
+    __centerCanvas__(self) -> None:
+        Private method.
+        Center the canvas when the text label is hidden.
+    
+    __resetCanvasPosition__(self) -> None:
+        Private method.
+        Reset the canvas position when the text label is visible.
     
     start_game(self) -> None:
         Start the game when the "Start Game" button is pressed.
@@ -34,7 +46,7 @@ from tkinter import ttk
 import sv_ttk
 from typing import Any
 
-from modules.GUI.draft.symbols import draw_x, draw_o, draw_triangle
+from modules.GUI.draft.symbols import *
 
 from modules.utils.decorator import private_method
 
@@ -121,7 +133,30 @@ class Welcome(ttk.Frame):
         draw_x(self, 0, 0, cell_size)
         draw_o(self, cell_size, 0, cell_size)
         draw_triangle(self, 2 * cell_size, 0, cell_size)
+        draw_hexagon(self, 0, cell_size, cell_size)
+        draw_star(self, cell_size, cell_size, cell_size)
+        draw_square(self, 2 * cell_size, cell_size, cell_size)
+        draw_losange(self, 0, 2 * cell_size, cell_size)
         
+        return None
+
+    @private_method
+    def __adjustButtonSize__(self, width: int) -> None:
+        """Adjust the size of the start button based on the window size.
+
+        Args:
+            width (int): The width of the window.
+
+        Returns:
+            None
+        """
+        # Calculate new font size for the button
+        button_font_size = max(14, int(width * 0.01))  # 2% of the window width
+
+        # Update button font size using ttk.Style
+        style = ttk.Style()
+        style.configure("TButton", font=("Arial", button_font_size))
+
         return None
 
     @private_method
@@ -146,8 +181,12 @@ class Welcome(ttk.Frame):
 
         # Adjust font sizes
         self.__adjustFontSizes__(event.width)
-        
+
+        # Adjust button size
+        self.__adjustButtonSize__(event.width)
+
         return None
+
 
     @private_method
     def __adjustFontSizes__(self, width: int) -> None:
