@@ -130,13 +130,14 @@ class Welcome(ttk.Frame):
             self.grid_canvas.create_line(i * cell_size, 0, i * cell_size, size, fill="white", width=3)
 
         # Draw symbols (here X, O, Triangle in the cells of the first row)
-        draw_x(self, 0, 0, cell_size)
-        draw_o(self, cell_size, 0, cell_size)
-        draw_triangle(self, 2 * cell_size, 0, cell_size)
-        draw_hexagon(self, 0, cell_size, cell_size)
-        draw_star(self, cell_size, cell_size, cell_size)
-        draw_square(self, 2 * cell_size, cell_size, cell_size)
-        draw_losange(self, 0, 2 * cell_size, cell_size)
+        drawCross(self, 0, 0, cell_size)
+        drawCircle(self, cell_size, 0, cell_size)
+        drawTriangle(self, 2 * cell_size, 0, cell_size)
+        drawHexagon(self, 0, cell_size, cell_size)
+        drawStar(self, cell_size, cell_size, cell_size)
+        drawSquare(self, 2 * cell_size, cell_size, cell_size)
+        drawRhombus(self, 0, 2 * cell_size, cell_size)
+        drawGrayCase(self, cell_size, 2 * cell_size, cell_size)
         
         return None
 
