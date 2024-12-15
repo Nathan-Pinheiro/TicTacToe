@@ -9,35 +9,37 @@ Classes:
     App: Represents the main application window.
     
     Attributes:
-        frames (dict): A dictionary to hold the frames of the application.
+        frames (dict[str, ttk.Frame]): A dictionary to hold the frames of the application.
 
-Functions:
-    close_window(event: Optional[tk.Event] = None) -> None:
+Methods:
+    __init__(self, title: str, first_page: str = "Welcome", geometry: Optional[str] = None) -> None:
+        Private method.
+        Constructor for the App class.
+        
+        Args:
+            title (str): The title of the application.
+            geometry (Optional[str]): The geometry of the application.
+            first_page (str): The first page to display.
+        
+    __closeWindow__(self, event: Optional[tk.Event] = None) -> None:
+        Private method.
         Close the application window.
         
         Args:
             event (Optional[tk.Event]): The event that triggered the close action.
-            
-        Returns:
-            None
-
-    create_frames(container: ttk.Frame) -> None:
+        
+    __createFrames__(self, container: ttk.Frame) -> None:
+        Private method.
         Create the frames for the application.
         
         Args:
             container (ttk.Frame): The container to hold the frames.
-            
-        Returns:
-            None
-
-    show_frame(page_name: str) -> None:
+        
+    showFrame(self, page_name: str) -> None:
         Show a specific frame.
         
         Args:
             page_name (str): The name of the frame to show.
-            
-        Returns:
-            None
 """
 
 ## Implementation
@@ -45,19 +47,21 @@ Functions:
 # Import #
 import tkinter as tk
 from tkinter import ttk
-from typing import Optional
+from typing import Optional, Dict
+import os
+import importlib
 
-from modules.GUI.pages.welcome import Welcome
+from modules.utils.decorator import private_method
 
 # Class #
 class App(tk.Tk):
-    def __init__(self, title: str, firstPage: str = "Welcome", geometry: Optional[str] = None) -> None:
+    def __init__(self, title: str, first_page: str = "Welcome", geometry: Optional[str] = None) -> None:
         """Constructor for the App class.
         
         Args:
             title (str): The title of the application.
             geometry (Optional[str]): The geometry of the application.
-            firstPage (str): The first page to display.
+            first_page (str): The first page to display.
             
         Returns:
             None
@@ -71,34 +75,67 @@ class App(tk.Tk):
             self.attributes("-fullscreen", False)
             self.state("zoomed")
             
-        self.bind("<Escape>", self.close_window)
-        self.frames: dict[str, ttk.Frame] = {}
+        self.bind("<Escape>", self.__closeWindow__)
+        self.frames: Dict[str, ttk.Frame] = {}
 
         container = ttk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
-        self.create_frames(container)
-        self.show_frame(firstPage)
+        self.__createFrames__(container)
+        self.showFrame(first_page)
         
         return None
         
-    def close_window(self, event: Optional[tk.Event] = None) -> None:
+    @private_method
+    def __closeWindow__(self, event: Optional[tk.Event] = None) -> None:
+        """Close the application window.
+        
+        Args:
+            event (Optional[tk.Event]): The event that triggered the close action.
+            
+        Returns:
+            None
+        """
         self.destroy()
         
         return None
 
-    def create_frames(self, container: ttk.Frame) -> None:
-        for F in [Welcome]:
-            page_name = F.__name__
-            frame = F(parent=container, controller=self)
-            self.frames[page_name] = frame
-            frame.grid(row=0, column=0, sticky="nsew")
+    @private_method
+    def __createFrames__(self, container: ttk.Frame) -> None:
+        """Create the frames for the application.
+        
+        Args:
+            container (ttk.Frame): The container to hold the frames.
+            
+        Returns:
+            None
+        """
+        pages_dir = os.path.join(os.path.dirname(__file__), 'pages')
+        for filename in os.listdir(pages_dir):
+            if filename.endswith('.py') and filename != '__init__.py':
+                module_name = f"modules.GUI.pages.{filename[:-3]}"
+                module = importlib.import_module(module_name)
+                for attr in dir(module):
+                    cls = getattr(module, attr)
+                    if isinstance(cls, type) and issubclass(cls, ttk.Frame):
+                        page_name = cls.__name__.capitalize()
+                        frame = cls(parent=container, controller=self)
+                        self.frames[page_name] = frame
+                        frame.grid(row=0, column=0, sticky="nsew")
             
         return None
 
-    def show_frame(self, page_name: str) -> None:
+    def showFrame(self, page_name: str) -> None:
+        """Show a specific frame.
+        
+        Args:
+            page_name (str): The name of the frame to show.
+            
+        Returns:
+            None
+        """
         frame: ttk.Frame = self.frames[page_name]
         frame.tkraise()
         
