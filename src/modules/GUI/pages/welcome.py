@@ -68,9 +68,9 @@ class Welcome(ttk.Frame):
                                     text=("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent rutrum tellus "
                                           "non ante euismod, id blandit massa auctor. Quisque urna tellus, sodales at ante nec," 
                                           " pharetra tincidunt ante."), 
-                                    wraplength=400, 
+                                    wraplength=600, 
                                     justify="left",
-                                    font=("Arial", 24))
+                                    font=("Arial", 20))
         self.text_label.grid(row=1, column=0, pady=(5, 5), padx=(100, 10), sticky="w")  # Reduce paddings
 
         # Unique canvas for the grid and symbols
@@ -160,12 +160,15 @@ class Welcome(ttk.Frame):
             None
         """
         # Calculate new font sizes
-        title_font_size = max(24, int(width * 0.03))  # 3% of the window width
-        text_font_size = max(12, int(width * 0.02))  # 2% of the window width
+        title_font_size = max(20, int(width * 0.03))  # 3% of the window width
+        text_font_size = max(12, int(width * 0.015))  # 2% of the window width
+        
+        # Calculate new wrap length for the text label
+        wrap_length = width/2 - 110 # 110 is the sum of the left and right paddings
 
         # Update font sizes
         self.title_label.config(font=("Arial", title_font_size, "bold"))
-        self.text_label.config(font=("Arial", text_font_size))
+        self.text_label.config(font=("Arial", text_font_size), wraplength=wrap_length)
 
         # Hide text_label if the width is too small
         if width < 900:  # Adjust this threshold as needed
