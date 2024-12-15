@@ -16,18 +16,6 @@ Methods:
         Private method.
         Draw the tic-tac-toe grid with symbols.
     
-    __draw_x(self, x: int, y: int, size: int) -> None:
-        Private method.
-        Draw an X symbol centered in a cell.
-    
-    __draw_o(self, x: int, y: int, size: int) -> None:
-        Private method.
-        Draw an O symbol centered in a cell.
-    
-    __draw_triangle(self, x: int, y: int, size: int) -> None:
-        Private method.
-        Draw a triangle symbol centered in a cell.
-    
     __on_resize(self, event: Any) -> None:
         Private method.
         Redraw the tic-tac-toe grid responsively when the window is resized.
@@ -45,6 +33,8 @@ import tkinter as tk
 from tkinter import ttk
 import sv_ttk
 from typing import Any
+
+from modules.GUI.draft.symbols import draw_x, draw_o, draw_triangle
 
 from modules.utils.decorator import private_method
 
@@ -67,11 +57,11 @@ class Welcome(ttk.Frame):
         self.grid_rowconfigure(1, weight=2)  # Increase the space for the text
         self.grid_rowconfigure(2, weight=1)
         self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=0)  # Decrease the space for column 1
+        self.grid_columnconfigure(1, weight=2)  # Increase the space for the grid
 
         # Title "Tic Tac Toe"
         self.title_label: ttk.Label = ttk.Label(self, text="Tic Tac Toe", font=("Arial", 48, "bold"))
-        self.title_label.grid(row=0, column=0, columnspan=2, pady=(10, 0), sticky="n")
+        self.title_label.grid(row=0, column=0, columnspan=2, pady=(50, 0), padx=0, sticky="n")
 
         # Lorem Ipsum text
         self.text_label: ttk.Label = ttk.Label(self, 
@@ -80,19 +70,19 @@ class Welcome(ttk.Frame):
                                           " pharetra tincidunt ante."), 
                                     wraplength=400, 
                                     justify="left",
-                                    font=("Arial", 12))
-        self.text_label.grid(row=1, column=0, pady=(5, 5), padx=100, sticky="w")  # Reduce paddings
+                                    font=("Arial", 24))
+        self.text_label.grid(row=1, column=0, pady=(5, 5), padx=(100, 10), sticky="w")  # Reduce paddings
 
         # Unique canvas for the grid and symbols
         self.grid_canvas: tk.Canvas = tk.Canvas(self, bg="#333", highlightthickness=0)
-        self.grid_canvas.grid(row=1, column=1, pady=0, padx=100, sticky="e")  # Reduce padding gap
+        self.grid_canvas.grid(row=1, column=1, pady=0, padx=(10, 100), sticky="e")  # Reduce padding gap
 
         # "Start Game" button
         self.start_button: ttk.Button = ttk.Button(self, text="Start Game", command=self.start_game)
         self.start_button.grid(row=2, column=0, columnspan=2, pady=50, sticky="s")
 
         # Dynamic resizing
-        self.bind("<Configure>", self.__on_resize)
+        self.bind("<Configure>", self.__onResize__)
 
         # Dark theme
         sv_ttk.set_theme("dark")
@@ -100,7 +90,7 @@ class Welcome(ttk.Frame):
         return None
 
     @private_method
-    def __draw_grid(self, size: int) -> None:
+    def __drawGrid__(self, size: int) -> None:
         """Draw the tic-tac-toe grid with symbols.
 
         Args:
@@ -128,71 +118,14 @@ class Welcome(ttk.Frame):
             self.grid_canvas.create_line(i * cell_size, 0, i * cell_size, size, fill="white", width=3)
 
         # Draw symbols (here X, O, Triangle in the cells of the first row)
-        self.__draw_x(0, 0, cell_size)
-        self.__draw_o(cell_size, 0, cell_size)
-        self.__draw_triangle(2 * cell_size, 0, cell_size)
+        draw_x(self, 0, 0, cell_size)
+        draw_o(self, cell_size, 0, cell_size)
+        draw_triangle(self, 2 * cell_size, 0, cell_size)
         
         return None
 
     @private_method
-    def __draw_x(self, x: int, y: int, size: int) -> None:
-        """Draw an X centered in a cell.
-
-        Args:
-            x (int): The x-coordinate of the cell.
-            y (int): The y-coordinate of the cell.
-            size (int): The size of the cell.
-
-        Returns:
-            None
-        """
-        margin: float = size * 0.2
-        self.grid_canvas.create_line(x + margin, y + margin, x + size - margin, y + size - margin, fill="white", width=4)
-        self.grid_canvas.create_line(x + margin, y + size - margin, x + size - margin, y + margin, fill="white", width=4)
-        
-        return None
-
-    @private_method
-    def __draw_o(self, x: int, y: int, size: int) -> None:
-        """Draw an O centered in a cell.
-
-        Args:
-            x (int): The x-coordinate of the cell.
-            y (int): The y-coordinate of the cell.
-            size (int): The size of the cell.
-
-        Returns:
-            None
-        """
-        margin: float = size * 0.2
-        self.grid_canvas.create_oval(x + margin, y + margin, x + size - margin, y + size - margin, outline="white", width=4)
-        
-        return None
-
-    @private_method
-    def __draw_triangle(self, x: int, y: int, size: int) -> None:
-        """Draw a triangle centered in a cell.
-
-        Args:
-            x (int): The x-coordinate of the cell.
-            y (int): The y-coordinate of the cell.
-            size (int): The size of the cell.
-
-        Returns:
-            None
-        """
-        half: int = size // 2
-        margin: float = size * 0.2
-        self.grid_canvas.create_polygon(
-            x + half, y + margin,
-            x + margin, y + size - margin,
-            x + size - margin, y + size - margin,
-            outline="white", width=4, fill="")
-        
-        return None
-
-    @private_method
-    def __on_resize(self, event: Any) -> None:
+    def __onResize__(self, event: Any) -> None:
         """Redraw widgets responsively when the window is resized.
 
         Args:
@@ -209,8 +142,64 @@ class Welcome(ttk.Frame):
         self.grid_canvas.config(width=size, height=size)
 
         # Redraw the grid and symbols
-        self.__draw_grid(size)
+        self.__drawGrid__(size)
+
+        # Adjust font sizes
+        self.__adjustFontSizes__(event.width)
         
+        return None
+
+    @private_method
+    def __adjustFontSizes__(self, width: int) -> None:
+        """Adjust the font sizes of the title and text labels based on the window size.
+
+        Args:
+            width (int): The width of the window.
+
+        Returns:
+            None
+        """
+        # Calculate new font sizes
+        title_font_size = max(24, int(width * 0.03))  # 3% of the window width
+        text_font_size = max(12, int(width * 0.02))  # 2% of the window width
+
+        # Update font sizes
+        self.title_label.config(font=("Arial", title_font_size, "bold"))
+        self.text_label.config(font=("Arial", text_font_size))
+
+        # Hide text_label if the width is too small
+        if width < 900:  # Adjust this threshold as needed
+            self.text_label.grid_remove()
+            self.__centerCanvas__()
+        else:
+            self.text_label.grid()
+            self.__resetCanvasPosition__()
+
+        return None
+
+    @private_method
+    def __centerCanvas__(self) -> None:
+        """Center the canvas when the text label is hidden.
+
+        Returns:
+            None
+        """
+        self.grid_canvas.grid_configure(row=1, column=0, columnspan=2, pady=0, padx=0, sticky="nsew")
+        # Il faut que le canvas prenne seulement la taille de la grille
+        # Il faut que le canvas soit centré dans la fenêtre
+        self.grid_canvas.place(relx=0.5, rely=0.5, anchor="center")
+
+        return None
+
+    @private_method
+    def __resetCanvasPosition__(self) -> None:
+        """Reset the canvas position when the text label is visible.
+
+        Returns:
+            None
+        """
+        self.grid_canvas.grid_configure(row=1, column=1, pady=0, padx=(10, 100), sticky="e")
+
         return None
 
     def start_game(self) -> None:
