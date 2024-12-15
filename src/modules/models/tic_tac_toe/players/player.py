@@ -1,4 +1,5 @@
-from modules.models.board import Board
+from modules.models.board.board import Board
+from modules.models.coordinate import Coordinate
 
 class Player:
 
@@ -13,5 +14,5 @@ class Player:
         self.__name__ = name
         return None
 
-    def get_choice(self, board : Board) -> int:
+    def get_choice(self, board : Board) -> Coordinate:
         pass

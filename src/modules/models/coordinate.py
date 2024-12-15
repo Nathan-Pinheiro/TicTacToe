@@ -108,3 +108,7 @@ class Coordinate:
         """
         
         self.__line__ = column
+        
+    def __str__(self):
+        """Return the string value of the coordinate."""
+        return f"( {self.__line__} : {self.__column__} )"

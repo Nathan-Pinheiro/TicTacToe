@@ -48,6 +48,7 @@ Methods:
 # ---------------------------------------------------------------------------------------------------- #
 
 ## Implementation
+from __future__ import annotations
 
 # Class #
 class Entity:
@@ -102,3 +103,16 @@ class Entity:
         """
         self.__name__ = iconPath
         return None
+    
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Entity): return False
+        return self.__name__ == other.__name__ and self.__iconPath__ == other.__iconPath__
+    
+    def copy(self) -> Entity:
+        """
+        Create a copy of the current Entity object.
+
+        Returns:
+            Entity: A new instance of Entity with the same attributes.
+        """
+        return Entity(self.__name__, self.__iconPath__)

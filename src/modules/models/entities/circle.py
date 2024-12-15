@@ -4,4 +4,4 @@ class Circle(Entity):
     
     def __init__(self):
         """Constructor for the Circle class."""
-        super("O", None)
+        super().__init__("O", None)

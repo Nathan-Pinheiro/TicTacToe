@@ -83,16 +83,16 @@ class Case:
         """Get the entity on the case.
 
         Returns:
-            int: The entity on the case.
+            entity (Entity): The entity on the case.
         """
         
         return self.__entity__
     
-    def setPawn(self, entity : Entity) -> None :
+    def setEntity(self, entity : Entity) -> None :
         """Set the entity on the case.
 
         Args:
-            column (int): The entity on the case.
+            entity (Entity): The entity on the case.
 
         Returns:
             None
@@ -123,3 +123,11 @@ class Case:
         self.__isBlocked__ = isBlocked
         
         return None
+    
+    def isAvaillable(self) -> bool :
+  
+        isCaseBlocked : bool = self.isBlocked()
+        isCaseEmpty : bool = self.getEntity() == None
+            
+        if(isCaseBlocked or not isCaseEmpty) : return False
+        else : return True

@@ -78,17 +78,11 @@ class Board:
         availlable_cases = []        
 
         for line in range(0, self.getHeight()):
-            
             for column in range(0, self.getWidth()):
 
                 if(self.getCase(line, column)):
-                    
                     case : Case = self.getCase(line, column)
-                    
-                    isCaseBlocked : bool = case.isBlocked()
-                    isCaseEmpty : bool = case.getEntity() == None
-                    
-                    if(not isCaseBlocked and isCaseEmpty): availlable_cases.append(case)
+                    if(case.isAvaillable()): availlable_cases.append(case)
                     
         return availlable_cases
 

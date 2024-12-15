@@ -4,5 +4,5 @@ class Cross(Entity):
     
     def __init__(self):
         """Constructor for the Cross class."""
-        super("X", None)
+        super().__init__("X", None)
         

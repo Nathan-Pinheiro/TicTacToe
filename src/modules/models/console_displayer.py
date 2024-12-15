@@ -2,22 +2,28 @@ import os
 
 from modules.models.board.board import Board
 
+CONSOLE_SIZE = 30
+SEP = "="
+
+
+def display_sep():
+    print(SEP * CONSOLE_SIZE)
+
 def display_board(board : Board):
     
     for line in range(board.getHeight()):
         
-        print("|", end=" ")
+        word = f"{line + 1} | "
         
         for column in range(board.getWidth()):
             
-            entity_char : str
             if(board.getCase(line, column).isBlocked()) : entity_char = "#"
-            elif(board.getCase(line, column).getEntity()) : entity_char = " "
+            elif(board.getCase(line, column).getEntity()) : entity_char = board.getCase(line, column).getEntity().getName()
             else : entity_char = " "
             
-            print(entity_char, end=" | ")
+            word += entity_char + " | "
             
-        print()
+        print(word.center(CONSOLE_SIZE))
         
 def ask_for_int(question : str):
     
@@ -28,6 +34,9 @@ def ask_for_int(question : str):
     
 def display(value : str):
     print(value)
+    
+def display_centered(value : str):
+    print(value.center(CONSOLE_SIZE))
 
 def clear_screen():
     os.system("cls")
