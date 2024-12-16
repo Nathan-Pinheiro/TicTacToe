@@ -1,29 +1,6 @@
 from enum import Enum
 from typing import Optional
-from modules.models.entities.entity import Entity
-
-class GameStatus(Enum):
-    
-    UNFINISHED = 0
-    DRAW = 1
-    VICTORY = 2
-
-class GameState:
-    
-    def __init__(self, state: GameStatus, winner: Optional[Entity] = None):
-        """
-        Represents the result of a game.
-        
-        :param state: The current state of the game (UNFINISHED, DRAW, or VICTORY).
-        :param winner: The ID of the winning player if applicable. None for UNFINISHED or DRAW.
-        """
-        
-        self.__state__ = state
-        self.__winner__ = winner
-
-from enum import Enum
-from typing import Optional
-from modules.models.entities.entity import Entity
+from modules.models.board_components.entity import Entity
 
 class GameStatus(Enum):
     UNFINISHED = 0

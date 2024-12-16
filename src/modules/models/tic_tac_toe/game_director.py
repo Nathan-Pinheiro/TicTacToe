@@ -1,13 +1,13 @@
-from modules.models.entities.entity import Entity
-from modules.models.coordinate import Coordinate
-from modules.models.board.case import Case
-from modules.models.board.board import Board
+from modules.models.board_components.entity import Entity
+from modules.models.board_components.coordinate import Coordinate
+from modules.models.board_components.case import Case
+from modules.models.board_components.board import Board
 from modules.models.tic_tac_toe.game_state import TicTacToeGameState
 from modules.models.tic_tac_toe.player_data import PlayerData
 from modules.models.tic_tac_toe.players.player import Player
 from modules.models.tic_tac_toe.player_data import PlayerData
-from modules.models.tic_tac_toe.win_conditions.win_condition import WinCondition
-from modules.models.tic_tac_toe.win_conditions.game_result import GameState, GameStatus
+from modules.models.tic_tac_toe.win_condition import WinCondition
+from modules.models.tic_tac_toe.game_result import GameState, GameStatus
 from modules.utils.decorator import private_method
 import os
 
@@ -26,12 +26,13 @@ class GameDirector :
     def __play__(self, line : int, column : int, entity : Entity) -> None :
 
         board : Board = self.__game_state__.getBoard()
-        case : Case = board.getCase(line, column)
-        
-        if(case == None) : raise ValueError(f"Can't play at line = {line}, column = {column}. Line must be from 0 to {board.getHeight()}. Column must be from 0 to {board.getWidth()}")
-        if(not case.isAvaillable()) : raise ValueError(f"Can't play at line = {line}, column = {column}. Case is already taken.")
+    
+        if(line < 0 or line > board.getHeight()) : raise ValueError(f"Line is out of range. Should be from 0 to {board.getHeight()} but was <{line}>")
+        if(column < 0 or column > board.getWidth()) : raise ValueError(f"Column is out of range. Should be from 0 to {board.getWidth()} but was <{column}>")
 
-        case.setEntity(entity)
+        if(not board.isCaseAvaillable(line, column)) : raise ValueError(f"Can't play at line = {line}, column = {column}. Case is already taken.")
+
+        board.setEntityAt(entity, line, column)
     
         return None
     
@@ -51,7 +52,7 @@ class GameDirector :
         gameResult : GameState = self.__game_state__.getWinCondition().checkWin(board)
 
         while(gameResult.getGameStatus() == GameStatus.UNFINISHED) :
-            
+
             playerToPlayIndex : int = self.__game_state__.getPlayerToPlayIndex()
             playerToPlayData : PlayerData = self.__game_state__.getPlayerData(playerToPlayIndex)
             playerToPlay : Player = self.getPlayerToPlay()

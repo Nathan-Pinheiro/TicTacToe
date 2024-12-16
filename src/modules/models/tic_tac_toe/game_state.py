@@ -1,5 +1,5 @@
-from modules.models.board.board import Board
-from modules.models.tic_tac_toe.win_conditions.win_condition import WinCondition
+from modules.models.board_components.board import Board
+from modules.models.tic_tac_toe.win_condition import WinCondition
 from modules.models.tic_tac_toe.power_ups.bomb import Bomb
 from modules.models.tic_tac_toe.player_data import PlayerData
 

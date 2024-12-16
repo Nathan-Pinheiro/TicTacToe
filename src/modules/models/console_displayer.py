@@ -1,15 +1,15 @@
 import os
 
-from modules.models.board.board import Board
+from modules.models.board_components.boards.simple_board import SimpleBoard
+from modules.models.board_components.entity import Entity
 
 CONSOLE_SIZE = 30
 SEP = "="
 
-
 def display_sep():
     print(SEP * CONSOLE_SIZE)
 
-def display_board(board : Board):
+def display_board(board : SimpleBoard):
     
     for line in range(board.getHeight()):
         
@@ -17,9 +17,11 @@ def display_board(board : Board):
         
         for column in range(board.getWidth()):
             
-            if(board.getCase(line, column).isBlocked()) : entity_char = "#"
-            elif(board.getCase(line, column).getEntity()) : entity_char = board.getCase(line, column).getEntity().getName()
-            else : entity_char = " "
+            if(board.isCaseBlocked(line, column)) : entity_char = '#'
+            else : 
+                entity : Entity = board.getEntityAt(line, column)
+                if(entity) : entity_char = board.getEntityAt(line, column).getName()
+                else : entity_char = ' '
             
             word += entity_char + " | "
             

@@ -1,4 +1,4 @@
-from modules.models.board.board import Board
+from modules.models.board_components.board import Board
 
 class WinCondition :
     

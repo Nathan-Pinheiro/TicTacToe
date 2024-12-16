@@ -1,4 +1,4 @@
-from modules.models.entities.entity import Entity
+from modules.models.board_components.entity import Entity
 from modules.models.tic_tac_toe.power_ups.power_up import PowerUp
 
 class PlayerData :

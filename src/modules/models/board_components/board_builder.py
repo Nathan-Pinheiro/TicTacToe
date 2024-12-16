@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import random
 
-from modules.models.board.board import Board
-from modules.models.board.case import Case
-from modules.models.board.board_shapes.board_shape import BoardShape
+from modules.models.board_components.boards.simple_board import SimpleBoard
+from modules.models.board_components.case import Case
+from modules.models.board_components.board_shapes.board_shape import BoardShape
+
+from modules.models.console_displayer import *
 
 MIN_HEIGHT = 3
 MAX_HEIGHT = 7
@@ -45,18 +47,20 @@ class BoardBuilder:
         self.__randomlyBlockedCases__ = randomlyBlockedCases
         return self
     
-    def build(self) -> Board:
+    def build(self) -> SimpleBoard:
 
         if(self.__height__ < MIN_HEIGHT or self.__height__ > MAX_HEIGHT) : raise ValueError(f"Height can't be outside range {MIN_HEIGHT} - {MAX_HEIGHT}")
         if(self.__width__ < MIN_WIDTH or self.__width__ > MAX_WIDTH) : raise ValueError(f"Width can't be outside range {MIN_HEIGHT} - {MAX_HEIGHT}")
         
-        board = Board(self.__width__, self.__height__)
+        board = SimpleBoard(self.__width__, self.__height__)
+
+        display_board(board)
 
         if(self.__shape__) : self.__shape__.apply_shape(board)
         
         if(self.__randomlyBlockedCases__ > len(board.getAvaillableCases())) : raise ValueError(f"Cannot block {self.__randomlyBlockedCases__} cases because only {len(board.getAvaillableCases())} can be blocked.")
 
-        if(self.__randomlyBlockedCases__ > 0) :        
+        if(self.__randomlyBlockedCases__ > 0) :
 
             for _ in range(0, self.__randomlyBlockedCases__):
                 

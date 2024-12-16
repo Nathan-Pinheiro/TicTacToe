@@ -1,7 +1,7 @@
 from modules.models.tic_tac_toe.players.player import Player
-from modules.models.board.board import Board
-from modules.models.coordinate import Coordinate
-from modules.models.board.case import Case
+from modules.models.board_components.boards.simple_board import SimpleBoard
+from modules.models.board_components.coordinate import Coordinate
+from modules.models.board_components.case import Case
 from modules.models.console_displayer import *
 
 class HumanPlayer(Player):
@@ -9,7 +9,7 @@ class HumanPlayer(Player):
     def __init__(self, name : str) -> None:
         super(name)
     
-    def get_choice(self, board : Board) -> Coordinate:
+    def get_choice(self, board : SimpleBoard) -> Coordinate:
 
         chosedCase : Case = None
         isChoicePossible : bool = False

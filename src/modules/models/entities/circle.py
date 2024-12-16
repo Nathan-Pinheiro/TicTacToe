@@ -1,4 +1,4 @@
-from modules.models.entities.entity import Entity
+from modules.models.board_components.entity import Entity
 
 class Circle(Entity):
     

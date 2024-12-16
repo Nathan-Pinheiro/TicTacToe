@@ -36,8 +36,9 @@ Methods:
 ## Implementation
 
 # Import #
-from modules.models.board.case import Case
-from modules.models.coordinate import Coordinate
+from modules.models.board_components.case import Case
+from modules.models.board_components.entity import Entity
+from modules.models.board_components.directions import Directions
 from modules.utils.decorator import private_method
 
 # Class #
@@ -57,49 +58,40 @@ class Board:
         self.__width__ : int = width
         self.__height__ : int = height
         
-        self.__initializeBoard__()
-        
-        return None
-
-    @private_method
-    def __initializeBoard__(self) -> None:
-        """Initialize the board.
-        
-        Returns:
-            None
-        """
-        
-        self.__cases__: list[list[Case]] = [[Case(Coordinate(line, column)) for column in range(self.__width__)] for line in range(self.__height__)]
-        
         return None
         
+    def isCaseAvaillable(self) -> bool :
+        pass 
+    
     def getAvaillableCases(self) -> list[Case] :
+        pass
 
-        availlable_cases = []        
+    def isCaseBlocked(self, line : int, column : int) -> bool :
+        pass
+    
+    def setIsCaseBlocked(self, line : int, column : int, isBlocked : bool) -> None :
+        pass
 
-        for line in range(0, self.getHeight()):
-            for column in range(0, self.getWidth()):
+    def getEntityAt(self, line : int, column : int) -> Entity:
+        pass
 
-                if(self.getCase(line, column)):
-                    case : Case = self.getCase(line, column)
-                    if(case.isAvaillable()): availlable_cases.append(case)
-                    
-        return availlable_cases
-
-    def getCase(self, line : int, column : int) -> Case :
-        """Get the case at the given line and column.
+    def setEntityAt(self, entity : Entity, line : int, column : int) -> None:
+        pass
+    
+    def isLineConsituedBySameEntity(self, startLine : int, startColumn : int, lineLength : int, direction : Directions) -> bool:
+        """
+        Check if a specific line contains a the same entity.
 
         Args:
-            line (int): The line of the case to get.
-            column (int): The column of the case to get.
+            startLine (int): Starting line.
+            startColumn (int): Starting column.
+            lineLength (int): The length of the line.
+            direction (int): The direction the line is going.
 
         Returns:
-            Case: The case at the given line and column.
+            bool: True if there the described line is constituted by the same entity, False otherwise.
         """
-        if(line < 0 or line > self.getHeight()) : return None
-        if(column < 0 or column > self.getWidth()) : return None     
-
-        return self.__cases__[line][column]
+        pass
     
     def getWidth(self) -> int:
         return self.__width__

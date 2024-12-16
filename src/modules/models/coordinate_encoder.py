@@ -57,7 +57,7 @@ Functions:
 ## Implementation
 
 # Import #
-from modules.models.coordinate import Coordinate
+from modules.models.board_components.coordinate import Coordinate
 from modules.utils.decorator import private_method
 
 # Functions #

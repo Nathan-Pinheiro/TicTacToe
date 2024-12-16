@@ -46,13 +46,13 @@ Methods:
 ## Implementation
 
 # Import #
-from modules.models.coordinate import Coordinate
-from modules.models.entities.entity import Entity
+from modules.models.board_components.coordinate import Coordinate
+from modules.models.board_components.entity import Entity
 
 # Class #
 class Case:
     
-    def __init__(self, coordinate : Coordinate, entity : Entity = None, isBlocked = False) -> None:
+    def __init__(self, coordinate : Coordinate, entity : Entity = None, isBlocked : bool = False) -> None:
         """Constructor for the Case class.
 
         Args:
@@ -64,9 +64,9 @@ class Case:
             None
         """
         
-        self.__isBlocked__ = isBlocked
-        self.__coordinate__ = coordinate
         self.__entity__ = entity
+        self.__coordinate__ = coordinate
+        self.__isBlocked__ = isBlocked
         
         return None
         
@@ -128,6 +128,6 @@ class Case:
   
         isCaseBlocked : bool = self.isBlocked()
         isCaseEmpty : bool = self.getEntity() == None
-            
+
         if(isCaseBlocked or not isCaseEmpty) : return False
         else : return True
