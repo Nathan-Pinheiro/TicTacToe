@@ -6,91 +6,116 @@ Shape Drawing Module
 This module provides functions to draw various shapes on a graphical canvas, including 'X', 'O', triangles, stars, squares, hexagons, and rhombuses.
 
 Functions:
-    drawCross(app: Any, x: int, y: int, size: int) -> None:
+    drawCross(app: tk.Tk, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 4) -> None:
         Draw an 'X' centered in a cell.
         
         Args:
-            app (Any): The application object containing the canvas.
+            app (tk.Tk): The application object containing the canvas.
             x (int): The x-coordinate of the top-left corner of the cell.
             y (int): The y-coordinate of the top-left corner of the cell.
             size (int): The size of the cell.
+            color (str): The color of the 'X' (default is white).
+            weight (int): The thickness of the lines (default is 4).
             
         Returns:
             None
 
-    drawCircle(app: Any, x: int, y: int, size: int) -> None:
+    drawCircle(app: tk.Tk, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 4) -> None:
         Draw an 'O' centered in a cell.
         
         Args:
-            app (Any): The application object containing the canvas.
+            app (tk.Tk): The application object containing the canvas.
             x (int): The x-coordinate of the top-left corner of the cell.
             y (int): The y-coordinate of the top-left corner of the cell.
             size (int): The size of the cell.
+            color (str): The color of the 'O' (default is white).
+            weight (int): The thickness of the lines (default is 4).
             
         Returns:
             None
 
-    drawTriangle(app: Any, x: int, y: int, size: int) -> None:
+    drawTriangle(app: tk.Tk, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 4) -> None:
         Draw a triangle centered in a cell.
         
         Args:
-            app (Any): The application object containing the canvas.
+            app (tk.Tk): The application object containing the canvas.
             x (int): The x-coordinate of the top-left corner of the cell.
             y (int): The y-coordinate of the top-left corner of the cell.
             size (int): The size of the cell.
+            color (str): The color of the triangle (default is white).
+            weight (int): The thickness of the lines (default is 4).
             
         Returns:
             None
 
-    drawStar(app: Any, x: int, y: int, size: int) -> None:
+    drawStar(app: tk.Tk, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 4) -> None:
         Draw a perfect 5-pointed star centered in a cell.
         
         Args:
-            app (Any): The application object containing the canvas.
+            app (tk.Tk): The application object containing the canvas.
             x (int): The x-coordinate of the top-left corner of the cell.
             y (int): The y-coordinate of the top-left corner of the cell.
             size (int): The size of the cell.
+            color (str): The color of the star (default is white).
+            weight (int): The thickness of the lines (default is 4).
             
         Returns:
             None
 
-    drawSquare(app: Any, x: int, y: int, size: int) -> None:
+    drawSquare(app: tk.Tk, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 4) -> None:
         Draw a square centered in a cell.
         
         Args:
-            app (Any): The application object containing the canvas.
+            app (tk.Tk): The application object containing the canvas.
             x (int): The x-coordinate of the top-left corner of the cell.
             y (int): The y-coordinate of the top-left corner of the cell.
             size (int): The size of the cell.
+            color (str): The color of the square (default is white).
+            weight (int): The thickness of the lines (default is 4).
             
         Returns:
             None
 
-    drawHexagon(app: Any, x: int, y: int, size: int) -> None:
+    drawHexagon(app: tk.Tk, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 4) -> None:
         Draw a hexagon centered in a cell.
         
         Args:
-            app (Any): The application object containing the canvas.
+            app (tk.Tk): The application object containing the canvas.
             x (int): The x-coordinate of the top-left corner of the cell.
             y (int): The y-coordinate of the top-left corner of the cell.
             size (int): The size of the cell.
+            color (str): The color of the hexagon (default is white).
+            weight (int): The thickness of the lines (default is 4).
             
         Returns:
             None
 
-    drawRhombus(app: Any, x: int, y: int, size: int) -> None:
+    drawRhombus(app: tk.Tk, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 4) -> None:
         Draw a rhombus (diamond shape) centered in a cell.
         
         Args:
-            app (Any): The application object containing the canvas.
+            app (tk.Tk): The application object containing the canvas.
             x (int): The x-coordinate of the top-left corner of the cell.
             y (int): The y-coordinate of the top-left corner of the cell.
             size (int): The size of the cell.
+            color (str): The color of the rhombus (default is white).
+            weight (int): The thickness of the lines (default is 4).
             
         Returns:
             None
             
-    drawGrayCase(app: Any, x: int, y: int, size: int) -> None:
+    drawGrayCase(app: tk.Tk, x: int, y: int, size: int, color: str = "#5c5c5c") -> None:
+        Draw a gray square centered in a cell.
+        
+        Args:
+            app (tk.Tk): The application object containing the canvas.
+            x (int): The x-coordinate of the top-left corner of the cell.
+            y (int): The y-coordinate of the top-left corner of the cell.
+            size (int): The size of the cell.
+            color (str): The color of the square (default is gray).
+            
+        Returns:
+            None
 """
 
 # ---------------------------------------------------------------------------------------------------- #
@@ -98,18 +123,20 @@ Functions:
 ## Implementation
 
 # Import
-from typing import Any
+import tkinter as tk
 import math
 
-def drawCross(app: Any, x: int, y: int, size: int) -> None:
+def drawCross(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 1) -> None:
     """
     Draw an 'X' centered in a cell.
     
     Args:
-        app (Any): The application object containing the canvas.
+        app (tk.Tk): The application object containing the canvas.
         x (int): The x-coordinate of the top-left corner of the cell.
         y (int): The y-coordinate of the top-left corner of the cell.
         size (int): The size of the cell.
+        color (str): The color of the 'X' (default is white).
+        weight (int): The thickness of the lines (default is 4).
         
     Returns:
         None
@@ -118,19 +145,21 @@ def drawCross(app: Any, x: int, y: int, size: int) -> None:
     margin: float = size * 0.2
     
     # Draw two crossing lines to form the X
-    app.grid_canvas.create_line(x + margin, y + margin, x + size - margin, y + size - margin, fill="white", width=4)
-    app.grid_canvas.create_line(x + margin, y + size - margin, x + size - margin, y + margin, fill="white", width=4)
+    canvas.create_line(x + margin, y + margin, x + size - margin, y + size - margin, fill=color, width=weight)
+    canvas.create_line(x + margin, y + size - margin, x + size - margin, y + margin, fill=color, width=weight)
     return None
 
-def drawCircle(app: Any, x: int, y: int, size: int) -> None:
+def drawCircle(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 1) -> None:
     """
     Draw an 'O' centered in a cell.
     
     Args:
-        app (Any): The application object containing the canvas.
+        app (tk.Tk): The application object containing the canvas.
         x (int): The x-coordinate of the top-left corner of the cell.
         y (int): The y-coordinate of the top-left corner of the cell.
         size (int): The size of the cell.
+        color (str): The color of the 'O' (default is white).
+        weight (int): The thickness of the lines (default is 4).
         
     Returns:
         None
@@ -139,18 +168,20 @@ def drawCircle(app: Any, x: int, y: int, size: int) -> None:
     margin: float = size * 0.2
     
     # Draw an oval (circle) inside the cell
-    app.grid_canvas.create_oval(x + margin, y + margin, x + size - margin, y + size - margin, outline="white", width=4)
+    canvas.create_oval(x + margin, y + margin, x + size - margin, y + size - margin, outline=color, width=weight)
     return None
 
-def drawTriangle(app: Any, x: int, y: int, size: int) -> None:
+def drawTriangle(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 1) -> None:
     """
     Draw a triangle centered in a cell.
     
     Args:
-        app (Any): The application object containing the canvas.
+        app (tk.Tk): The application object containing the canvas.
         x (int): The x-coordinate of the top-left corner of the cell.
         y (int): The y-coordinate of the top-left corner of the cell.
         size (int): The size of the cell.
+        color (str): The color of the triangle (default is white).
+        weight (int): The thickness of the lines (default is 4).
         
     Returns:
         None
@@ -160,22 +191,24 @@ def drawTriangle(app: Any, x: int, y: int, size: int) -> None:
     margin: float = size * 0.2
 
     # Define the vertices of the triangle
-    app.grid_canvas.create_polygon(
+    canvas.create_polygon(
         x + half, y + margin,  # Top vertex
         x + margin, y + size - margin,  # Bottom-left vertex
         x + size - margin, y + size - margin,  # Bottom-right vertex
-        outline="white", width=4, fill="")
+        outline=color, width=weight, fill="")
     return None
 
-def drawStar(app: Any, x: int, y: int, size: int) -> None:
+def drawStar(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 1) -> None:
     """
     Draw a perfect 5-pointed star centered in a cell.
     
     Args:
-        app (Any): The application object containing the canvas.
+        app (tk.Tk): The application object containing the canvas.
         x (int): The x-coordinate of the top-left corner of the cell.
         y (int): The y-coordinate of the top-left corner of the cell.
         size (int): The size of the cell.
+        color (str): The color of the star (default is white).
+        weight (int): The thickness of the lines (default is 4).
         
     Returns:
         None
@@ -203,18 +236,20 @@ def drawStar(app: Any, x: int, y: int, size: int) -> None:
         points.append(py)
 
     # Draw the star
-    app.grid_canvas.create_polygon(points, outline="white", width=4, fill="")
+    canvas.create_polygon(points, outline=color, width=weight, fill="")
     return None
 
-def drawSquare(app: Any, x: int, y: int, size: int) -> None:
+def drawSquare(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 1) -> None:
     """
     Draw a square centered in a cell.
     
     Args:
-        app (Any): The application object containing the canvas.
+        app (tk.Tk): The application object containing the canvas.
         x (int): The x-coordinate of the top-left corner of the cell.
         y (int): The y-coordinate of the top-left corner of the cell.
         size (int): The size of the cell.
+        color (str): The color of the square (default is white).
+        weight (int): The thickness of the lines (default is 4).
         
     Returns:
         None
@@ -223,18 +258,20 @@ def drawSquare(app: Any, x: int, y: int, size: int) -> None:
     margin: float = size * 0.2
     
     # Draw the square
-    app.grid_canvas.create_rectangle(x + margin, y + margin, x + size - margin, y + size - margin, outline="white", width=4)
+    canvas.create_rectangle(x + margin, y + margin, x + size - margin, y + size - margin, outline=color, width=weight)
     return None
 
-def drawHexagon(app: Any, x: int, y: int, size: int) -> None:
+def drawHexagon(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 1) -> None:
     """
     Draw a hexagon centered in a cell.
     
     Args:
-        app (Any): The application object containing the canvas.
+        app (tk.Tk): The application object containing the canvas.
         x (int): The x-coordinate of the top-left corner of the cell.
         y (int): The y-coordinate of the top-left corner of the cell.
         size (int): The size of the cell.
+        color (str): The color of the hexagon (default is white).
+        weight (int): The thickness of the lines (default is 4).
         
     Returns:
         None
@@ -251,18 +288,20 @@ def drawHexagon(app: Any, x: int, y: int, size: int) -> None:
         x + margin, y + margin + 3 * (size - 2 * margin) / 4,  # Bottom-left vertex
         x + margin, y + margin + (size - 2 * margin) / 4  # Top-left vertex
     ]
-    app.grid_canvas.create_polygon(points, outline="white", width=4, fill="")
+    canvas.create_polygon(points, outline=color, width=weight, fill="")
     
     return None
 
-def drawRhombus(app: Any, x: int, y: int, size: int) -> None:
+def drawRhombus(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 1) -> None:
     """Draw a rhombus (diamond shape) centered in a cell on the canvas.
     
     Args:
-        app (Any): The application object containing the canvas.
+        app (tk.Tk): The application object containing the canvas.
         x (int): The x-coordinate of the top-left corner of the cell.
         y (int): The y-coordinate of the top-left corner of the cell.
         size (int): The size of the cell.
+        color (str): The color of the rhombus (default is white).
+        weight (int): The thickness of the lines (default is 4).
     
     Returns:
         None
@@ -276,21 +315,22 @@ def drawRhombus(app: Any, x: int, y: int, size: int) -> None:
         x + half, y + size - margin,  # Bottom vertex
         x + margin, y + half  # Left vertex
     ]
-    app.grid_canvas.create_polygon(points, outline="white", width=4, fill="")
+    canvas.create_polygon(points, outline=color, width=weight, fill="")
     
     return None
 
-def drawGrayCase(app: Any, x: int, y: int, size: int) -> None:
+def drawGrayCase(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#5c5c5c") -> None:
     """Draw a gray square centered in a cell on the canvas.
     
     Args:
-        app (Any): The application object containing the canvas.
+        app (tk.Tk): The application object containing the canvas.
         x (int): The x-coordinate of the top-left corner of the cell.
         y (int): The y-coordinate of the top-left corner of the cell.
         size (int): The size of the cell.
+        color (str): The color of the square (default is gray).
     
     Returns:
         None
     """
-    app.grid_canvas.create_rectangle(x+2, y+2, x + size-1, y + size, fill="#5c5c5c", outline="")
+    canvas.create_rectangle(x + 1, y + 1, x + size, y + size, fill=color, outline="")
     return None

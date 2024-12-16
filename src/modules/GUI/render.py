@@ -48,6 +48,7 @@ Methods:
 import tkinter as tk
 from tkinter import ttk
 from typing import Optional, Dict
+import sv_ttk
 import os
 import importlib
 
@@ -86,6 +87,8 @@ class App(tk.Tk):
         self.__createFrames__(container)
         self.showFrame(first_page)
         
+        sv_ttk.set_theme("dark")
+        
         return None
         
     @private_method
@@ -112,7 +115,13 @@ class App(tk.Tk):
         Returns:
             None
         """
+
         pages_dir = os.path.join(os.path.dirname(__file__), 'pages')
+        
+        if not os.path.exists(pages_dir):
+            print(f"Répertoire introuvable : {pages_dir}")
+            return None
+        
         for filename in os.listdir(pages_dir):
             if filename.endswith('.py') and filename != '__init__.py':
                 module_name = f"modules.GUI.pages.{filename[:-3]}"
@@ -137,6 +146,9 @@ class App(tk.Tk):
             None
         """
         frame: ttk.Frame = self.frames[page_name]
+        if frame is None:
+            print(f"Error: No frame found with name '{page_name}'")
+            return None
         frame.tkraise()
         
         return None

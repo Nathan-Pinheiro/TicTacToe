@@ -9,14 +9,14 @@ Classes:
     Welcome: A class representing the welcome page of the Tic Tac Toe game.
     
 Methods:
-    __init__(self, parent: Any, controller: Any) -> None:
+    __init__(self, parent: tk.Tk, controller: tk.Tk) -> None:
         Initialize the welcome page with the given parent and controller.
     
     __drawGrid__(self, size: int) -> None:
         Private method.
         Draw the tic-tac-toe grid with symbols.
     
-    __onResize__(self, event: Any) -> None:
+    __onResize__(self, event: tk.Tk) -> None:
         Private method.
         Redraw widgets responsively when the window is resized.
     
@@ -43,26 +43,24 @@ Methods:
 # Import #
 import tkinter as tk
 from tkinter import ttk
-import sv_ttk
-from typing import Any
 
-from modules.GUI.draft.symbols import *
+from modules.GUI.draft.grid import draw_grid
 
 from modules.utils.decorator import private_method
 
 class Welcome(ttk.Frame):
-    def __init__(self, parent: Any, controller: Any) -> None:
+    def __init__(self, parent: tk.Tk, controller: tk.Tk) -> None:
         """Initialize the welcome page with the given parent and controller.
 
         Args:
-            parent (Any): The parent widget.
-            controller (Any): The controller of the application.
+            parent (tk.Tk): The parent widget.
+            controller (tk.Tk): The controller of the application.
 
         Returns:
             None
         """
         super().__init__(parent)
-        self.controller: Any = controller
+        self.controller: tk.Tk = controller
 
         # Main grid configuration
         self.grid_rowconfigure(0, weight=1)
@@ -96,8 +94,6 @@ class Welcome(ttk.Frame):
         # Dynamic resizing
         self.bind("<Configure>", self.__onResize__)
 
-        # Dark theme
-        sv_ttk.set_theme("dark")
         
         return None
 
@@ -111,34 +107,19 @@ class Welcome(ttk.Frame):
         Returns:
             None
         """
-        self.grid_canvas.delete("all")  # Clear the canvas
-
         # Cell size
         cell_size: int = size // 3
 
-        # Draw the gray square (background)
-        self.grid_canvas.create_rectangle(0, 0, size, size, fill="#333", outline="")
-        
-        # Set the canvas to the same size as the grid
-        self.grid_canvas.config(width=size, height=size)
+        # Example board configuration
+        board = [
+            ['X', 'O', 'T'],
+            ['H', 'S', 'Q'],
+            ['R', '#', '']
+        ]
 
-        # Draw white lines (horizontal and vertical)
-        for i in range(1, 3):
-            # Horizontal lines
-            self.grid_canvas.create_line(0, i * cell_size, size, i * cell_size, fill="white", width=3)
-            # Vertical lines
-            self.grid_canvas.create_line(i * cell_size, 0, i * cell_size, size, fill="white", width=3)
+        # Draw the grid with symbols
+        draw_grid(self.grid_canvas, size, cell_size, board)
 
-        # Draw symbols (here X, O, Triangle in the cells of the first row)
-        drawCross(self, 0, 0, cell_size)
-        drawCircle(self, cell_size, 0, cell_size)
-        drawTriangle(self, 2 * cell_size, 0, cell_size)
-        drawHexagon(self, 0, cell_size, cell_size)
-        drawStar(self, cell_size, cell_size, cell_size)
-        drawSquare(self, 2 * cell_size, cell_size, cell_size)
-        drawRhombus(self, 0, 2 * cell_size, cell_size)
-        drawGrayCase(self, cell_size, 2 * cell_size, cell_size)
-        
         return None
 
     @private_method
@@ -152,7 +133,7 @@ class Welcome(ttk.Frame):
             None
         """
         # Calculate new font size for the button
-        button_font_size = max(14, int(width * 0.01))  # 2% of the window width
+        button_font_size = max(18, int(width * 0.01))  # 2% of the window width
 
         # Update button font size using ttk.Style
         style = ttk.Style()
@@ -161,18 +142,18 @@ class Welcome(ttk.Frame):
         return None
 
     @private_method
-    def __onResize__(self, event: Any) -> None:
+    def __onResize__(self, event: tk.Tk) -> None:
         """Redraw widgets responsively when the window is resized.
 
         Args:
-            event (Any): The event object.
+            event (tk.Tk): The event object.
 
         Returns:
             None
         """
         # Calculate the size of the square based on the window
-        size: int = min(event.width, event.height) * 0.5  # Canvas size (50% of the window)
-        size = int(size) - (int(size) % 3)  # Ensure the size is a multiple of 3
+        size: int = min(event.width, event.height) * 0.6  # Canvas size (50% of the window)
+        size = int(size) - (int(size) % 2)  # Ensure the size is a multiple of 3
 
         # Update the canvas size
         self.grid_canvas.config(width=size, height=size)
@@ -251,19 +232,6 @@ class Welcome(ttk.Frame):
         Returns:
             None
         """
-        print("Starting the game...")
+        self.controller.showFrame("Game")
         
         return None
-
-# Launch the application
-if __name__ == "__main__":
-    class App(tk.Tk):
-        def __init__(self) -> None:
-            super().__init__()
-            self.title("Tic Tac Toe - Welcome")
-            self.geometry("800x600")
-            self.frame: Welcome = Welcome(self, self)
-            self.frame.pack(fill="both", expand=True)
-
-    app: App = App()
-    app.mainloop()
