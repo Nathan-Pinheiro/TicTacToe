@@ -2,14 +2,14 @@ from enum import Enum
 from typing import Optional
 from modules.models.board_components.entity import Entity
 
-class GameStatus(Enum):
+class GameOutcomeStatus(Enum):
     UNFINISHED = 0
     DRAW = 1
     VICTORY = 2
 
-class GameState:
+class GameOutcome:
     
-    def __init__(self, state: GameStatus, winner: Optional[Entity] = None):
+    def __init__(self, state: GameOutcomeStatus, winner: Optional[Entity] = None):
         """
         Represents the result of a game.
         
@@ -20,7 +20,7 @@ class GameState:
         self.__state__ = state
         self.__winner__ = winner
 
-    def getGameStatus(self) -> GameStatus:
+    def getGameStatus(self) -> GameOutcomeStatus:
         """Get the current state of the game."""
         return self.__state__
 
@@ -31,6 +31,6 @@ class GameState:
     def __str__(self):
 
         match self.__state__ :
-            case GameStatus.UNFINISHED : return "Game is still ongoing."
-            case GameStatus.DRAW : return "The game ended in a draw."
-            case GameStatus.VICTORY : return f"Player {self.__winner__} won the game!"
+            case GameOutcomeStatus.UNFINISHED : return "Game is still ongoing."
+            case GameOutcomeStatus.DRAW : return "The game ended in a draw."
+            case GameOutcomeStatus.VICTORY : return f"Player {self.__winner__} won the game!"

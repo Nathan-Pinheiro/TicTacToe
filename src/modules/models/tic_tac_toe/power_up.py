@@ -7,3 +7,6 @@ class PowerUp :
         
     def use(self, board : Board) -> None:
         pass
+    
+    def canPlay(self, board : Board, line : int, column : int):
+        pass

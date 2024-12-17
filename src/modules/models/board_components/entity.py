@@ -63,7 +63,7 @@ class Entity:
 
         self.__name__ : str = name
         self.__iconPath__ : str = iconPath
-        
+
     def getName(self):
         """Get the name of the entity.
         
@@ -108,6 +108,9 @@ class Entity:
         if not isinstance(other, Entity): return False
         return self.__name__ == other.__name__ and self.__iconPath__ == other.__iconPath__
     
+    def __str__(self):
+        return self.getName()
+
     def copy(self) -> Entity:
         """
         Create a copy of the current Entity object.

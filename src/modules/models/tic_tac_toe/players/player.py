@@ -1,5 +1,5 @@
-from modules.models.board_components.boards.simple_board import SimpleBoard
-from modules.models.board_components.coordinate import Coordinate
+from modules.models.tic_tac_toe.game_state import GameState
+from modules.models.tic_tac_toe.move import Move
 
 class Player:
 
@@ -14,5 +14,5 @@ class Player:
         self.__name__ = name
         return None
 
-    def get_choice(self, board : SimpleBoard) -> Coordinate:
+    def get_choice(self, gameState : GameState) -> Move:
         pass

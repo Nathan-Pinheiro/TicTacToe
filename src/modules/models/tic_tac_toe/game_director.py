@@ -2,39 +2,27 @@ from modules.models.board_components.entity import Entity
 from modules.models.board_components.coordinate import Coordinate
 from modules.models.board_components.case import Case
 from modules.models.board_components.board import Board
-from modules.models.tic_tac_toe.game_state import TicTacToeGameState
+from modules.models.tic_tac_toe.game_state import GameState
 from modules.models.tic_tac_toe.player_data import PlayerData
 from modules.models.tic_tac_toe.players.player import Player
 from modules.models.tic_tac_toe.player_data import PlayerData
 from modules.models.tic_tac_toe.win_condition import WinCondition
-from modules.models.tic_tac_toe.game_result import GameState, GameStatus
+from modules.models.tic_tac_toe.game_outcome import GameOutcome, GameOutcomeStatus
 from modules.utils.decorator import private_method
-import os
+from modules.models.tic_tac_toe.move import Move 
 
 class GameDirector :
 
     def __init__(self, board : Board, winCondition : WinCondition, players : list[Player], playersData : list[PlayerData]):
 
         self.__players__ = players
-        self.__game_state__ = TicTacToeGameState(board, winCondition, playersData)
+        self.__game_state__ = GameState(board, winCondition, playersData)
         
     def getPlayerToPlay(self) -> Player:
         
+        print(self.__game_state__.getPlayerToPlayIndex())
+
         return self.__players__[self.__game_state__.getPlayerToPlayIndex()]
-    
-    @private_method
-    def __play__(self, line : int, column : int, entity : Entity) -> None :
-
-        board : Board = self.__game_state__.getBoard()
-    
-        if(line < 0 or line > board.getHeight()) : raise ValueError(f"Line is out of range. Should be from 0 to {board.getHeight()} but was <{line}>")
-        if(column < 0 or column > board.getWidth()) : raise ValueError(f"Column is out of range. Should be from 0 to {board.getWidth()} but was <{column}>")
-
-        if(not board.isCaseAvaillable(line, column)) : raise ValueError(f"Can't play at line = {line}, column = {column}. Case is already taken.")
-
-        board.setEntityAt(entity, line, column)
-    
-        return None
     
     @private_method
     def __nextTurn__(self) -> None :
@@ -44,33 +32,24 @@ class GameDirector :
         if(playerToPlayIndex < self.__game_state__.getPlayerCount() - 1) : self.__game_state__.setPlayerToPlayIndex(playerToPlayIndex + 1)
         else : self.__game_state__.setPlayerToPlayIndex(0)
         
-        return None      
+        return None
 
-    def launchGame(self) :
+    def launchGame(self) -> GameState:
         
-        board : Board = self.__game_state__.getBoard()
-        gameResult : GameState = self.__game_state__.getWinCondition().checkWin(board)
+        gameOutcome : GameOutcome = self.__game_state__.checkWin()
 
-        while(gameResult.getGameStatus() == GameStatus.UNFINISHED) :
+        while(gameOutcome.getGameStatus() == GameOutcomeStatus.UNFINISHED) :
 
             playerToPlayIndex : int = self.__game_state__.getPlayerToPlayIndex()
             playerToPlayData : PlayerData = self.__game_state__.getPlayerData(playerToPlayIndex)
             playerToPlay : Player = self.getPlayerToPlay()
 
-            coordinate : Coordinate = playerToPlay.get_choice(board)
+            move : Move = playerToPlay.get_choice(self.__game_state__)
             newEntity : Entity = playerToPlayData.getEntity().copy()            
 
-            self.__play__(coordinate.getLine(), coordinate.getColumn(), newEntity)
+            self.__game_state__.play(move)
             self.__nextTurn__()
 
-            gameResult = self.__game_state__.getWinCondition().checkWin(board)
-            
-
-            
-            
+            gameOutcome = self.__game_state__.checkWin()
         
-        
-        
-
-
-        
+        return self.__game_state__

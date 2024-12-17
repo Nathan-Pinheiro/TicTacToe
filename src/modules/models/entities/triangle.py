@@ -1,7 +1,7 @@
 from modules.models.board_components.entity import Entity
 
-class Cross(Entity):
+class Triangle(Entity):
     
     def __init__(self):
         """Constructor for the Cross class."""
-        super().__init__("X", None)
+        super().__init__("△", None)

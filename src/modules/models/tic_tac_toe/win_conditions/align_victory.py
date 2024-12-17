@@ -1,7 +1,7 @@
 from modules.models.board_components.board import Board
 from modules.models.board_components.entity import Entity
 from modules.models.tic_tac_toe.win_condition import WinCondition
-from modules.models.tic_tac_toe.game_result import GameState, GameStatus
+from modules.models.tic_tac_toe.game_outcome import GameOutcome, GameOutcomeStatus
 from modules.models.board_components.directions import Directions
 from modules.utils.decorator import private_method
 
@@ -17,7 +17,7 @@ class AlignVictory(WinCondition) :
         
         return None
 
-    def checkWin(self, board : Board) -> GameState:
+    def checkWin(self, board : Board) -> GameOutcome:
 
         isDraw : bool = True
 
@@ -27,10 +27,10 @@ class AlignVictory(WinCondition) :
                 if(board.isCaseAvaillable(line, column)): 
                     isDraw = False
                 elif(self.__isCaseWinning__(board, line, column)) : 
-                    return GameState(GameStatus.VICTORY, board.getEntityAt(line, column))
+                    return GameOutcome(GameOutcomeStatus.VICTORY, board.getEntityAt(line, column))
 
-        if(isDraw) : return GameState(GameStatus.DRAW)
-        else : return GameState(GameStatus.UNFINISHED)
+        if(isDraw) : return GameOutcome(GameOutcomeStatus.DRAW)
+        else : return GameOutcome(GameOutcomeStatus.UNFINISHED)
 
     @private_method
     def __isCaseWinning__(self, board: Board, line : int, column : int) -> bool:

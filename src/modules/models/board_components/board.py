@@ -60,7 +60,7 @@ class Board:
         
         return None
         
-    def isCaseAvaillable(self) -> bool :
+    def isCaseAvaillable(self, line : int, column : int) -> bool :
         pass 
     
     def getAvaillableCases(self) -> list[Case] :
@@ -75,7 +75,7 @@ class Board:
     def getEntityAt(self, line : int, column : int) -> Entity:
         pass
 
-    def setEntityAt(self, entity : Entity, line : int, column : int) -> None:
+    def setEntityAt(self, line : int, column : int, entity : Entity) -> None:
         pass
     
     def isLineConsituedBySameEntity(self, startLine : int, startColumn : int, lineLength : int, direction : Directions) -> bool:

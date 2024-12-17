@@ -75,7 +75,7 @@ s
         self.__cases__: list[list[Case]] = [[Case(Coordinate(line, column)) for column in range(self.__width__)] for line in range(self.__height__)]
 
         return None
-        
+
     def getAvaillableCases(self) -> list[Case] :
 
         availlable_cases = []        
@@ -91,14 +91,6 @@ s
                     
         return availlable_cases
 
-    def getWidth(self) -> int:
-        
-        return self.__width__
-
-    def getHeight(self) -> int:
-        
-        return self.__height__
-        
     def isCaseBlocked(self, line : int, column : int) -> bool :
         
         if(line < 0 or line > self.getHeight()) : raise ValueError(f"Line is out of range. Should be from 0 to {self.getHeight()} but was <{line}>")
@@ -124,7 +116,7 @@ s
 
         return self.__cases__[line][column].getEntity()
     
-    def setEntityAt(self, entity : Entity, line : int, column : int) :
+    def setEntityAt(self, line : int, column : int, entity : Entity) :
         
         if(line < 0 or line > self.getHeight()) : raise ValueError(f"Line is out of range. Should be from 0 to {self.getHeight()} but was <{line}>")
         if(column < 0 or column > self.getWidth()) : raise ValueError(f"Column is out of range. Should be from 0 to {self.getWidth()} but was <{column}>")
@@ -132,7 +124,7 @@ s
         return self.__cases__[line][column].setEntity(entity)
     
     def isLineConsituedBySameEntity(self, startLine : int, startColumn : int, lineLength : int, direction : Directions) -> bool:
-        
+
         if(lineLength < 1) : return False
           
         if startLine < 0 or startLine >= self.getHeight() : return False

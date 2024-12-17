@@ -3,7 +3,7 @@ import os
 from modules.models.board_components.boards.simple_board import SimpleBoard
 from modules.models.board_components.entity import Entity
 
-CONSOLE_SIZE = 30
+CONSOLE_SIZE = 40
 SEP = "="
 
 def display_sep():
@@ -11,6 +11,13 @@ def display_sep():
 
 def display_board(board : SimpleBoard):
     
+    word = f"    "
+
+    for column in range(board.getWidth()):
+        word += str(column + 1) + "   "
+        
+    print(word.center(CONSOLE_SIZE))
+
     for line in range(board.getHeight()):
         
         word = f"{line + 1} | "
