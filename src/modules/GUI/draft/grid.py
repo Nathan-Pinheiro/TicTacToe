@@ -1,7 +1,7 @@
 import tkinter as tk
 from modules.GUI.draft.symbols import drawCross, drawCircle, drawTriangle, drawHexagon, drawStar, drawSquare, drawRhombus, drawGrayCase
 
-def draw_grid(canvas: tk.Canvas, size: int, cell_size: int, board: list = None, line_color: str = "white", line_width: int = 1) -> None:
+def draw_grid(canvas: tk.Canvas, width: int, height: int, cell_size: int, board: list = None, line_color: str = "white", line_width: int = 1, coord: bool = False) -> None:
     """Draw a tic-tac-toe grid on the given canvas.
 
     Args:
@@ -12,6 +12,7 @@ def draw_grid(canvas: tk.Canvas, size: int, cell_size: int, board: list = None, 
                       '#' indicates a gray cell, 'X' for a cross, 'O' for a circle, and '' for an empty cell.
         line_color (str): The color of the grid lines.
         line_width (int): The width of the grid lines.
+        coord (bool): Whether to draw coordinates around the grid.
 
     Returns:
         None
@@ -20,14 +21,16 @@ def draw_grid(canvas: tk.Canvas, size: int, cell_size: int, board: list = None, 
     canvas.delete("all")
 
     # Draw the gray square (background)
-    canvas.create_rectangle(0, 0, size, size, fill="#333", outline="")
+    canvas.create_rectangle(0, 0, height, width, fill="#333", outline="")
 
     # Draw white lines (horizontal and vertical)
-    for i in range(1, size // cell_size):
+    for i in range(1, height // cell_size):
         # Horizontal lines
-        canvas.create_line(0, i * cell_size, size, i * cell_size, fill=line_color, width=line_width)
+        canvas.create_line(0, i * cell_size, width, i * cell_size, fill=line_color, width=line_width)
+    
+    for i in range(1, width // cell_size):
         # Vertical lines
-        canvas.create_line(i * cell_size, 0, i * cell_size, size, fill=line_color, width=line_width)
+        canvas.create_line(i * cell_size, 0, i * cell_size, height, fill=line_color, width=line_width)
 
     # Draw symbols if a board is provided
     if board:
@@ -56,5 +59,15 @@ def draw_grid(canvas: tk.Canvas, size: int, cell_size: int, board: list = None, 
                     drawSquare(canvas, x0, y0, cell_size)
                 elif board[row][col] == 'R':
                     drawRhombus(canvas, x0, y0, cell_size)
+                    
+    # Draw coordinates if coord is True
+    if coord:
+        for i in range(height // cell_size):
+            # Draw row coordinates
+            canvas.create_text(10, i * cell_size + cell_size - 14, text=str(i + 1), fill="#ffffff")
+        for i in range(width // cell_size):
+            # Draw column coordinates
+            letter = chr(i + 65)
+            canvas.create_text(i * cell_size + cell_size - 10, 14, text=letter, fill="white")
 
     return None

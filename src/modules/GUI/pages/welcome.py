@@ -118,7 +118,7 @@ class Welcome(ttk.Frame):
         ]
 
         # Draw the grid with symbols
-        draw_grid(self.grid_canvas, size, cell_size, board)
+        draw_grid(self.grid_canvas, size, size, cell_size, board)
 
         return None
 
