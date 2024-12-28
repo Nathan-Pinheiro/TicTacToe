@@ -1,7 +1,7 @@
 from modules.models.board_components.board import Board
 from modules.models.tic_tac_toe.game_state import GameState
 from modules.models.tic_tac_toe.player_data import PlayerData
-from modules.models.tic_tac_toe.players.player import Player
+from modules.models.tic_tac_toe.player import Player
 from modules.models.tic_tac_toe.player_data import PlayerData
 from modules.models.tic_tac_toe.win_condition import WinCondition
 from modules.models.tic_tac_toe.game_outcome import GameOutcome, GameOutcomeStatus
@@ -36,7 +36,5 @@ class GameDirector :
             move : Move = playerToPlay.get_choice(self.__game_state__)
 
             gameOutcome = self.__game_state__.play(move)
-
-            os.system("pause")
 
         return self.__game_state__

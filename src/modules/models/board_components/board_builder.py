@@ -5,7 +5,7 @@ import random
 from modules.models.board_components.boards.simple_board import SimpleBoard
 from modules.models.board_components.boards.optimized_board import OptimizedBoard
 from modules.models.board_components.case import Case
-from modules.models.board_components.board_shapes.board_shape import BoardShape
+from modules.models.board_components.board_shape import BoardShape
 
 from modules.models.console_displayer import *
 

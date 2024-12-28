@@ -1,18 +1,19 @@
-from modules.models.tic_tac_toe.players.player import Player
+from modules.models.tic_tac_toe.player import Player
 from modules.models.tic_tac_toe.game_state import GameState
-from modules.models.board_components.coordinate import Coordinate
-from modules.models.board_components.case import Case
 from modules.models.console_displayer import *
 from modules.models.tic_tac_toe.move import Move
 from modules.models.tic_tac_toe.game_outcome import GameOutcomeStatus
 import random
+import os
 
 class AlphaBetaPruningPlayer(Player):
     
-    def __init__(self, maxDepth : int) -> None:
+    def __init__(self, maxDepth : int, debugOn : bool = False) -> None:
         
         super().__init__("Minimax AI")
+        
         self.__maxDepth__  : int = maxDepth
+        self.__debugOn__ : bool = debugOn
     
     def get_choice(self, gameState : GameState) -> Move:
         
@@ -20,9 +21,12 @@ class AlphaBetaPruningPlayer(Player):
         
         bestScore, bestMove = self.__minimax__(gameState, self.__maxDepth__, gameState.getPlayerToPlayIndex())   
 
-        print("Explored : ", self.__nodeExplored__)
-        print("Best score : ", bestScore)
-
+        if(self.__debugOn__):
+            
+            print("Explored : ", self.__nodeExplored__)
+            print("Best score : ", bestScore)
+            os.system("pause")
+        
         return bestMove
     
     def __minimax__(self, gameState: GameState, depth: int, playerIndex: int, alpha: int = float('-inf'), beta: int = float('inf')) -> tuple[int, Move]:
@@ -94,7 +98,6 @@ class AlphaBetaPruningPlayer(Player):
 
                 moveIndex += 1
                     
-
         return bestScore + e, bestMove
 
     def getMoveStrengthToAdd(self, score : int) -> int : 

@@ -48,9 +48,11 @@ Methods:
 # ---------------------------------------------------------------------------------------------------- #
 
 ## Implementation
+
 from __future__ import annotations
 
 # Class #
+
 class Entity:
     
     def __init__(self, name : str, iconPath : str = None):
@@ -105,10 +107,23 @@ class Entity:
         return None
     
     def __eq__(self, other: object) -> bool:
+        """Allow comparing the value of the entity with another objects.
+        
+        Args:
+            the second object to compare with.
+        
+        Returns: 
+            bool : if the two objects have the same content
+        """
         if not isinstance(other, Entity): return False
         return self.__name__ == other.__name__ and self.__iconPath__ == other.__iconPath__
     
     def __str__(self):
+        """Return the string value of the entity.
+        
+        Returns:
+            str: The string value of the entity
+        """
         return self.getName()
 
     def copy(self) -> Entity:

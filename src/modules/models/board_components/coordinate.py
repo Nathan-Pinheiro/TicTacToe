@@ -49,6 +49,7 @@ Methods:
 ## Implementation
 
 # Class #
+
 class Coordinate:
     
     def __init__(self, line : int, column : int) -> None:

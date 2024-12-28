@@ -1,4 +1,4 @@
-from modules.models.board_components.board_shapes.board_shape import BoardShape
+from modules.models.board_components.board_shape import BoardShape
 from modules.models.board_components.board import Board
 
 class PyramidalShape(BoardShape):
@@ -7,13 +7,17 @@ class PyramidalShape(BoardShape):
         super()
         return None
     
-    def apply_shape(self, board : Board) -> None:
+    def apply_shape(self, board: Board) -> None:
 
-        pyramideSize : int = board.getWidth() // 2
+        width = board.getWidth()
+        height = board.getHeight()
+        center_x = (width - 1) // 2
 
-        for line in range(0, pyramideSize):
+        for line in range(height):
             
-            for column in range(0, pyramideSize - line):
+            pyramid_width = line * ((width + 1) // 2) // height
+
+            for column in range(width):
                 
-                board.setIsCaseBlocked(line, column, True)
-                board.setIsCaseBlocked(line, board.getWidth() - column - 1, True)
+                if column < center_x - pyramid_width or column > center_x + pyramid_width + (1 if width % 2 == 0 else 0):
+                    board.setIsCaseBlocked(line, column, True)

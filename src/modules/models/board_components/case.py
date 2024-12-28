@@ -46,10 +46,12 @@ Methods:
 ## Implementation
 
 # Import #
+
 from modules.models.board_components.coordinate import Coordinate
 from modules.models.board_components.entity import Entity
 
 # Class #
+
 class Case:
     
     def __init__(self, coordinate : Coordinate, entity : Entity = None, isBlocked : bool = False) -> None:
@@ -125,7 +127,11 @@ class Case:
         return None
     
     def isAvaillable(self) -> bool :
-  
+        """Get the availlable state of the case.
+
+        Returns:
+            bool: The availlable state of the case.
+        """
         isCaseBlocked : bool = self.isBlocked()
         isCaseEmpty : bool = self.getEntity() == None
 

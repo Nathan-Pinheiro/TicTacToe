@@ -1,4 +1,4 @@
-from modules.models.tic_tac_toe.players.player import Player
+from modules.models.tic_tac_toe.player import Player
 from modules.models.tic_tac_toe.game_state import GameState
 from modules.models.board_components.coordinate import Coordinate
 from modules.models.board_components.case import Case
@@ -9,10 +9,11 @@ import random
 
 class MinimaxPlayer(Player):
     
-    def __init__(self, maxDepth : int) -> None:
+    def __init__(self, maxDepth : int, debugOn : bool = False) -> None:
         
         super().__init__("Minimax AI")
         self.__maxDepth__  : int = maxDepth
+        self.__debugOn__ : bool = debugOn
     
     def get_choice(self, gameState : GameState) -> Move:
         
@@ -20,8 +21,11 @@ class MinimaxPlayer(Player):
         
         bestScore, bestMove = self.__minimax__(gameState, self.__maxDepth__, gameState.getPlayerToPlayIndex())   
 
-        print("Explored : ", self.__nodeExplored__)
-        print("Best score : ", bestScore)
+        if(self.__debugOn__):
+            
+            print("Explored : ", self.__nodeExplored__)
+            print("Best score : ", bestScore)
+            os.system("pause")
 
         return bestMove
     
