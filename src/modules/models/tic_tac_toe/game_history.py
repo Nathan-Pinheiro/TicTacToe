@@ -3,9 +3,8 @@ from modules.models.board_components.board import Board
 
 class GameHistory:
     
-    def __init__(self, initialBoard : Board) -> None:
+    def __init__(self) -> None:
         
-        self.__initialBoard__ = initialBoard
         self.__moves__ : list[Move] = []
         
         return None
@@ -16,9 +15,16 @@ class GameHistory:
     def getMove(self, moveIndex : int) -> Move:
         return self.__moves__[moveIndex]
     
-    def addMove(self, moveIndex : int) -> None:
-        return self.__moves__[moveIndex]
+    def getLastMove(self) -> Move:
+        return self.__moves__[len(self.__moves__) - 1]
+    
+    def addMove(self, move : Move) -> None:
+        self.__moves__.append(move)
     
     def removeLastMove(self) -> None:
         del self.__moves__[len(self.__moves__) - 1]
+        return None
+    
+    def removeMove(self, moveIndex : int) -> None:
+        del self.__moves__[moveIndex]
         return None

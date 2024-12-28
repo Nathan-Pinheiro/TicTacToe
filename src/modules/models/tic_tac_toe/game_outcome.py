@@ -9,7 +9,7 @@ class GameOutcomeStatus(Enum):
 
 class GameOutcome:
     
-    def __init__(self, state: GameOutcomeStatus, winner: Optional[Entity] = None):
+    def __init__(self, state: GameOutcomeStatus, winner: Optional[int] = None):
         """
         Represents the result of a game.
         
@@ -24,7 +24,7 @@ class GameOutcome:
         """Get the current state of the game."""
         return self.__state__
 
-    def getWinner(self) -> Optional[Entity]:
+    def getWinner(self) -> Optional[int]:
         """Get the winner of the game, if applicable."""
         return self.__winner__
 

@@ -12,6 +12,8 @@ from modules.models.tic_tac_toe.game_director import GameDirector
 from modules.models.tic_tac_toe.players.player import Player
 from modules.models.tic_tac_toe.win_conditions.align_victory import AlignVictory
 from modules.models.tic_tac_toe.players.human_player import HumanPlayer
+from modules.models.tic_tac_toe.players.minimax_player import MinimaxPlayer
+from modules.models.tic_tac_toe.players.alpha_beta_pruning_player import AlphaBetaPruningPlayer
 from modules.models.tic_tac_toe.players.random_player import RandomPlayer
 from modules.models.tic_tac_toe.player_data import PlayerData
 from modules.models.entities.circle import Circle
@@ -28,21 +30,20 @@ import os
 
 if(__name__ == "__main__"):
     
-    width : int = 5
-    height : int = 5
+    players : list[Player] = [HumanPlayer("Jean"), AlphaBetaPruningPlayer(10)]
+    playerEntities = [Cross(), Circle()]
+    playersData : list[PlayerData] = [PlayerData([]), PlayerData([])]
     
-    players : list[Player] = [HumanPlayer("Jean"), RandomPlayer()]
-    playersData : list[PlayerData] = [PlayerData(Triangle(), [BombMove]), PlayerData(Circle(), [BombMove])]
-    board : Board = BoardBuilder().setHeight(5).setWidth(7).setRandomlyBlockedCaseAmount(5).build()
+    board : Board = BoardBuilder(playerEntities).setHeight(3).setWidth(3).buildOptimizedBoard()
     winCondition = AlignVictory(3)
 
-    game_director = GameDirector(board, winCondition, players, playersData)
+    game_director = GameDirector(board, winCondition, players, playersData, 1)
 
     gameState : GameState = game_director.launchGame()
     
-    os.system("cls")
     display_sep()
     display_board(gameState.getBoard())
     display_sep()
+    
     display(gameState.checkWin())
     

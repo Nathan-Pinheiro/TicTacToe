@@ -7,15 +7,18 @@ from modules.models.board_components.entity import Entity
 
 class PowerUpMove(Move):
     
-    def __init__(self, moveCode : str, coordinate : Coordinate, entity : Entity) -> None:
+    def __init__(self, moveCode : str, coordinate : Coordinate) -> None:
         
-        super().__init__(moveCode, coordinate, entity)
+        super().__init__(moveCode, coordinate)
 
         return None
     
-    def play(self, board : Board) -> None :
+    def play(self, board : Board, playerIndex : int) -> None :
         pass
         
     @classmethod
     def canPlay(cls, board : Board, line : int, column : int) -> bool:
         pass
+    
+    def __str__(self):
+        return super().__str__()

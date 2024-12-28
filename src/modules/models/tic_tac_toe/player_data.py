@@ -4,14 +4,9 @@ from typing import Type
 
 class PlayerData :
     
-    def __init__(self, entity : Entity, powerUpsMoves : list[Type[PowerUpMove]]) :
+    def __init__(self, powerUpsMoves : list[Type[PowerUpMove]]) :
         
-        self.__entity__ = entity
         self.__powerUpsMoves__ : list[Type[PowerUpMove]] = powerUpsMoves
-        
-    def getEntity(self) -> Entity:
-        
-        return self.__entity__
     
     def getPowerUpMoves(self) -> list[Type[PowerUpMove]]:
         

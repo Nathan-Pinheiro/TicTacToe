@@ -1,6 +1,3 @@
-from modules.models.board_components.entity import Entity
-from modules.models.board_components.coordinate import Coordinate
-from modules.models.board_components.case import Case
 from modules.models.board_components.board import Board
 from modules.models.tic_tac_toe.game_state import GameState
 from modules.models.tic_tac_toe.player_data import PlayerData
@@ -10,29 +7,21 @@ from modules.models.tic_tac_toe.win_condition import WinCondition
 from modules.models.tic_tac_toe.game_outcome import GameOutcome, GameOutcomeStatus
 from modules.utils.decorator import private_method
 from modules.models.tic_tac_toe.move import Move 
+import random
+import os
 
 class GameDirector :
 
-    def __init__(self, board : Board, winCondition : WinCondition, players : list[Player], playersData : list[PlayerData]):
+    def __init__(self, board : Board, winCondition : WinCondition, players : list[Player], playersData : list[PlayerData], startingPlayer : int = -1):
+
+        if(startingPlayer == -1) : startingPlayer = random.randint(0, len(players) - 1)
 
         self.__players__ = players
-        self.__game_state__ = GameState(board, winCondition, playersData)
+        self.__game_state__ = GameState(board, winCondition, playersData, startingPlayer)
         
     def getPlayerToPlay(self) -> Player:
         
-        print(self.__game_state__.getPlayerToPlayIndex())
-
         return self.__players__[self.__game_state__.getPlayerToPlayIndex()]
-    
-    @private_method
-    def __nextTurn__(self) -> None :
-        
-        playerToPlayIndex : int = self.__game_state__.getPlayerToPlayIndex()
-
-        if(playerToPlayIndex < self.__game_state__.getPlayerCount() - 1) : self.__game_state__.setPlayerToPlayIndex(playerToPlayIndex + 1)
-        else : self.__game_state__.setPlayerToPlayIndex(0)
-        
-        return None
 
     def launchGame(self) -> GameState:
         
@@ -45,11 +34,9 @@ class GameDirector :
             playerToPlay : Player = self.getPlayerToPlay()
 
             move : Move = playerToPlay.get_choice(self.__game_state__)
-            newEntity : Entity = playerToPlayData.getEntity().copy()            
 
-            self.__game_state__.play(move)
-            self.__nextTurn__()
+            gameOutcome = self.__game_state__.play(move)
 
-            gameOutcome = self.__game_state__.checkWin()
-        
+            os.system("pause")
+
         return self.__game_state__

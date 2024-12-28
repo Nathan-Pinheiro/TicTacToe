@@ -1,6 +1,6 @@
 import os
 
-from modules.models.board_components.boards.simple_board import SimpleBoard
+from modules.models.board_components.board import Board
 from modules.models.board_components.entity import Entity
 
 CONSOLE_SIZE = 40
@@ -9,7 +9,7 @@ SEP = "="
 def display_sep():
     print(SEP * CONSOLE_SIZE)
 
-def display_board(board : SimpleBoard):
+def display_board(board : Board):
     
     word = f"    "
 

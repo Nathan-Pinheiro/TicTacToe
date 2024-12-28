@@ -8,3 +8,9 @@ class WinCondition :
     
     def checkWin(self, board : Board) -> GameOutcome :
         pass
+    
+    def checkWinForPlayer(self, playerIndex : int, board : Board) -> GameOutcome:
+        pass
+    
+    def evaluateForPlayer(self, playerIndex : int, board : Board) -> int:
+        pass

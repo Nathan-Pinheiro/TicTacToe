@@ -46,7 +46,7 @@ from modules.utils.decorator import private_method
 # Class #
 class SimpleBoard(Board):
 
-    def __init__(self, width : int, height : int) -> None:
+    def __init__(self, width : int, height : int, player_entities : list[Entity]) -> None:
         """Constructor for the Board class.
 s
         Args:
@@ -57,9 +57,11 @@ s
             None
         """
         
-        self.__width__ : int = width
-        self.__height__ : int = height
+        super.__init__(width, height, player_entities)
         
+        self.__piecesOnBoard__ = 0
+        self.__caseBlocked__ = 0
+
         self.__initializeBoard__()
         
         return None
@@ -76,21 +78,6 @@ s
 
         return None
 
-    def getAvaillableCases(self) -> list[Case] :
-
-        availlable_cases = []        
-
-        for line in range(0, self.getHeight()):
-            for column in range(0, self.getWidth()):
-
-                case : Case = self.__cases__[line][column]
-
-                if(self.__cases__[line][column]):
-                    
-                    if(case.isAvaillable()): availlable_cases.append(case)
-                    
-        return availlable_cases
-
     def isCaseBlocked(self, line : int, column : int) -> bool :
         
         if(line < 0 or line > self.getHeight()) : raise ValueError(f"Line is out of range. Should be from 0 to {self.getHeight()} but was <{line}>")
@@ -99,7 +86,12 @@ s
         return self.__cases__[line][column].isBlocked()
 
     def setIsCaseBlocked(self, line : int, column : int, isBlocked : bool) -> None :
+
+        if(isBlocked and not self.__cases__[line][column].isBlocked()): self.__caseBlocked__ += 1 
+        elif(not isBlocked and self.__cases__[line][column].isBlocked()) : self.__caseBlocked__ -= 1
+        
         self.__cases__[line][column].setIsBlocked(isBlocked)
+        
         return None
 
     def isCaseAvaillable(self, line : int, column : int) -> bool :
@@ -116,34 +108,60 @@ s
 
         return self.__cases__[line][column].getEntity()
     
-    def setEntityAt(self, line : int, column : int, entity : Entity) :
+    def addPlayerEntityAt(self, line : int, column : int, playerIndex : int) -> None:
         
-        if(line < 0 or line > self.getHeight()) : raise ValueError(f"Line is out of range. Should be from 0 to {self.getHeight()} but was <{line}>")
-        if(column < 0 or column > self.getWidth()) : raise ValueError(f"Column is out of range. Should be from 0 to {self.getWidth()} but was <{column}>")
+        if(line < 0 or line >= self.getHeight()) : raise ValueError(f"Line is out of range. Should be from 0 to {self.getHeight()} but was <{line}>")
+        if(column < 0 or column >= self.getWidth()) : raise ValueError(f"Column is out of range. Should be from 0 to {self.getWidth()} but was <{column}>")
+        if(playerIndex < 0 or playerIndex >= len(self.__player_entities__)) : raise ValueError(f"Player index is out of range. Should be from 0 to {len(self.__player_entities__)} but was <{playerIndex}>")
 
-        return self.__cases__[line][column].setEntity(entity)
+        entity : Entity = self.__player_entities__[playerIndex]
+        self.__cases__[line][column].setEntity(entity)
+        self.__piecesOnBoard__ += 1
+
+        return None
     
-    def isLineConsituedBySameEntity(self, startLine : int, startColumn : int, lineLength : int, direction : Directions) -> bool:
-
-        if(lineLength < 1) : return False
-          
-        if startLine < 0 or startLine >= self.getHeight() : return False
-        if startColumn < 0 or startColumn >= self.getWidth() : return False
-
-        if(direction == None) : return False        
-
-        lineDirection, columnDirection = direction.value
+    def removeEntityAt(self, line : int, column : int) -> None:
         
-        if startLine + lineLength * lineDirection < 0 or startLine + lineLength * lineDirection >= self.getHeight() : return False
-        if startColumn + lineLength * columnDirection < 0 or startColumn + lineLength * columnDirection >= self.getWidth() : return False
+        if(line < 0 or line >= self.getHeight()) : raise ValueError(f"Line is out of range. Should be from 0 to {self.getHeight()} but was <{line}>")
+        if(column < 0 or column >= self.getWidth()) : raise ValueError(f"Column is out of range. Should be from 0 to {self.getWidth()} but was <{column}>")
+
+        if(self.__cases__[line][column].getEntity() != None) : self.__piecesOnBoard__ -= 1
+
+        self.__cases__[line][column].setEntity(None)
+
+        return None
+
+    def checkIfAlignmentOnCaseForPlayer(self, line : int, column : int, playerIndex : int, align_length : int) -> bool:
         
-        entity = self.getEntityAt(startLine, startColumn)
+        """
+        Check if there a given player have his entities aligned
+        """
+
+        pass
+    
+    def checkAlignmentForPlayer(self, playerIndex : int, alignLength : int) -> bool:
+        pass
+
+    def checkIfPlayerHaveAlignment(self, alignLength : int) -> int:
+        pass
+    
+    def getEntityAligned(self, align_length : int) -> Entity:
+        """
+        Check if there is an Alignment of a given length and return the entity aligned
+        """
         
-        for step in range(1, lineLength):
-            
-            currentLine = startLine + step * lineDirection
-            currentColumn = startColumn + step * columnDirection
-                
-            if self.getEntityAt(currentLine, currentColumn) != entity: return False
-                    
-        return True
+        raise NotImplementedError("not develloped for the moment")
+
+        pass
+    
+    def isFull(self) -> bool :
+        
+        raise NotImplementedError("not develloped for the moment")
+
+        pass
+    
+    def blockRandomCase(self) -> None :
+        pass
+    
+    def copy(self) -> Board:
+        pass

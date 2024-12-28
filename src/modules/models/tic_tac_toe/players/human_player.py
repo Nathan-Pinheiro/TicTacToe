@@ -20,26 +20,27 @@ class HumanPlayer(Player):
         display_board(gameState.getBoard())
         display_sep()
 
-        move : Move = None
+        move : Move = SimpleMove
 
         isMovePossible : bool = False
 
-        while(not isMovePossible):
+        # while(not isMovePossible):
             
-            display("Types de coups :")
-            display(" 1 - Normal Moove")
-            display(" 2 - BOMB !!!")
-            rep : int = ask_for_int("Quel type de coup voulez-vous jouer ? ")
+        #     display("Types de coups :")
+        #     display(" 1 - Normal Moove")
+        #     display(" 2 - BOMB !!!")
+
+        #     rep : int = ask_for_int("Quel type de coup voulez-vous jouer ? ")
             
-            if(rep == 1) :
-                isMovePossible = True
-                move = SimpleMove
+        #     if(rep == 1) :
+        #         isMovePossible = True
+        #         move = SimpleMove
                 
-            elif(rep == 2) :
-                isMovePossible = BombMove in gameState.getPlayerData(gameState.getPlayerToPlayIndex()).getPowerUpMoves()
-                if(isMovePossible): move = BombMove
+        #     elif(rep == 2) :
+        #         isMovePossible = BombMove in gameState.getPlayerData(gameState.getPlayerToPlayIndex()).getPowerUpMoves()
+        #         if(isMovePossible): move = BombMove
                 
-            if(not isMovePossible) : display("Ce coup est impossible !")
+        #     if(not isMovePossible) : display("Ce coup est impossible !")
 
         isMovePossible : bool = False
 
@@ -58,4 +59,4 @@ class HumanPlayer(Player):
 
             else : display("Ce coup est impossible !")
 
-        return move(Coordinate(lineChosed - 1, columnChosed - 1), gameState.getPlayerToPlayEntity())
+        return move(Coordinate(lineChosed - 1, columnChosed - 1))

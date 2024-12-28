@@ -1,57 +1,46 @@
 from modules.models.board_components.board import Board
-from modules.models.board_components.entity import Entity
 from modules.models.tic_tac_toe.win_condition import WinCondition
 from modules.models.tic_tac_toe.game_outcome import GameOutcome, GameOutcomeStatus
-from modules.models.board_components.directions import Directions
+from modules.models.tic_tac_toe.game_state import GameState
 from modules.utils.decorator import private_method
 
 MIN_ENTITY_TO_ALIGN = 3
 
 class AlignVictory(WinCondition) :
     
-    def __init__(self, entityToAlign : int) -> None:
+    def __init__(self, alignLength : int) -> None:
         
-        if(entityToAlign < MIN_ENTITY_TO_ALIGN): raise ValueError(f"Can't create an AlignVictory with {entityToAlign} entity to align. It must be higher or equals than {MIN_ENTITY_TO_ALIGN}")
+        if(alignLength < MIN_ENTITY_TO_ALIGN): raise ValueError(f"Can't create an AlignVictory with {alignLength} entity to align. It must be higher or equals than {MIN_ENTITY_TO_ALIGN}")
         
-        self.__entityToAlign__ = entityToAlign
+        self.__alignLength__ = alignLength
         
         return None
 
     def checkWin(self, board : Board) -> GameOutcome:
 
-        isDraw : bool = True
+        winnerIndex : int = board.checkIfPlayerHaveAlignment(self.__alignLength__)
 
-        for line in range(0, board.getHeight()):
-            for column in range(0, board.getWidth()):
+        if(winnerIndex != -1) : return GameOutcome(GameOutcomeStatus.VICTORY, winnerIndex)
+        elif(board.isFull()) : return GameOutcome(GameOutcomeStatus.DRAW)
+        else : return GameOutcome(GameOutcomeStatus.UNFINISHED)
+    
+    def checkWinForPlayer(self, playerIndex : int, board : Board) -> GameOutcome:
 
-                if(board.isCaseAvaillable(line, column)): 
-                    isDraw = False
-                elif(self.__isCaseWinning__(board, line, column)) : 
-                    return GameOutcome(GameOutcomeStatus.VICTORY, board.getEntityAt(line, column))
-
-        if(isDraw) : return GameOutcome(GameOutcomeStatus.DRAW)
+        if(board.checkAlignmentForPlayer(playerIndex, self.__alignLength__)) : return GameOutcome(GameOutcomeStatus.VICTORY, playerIndex)
+        elif(board.isFull()) : return GameOutcome(GameOutcomeStatus.DRAW)
         else : return GameOutcome(GameOutcomeStatus.UNFINISHED)
 
-    @private_method
-    def __isCaseWinning__(self, board: Board, line : int, column : int) -> bool:
-        """
-        Check if the given case is part of a winning line.
-
-        Args:
-            board (Board): The game board.
-            case (Case): The case to check.
-
-        Returns:
-            bool: True if the case is part of a winning line, False otherwise.
-        """
+    def evaluateForPlayer(self, playerToEvaluateIndex : int, board : Board) -> int:
         
-        entity : Entity = board.getEntityAt(line, column)
+        playerAlignStrength : int = 0
+        oponentsAlignStrength : int = 0
 
-        if entity is None: return False
+        for alignLength in range(2, self.__alignLength__) :
+            for playerIndex in range(0, len(board.getPlayerEntities())):
+                if(playerIndex == playerToEvaluateIndex): playerAlignStrength += 2**alignLength * board.checkAlignmentForPlayer(playerIndex, alignLength)
+                else : oponentsAlignStrength += 2**alignLength * board.checkAlignmentForPlayer(playerIndex, alignLength)
+
+        totalStrength = playerAlignStrength + oponentsAlignStrength
         
-        return (
-            board.isLineConsituedBySameEntity(line, column, self.__entityToAlign__, Directions.HORIZONTAL) or
-            board.isLineConsituedBySameEntity(line, column, self.__entityToAlign__, Directions.VERTICAL) or
-            board.isLineConsituedBySameEntity(line, column, self.__entityToAlign__, Directions.ASCENDANT_DIAGONAL) or
-            board.isLineConsituedBySameEntity(line, column, self.__entityToAlign__, Directions.DESCENDANT_DIAGONAL)
-        )
+        if totalStrength == 0: return 0.0
+        else : return (playerAlignStrength - oponentsAlignStrength) / totalStrength

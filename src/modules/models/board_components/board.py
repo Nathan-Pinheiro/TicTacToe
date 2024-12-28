@@ -36,6 +36,8 @@ Methods:
 ## Implementation
 
 # Import #
+from __future__ import annotations
+
 from modules.models.board_components.case import Case
 from modules.models.board_components.entity import Entity
 from modules.models.board_components.directions import Directions
@@ -44,7 +46,7 @@ from modules.utils.decorator import private_method
 # Class #
 class Board:
 
-    def __init__(self, width : int, height : int) -> None:
+    def __init__(self, width : int, height : int, player_entities : list[Entity]) -> None:
         """Constructor for the Board class.
 
         Args:
@@ -54,16 +56,14 @@ class Board:
         Returns:
             None
         """
-        
+
         self.__width__ : int = width
         self.__height__ : int = height
+        self.__player_entities__ : list[Entity] = player_entities
         
         return None
         
     def isCaseAvaillable(self, line : int, column : int) -> bool :
-        pass 
-    
-    def getAvaillableCases(self) -> list[Case] :
         pass
 
     def isCaseBlocked(self, line : int, column : int) -> bool :
@@ -71,30 +71,54 @@ class Board:
     
     def setIsCaseBlocked(self, line : int, column : int, isBlocked : bool) -> None :
         pass
-
-    def getEntityAt(self, line : int, column : int) -> Entity:
-        pass
-
-    def setEntityAt(self, line : int, column : int, entity : Entity) -> None:
+    
+    def blockRandomCase(self) -> None :
         pass
     
-    def isLineConsituedBySameEntity(self, startLine : int, startColumn : int, lineLength : int, direction : Directions) -> bool:
-        """
-        Check if a specific line contains a the same entity.
+    def isEntityAt(self, line : int, column : int) -> bool :
+        pass
 
-        Args:
-            startLine (int): Starting line.
-            startColumn (int): Starting column.
-            lineLength (int): The length of the line.
-            direction (int): The direction the line is going.
+    def getEntityAt(self, line : int, column : int) -> Entity :
+        pass
 
-        Returns:
-            bool: True if there the described line is constituted by the same entity, False otherwise.
-        """
+    def addPlayerEntityAt(self, line : int, column : int, playerIndex : int) -> None:
         pass
     
+    def removeEntityAt(self, line : int, column : int) -> None:
+        pass
+
+    def checkIfAlignmentOnCaseForPlayer(self, line : int, column : int, playerIndex : int, alignLength : int) -> bool:
+        
+        """
+        Check if there a given player have his entities aligned
+        """
+
+        pass
+    
+    def checkAlignmentForPlayer(self, playerIndex : int, alignLength : int) -> bool:
+        pass
+
+    def checkIfPlayerHaveAlignment(self, alignLength : int) -> int:
+
+        """
+        Check for alignments for all players with a given length. 
+        
+        Return the player with aligned pieces index, -1 if there is no alignments. 
+        """        
+
+        pass
+    
+    def isFull(self) -> bool :
+        pass
+
     def getWidth(self) -> int:
         return self.__width__
 
     def getHeight(self) -> int:
         return self.__height__
+    
+    def getPlayerEntities(self) -> list[int]:
+        return self.__player_entities__
+    
+    def copy(self) -> Board:
+        pass

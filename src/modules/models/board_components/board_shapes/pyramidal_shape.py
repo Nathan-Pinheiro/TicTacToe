@@ -1,5 +1,5 @@
 from modules.models.board_components.board_shapes.board_shape import BoardShape
-from modules.models.board_components.boards.simple_board import SimpleBoard
+from modules.models.board_components.board import Board
 
 class PyramidalShape(BoardShape):
     
@@ -7,7 +7,7 @@ class PyramidalShape(BoardShape):
         super()
         return None
     
-    def apply_shape(self, board : SimpleBoard) -> None:
+    def apply_shape(self, board : Board) -> None:
 
         pyramideSize : int = board.getWidth() // 2
 

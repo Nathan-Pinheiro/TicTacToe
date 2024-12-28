@@ -7,13 +7,13 @@ import os
 
 class BombMove(PowerUpMove):
     
-    def __init__(self, coordinate : Coordinate, entity : Entity) -> None:
+    def __init__(self, coordinate : Coordinate) -> None:
         
-        super().__init__("b", coordinate, entity)
+        super().__init__("b", coordinate)
 
         return None
     
-    def play(self, board : Board) -> None :
+    def play(self, board : Board, playerIndex : int) -> None :
         
         line : int = self.__coordinate__.getLine()
         column : int = self.__coordinate__.getColumn()
@@ -24,7 +24,7 @@ class BombMove(PowerUpMove):
         for currentLine in range(line - 1, line + 2):
             for currentColumn in range(column - 1, column + 2):
                 if(0 <= currentLine < board.getHeight() and 0 <= currentColumn < board.getWidth()):
-                    board.setEntityAt(currentLine, currentColumn, None)
+                    board.removeEntityAt(currentLine, currentColumn)
                     board.setIsCaseBlocked(currentLine, currentColumn, False)
 
         return None
@@ -36,3 +36,6 @@ class BombMove(PowerUpMove):
         if(column < 0 or column > board.getWidth()) : return False
         
         return True
+    
+    def __str__(self):
+        return super().__str__()
