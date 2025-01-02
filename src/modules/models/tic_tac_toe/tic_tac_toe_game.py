@@ -59,7 +59,7 @@ class TicTacToeGame:
         if num_players > current_num_players:
             # Ajouter les nouveaux joueurs et leurs données
             for i in range(current_num_players, num_players):
-                self.players.append(AlphaBetaPruningPlayer(4, False))  # Par défaut, un joueur IA
+                self.players.append(MinimaxTranspositionTablePlayer(4, False))  # Par défaut, un joueur IA
                 # On met un symbole différent pour chaque joueur
                 if i % 4 == 0:
                     self.player_entities.append(Cross())
@@ -88,7 +88,7 @@ class TicTacToeGame:
         if is_human:
             self.players[player_index] = HumanPlayer(f"Player {player_index + 1}")
         else:
-            self.players[player_index] = AlphaBetaPruningPlayer(4, False)
+            self.players[player_index] = MinimaxTranspositionTablePlayer(4, False)
             
     def set_player_symbol(self, player_index, symbol):
         if player_index >= len(self.players):
