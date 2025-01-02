@@ -73,8 +73,7 @@ class App(tk.Tk):
         if geometry is not None:
             self.geometry(geometry)
         else:
-            self.attributes("-fullscreen", False)
-            self.state("zoomed")
+            self.attributes("-fullscreen", True)
             
         self.bind("<Escape>", self.__closeWindow__)
         self.frames: Dict[str, ttk.Frame] = {}
@@ -150,6 +149,10 @@ class App(tk.Tk):
             print(f"Error: No frame found with name '{page_name}'")
             return None
         frame.tkraise()
+        
+        # Appeler start_game si la page est Game
+        if page_name == "Game":
+            frame.start_game()
         
         return None
 

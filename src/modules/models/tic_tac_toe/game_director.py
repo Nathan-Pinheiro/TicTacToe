@@ -38,3 +38,7 @@ class GameDirector :
             gameOutcome = self.__game_state__.play(move)
 
         return self.__game_state__
+    
+    def getGameState(self) -> GameState:
+        
+        return self.__game_state__
