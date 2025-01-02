@@ -11,7 +11,7 @@ class HumanPlayer(Player):
     def __init__(self, name : str) -> None:
         super().__init__(name)
     
-    def get_choice(self, gameState : GameState) -> Move:
+    def get_choice_2(self, gameState : GameState) -> Move:
 
         clear_screen()
         
@@ -60,3 +60,7 @@ class HumanPlayer(Player):
             else : display("Ce coup est impossible !")
 
         return move(Coordinate(lineChosed - 1, columnChosed - 1))
+    
+    def get_choice(self, gameState: GameState, line: int, column: int) -> Move:
+        move = SimpleMove(Coordinate(line, column))
+        return move

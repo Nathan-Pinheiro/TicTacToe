@@ -49,9 +49,9 @@ def draw_grid(canvas: tk.Canvas, width: int, height: int, cell_size: int, board:
                 elif board[row][col] == 'O':
                     drawCircle(canvas, x0, y0, cell_size)
                 # Draw other symbols if needed
-                elif board[row][col] == 'T':
+                elif board[row][col] == '△':
                     drawTriangle(canvas, x0, y0, cell_size)
-                elif board[row][col] == 'H':
+                elif board[row][col] == '⬡':
                     drawHexagon(canvas, x0, y0, cell_size)
                 elif board[row][col] == 'S':
                     drawStar(canvas, x0, y0, cell_size)
