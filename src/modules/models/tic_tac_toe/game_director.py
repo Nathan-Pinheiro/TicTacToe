@@ -5,10 +5,12 @@ from modules.models.tic_tac_toe.player import Player
 from modules.models.tic_tac_toe.player_data import PlayerData
 from modules.models.tic_tac_toe.win_condition import WinCondition
 from modules.models.tic_tac_toe.game_outcome import GameOutcome, GameOutcomeStatus
+from modules.models.console_displayer import *
 from modules.utils.decorator import private_method
 from modules.models.tic_tac_toe.move import Move 
 import random
 import os
+import time
 
 class GameDirector :
 
@@ -25,6 +27,8 @@ class GameDirector :
 
     def launchGame(self) -> GameState:
         
+        
+
         gameOutcome : GameOutcome = self.__game_state__.checkWin()
 
         while(gameOutcome.getGameStatus() == GameOutcomeStatus.UNFINISHED) :
@@ -33,7 +37,20 @@ class GameDirector :
             playerToPlayData : PlayerData = self.__game_state__.getPlayerData(playerToPlayIndex)
             playerToPlay : Player = self.getPlayerToPlay()
 
+            start_time = time.time()
+
             move : Move = playerToPlay.get_choice(self.__game_state__)
+
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+
+            display_sep()
+
+            display(f"Player : {playerToPlayIndex} played {move}")
+            display(f"It took {elapsed_time:.6f} seconds")
+
+            display_sep()
+            os.system("pause")
 
             gameOutcome = self.__game_state__.play(move)
 

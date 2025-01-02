@@ -36,7 +36,7 @@ Methods:
 ## Implementation
 
 # Import #
-from modules.models.board_components.case import Case
+from modules.models.board_components.boards.simple_board_components.case import Case
 from modules.models.board_components.board import Board
 from modules.models.board_components.entity import Entity
 from modules.models.board_components.coordinate import Coordinate
@@ -234,3 +234,6 @@ class SimpleBoard(Board):
         board.__pieceCount__ = self.__pieceCount__
 
         return board
+    
+    def __hash__(self):
+        pass 

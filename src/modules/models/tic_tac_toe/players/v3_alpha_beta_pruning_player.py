@@ -1,17 +1,17 @@
 from modules.models.tic_tac_toe.player import Player
 from modules.models.tic_tac_toe.game_state import GameState
-from modules.models.board_components.coordinate import Coordinate
-from modules.models.board_components.case import Case
 from modules.models.console_displayer import *
 from modules.models.tic_tac_toe.move import Move
 from modules.models.tic_tac_toe.game_outcome import GameOutcomeStatus
 import random
+import os
 
-class MinimaxPlayer(Player):
+class AlphaBetaPruningPlayer(Player):
     
     def __init__(self, maxDepth : int, debugOn : bool = False) -> None:
         
         super().__init__("Minimax AI")
+        
         self.__maxDepth__  : int = maxDepth
         self.__debugOn__ : bool = debugOn
     
@@ -19,17 +19,18 @@ class MinimaxPlayer(Player):
         
         self.__nodeExplored__ = 0
         
+        print(hash(gameState.getBoard()))
+
         bestScore, bestMove = self.__minimax__(gameState, self.__maxDepth__, gameState.getPlayerToPlayIndex())   
 
         if(self.__debugOn__):
             
             print("Explored : ", self.__nodeExplored__)
             print("Best score : ", bestScore)
-            os.system("pause")
-
+        
         return bestMove
     
-    def __minimax__(self, gameState: GameState, depth: int, playerIndex: int) -> tuple[int, Move]:
+    def __minimax__(self, gameState: GameState, depth: int, playerIndex: int, alpha: int = float('-inf'), beta: int = float('inf')) -> tuple[int, Move]:
         """
         Recursively evaluates the game state using the Minimax algorithm.
 
@@ -49,47 +50,60 @@ class MinimaxPlayer(Player):
         bestMove = None
         e = 0
 
-        for move in gameState.getPossibleMoves() :         
+        possibleMoves : list[Move] = gameState.getPossibleMoves()
+        possibleMoves = self.orderMoves(possibleMoves, gameState.getBoard())
 
-            gameOutcome = gameState.play(move)
+        moveIndex = 0
+        while moveIndex < len(possibleMoves) and alpha < beta:
+            
+            currentMove = possibleMoves[moveIndex]
+
+            gameOutcome = gameState.play(currentMove)
             
             if(gameOutcome.getGameStatus() != GameOutcomeStatus.UNFINISHED) : 
                 
-                gameState.undo(move)
+                gameState.undo(currentMove)
                 
-                if gameOutcome.getGameStatus() == GameOutcomeStatus.DRAW : return 0, move
-                elif gameOutcome.getWinner() == playerIndex : return self.getWinReward(gameState), move
-                else : return self.getLooseReward(gameState), move
+                if gameOutcome.getGameStatus() == GameOutcomeStatus.DRAW : return 0, currentMove
+                elif gameOutcome.getWinner() == playerIndex : return self.getWinReward(gameState), currentMove
+                else : return self.getLooseReward(gameState), currentMove
 
             else :
                 
-                nextScore, _ = self.__minimax__(gameState, depth - 1, playerIndex)
+                nextScore, _ = self.__minimax__(gameState, depth - 1, playerIndex, alpha, beta)
 
-                gameState.undo(move)
+                gameState.undo(currentMove)
 
                 if playerIndex == gameState.getPlayerToPlayIndex():
 
                     if bestScore == None or nextScore > bestScore:
                         
-                        if(bestScore is not None) : e += self.getMoveStrengthToAdd(bestScore) 
                         bestScore = nextScore
-                        bestMove = move
+                        bestMove = currentMove
                         
-                    else : 
-                        e += self.getMoveStrengthToAdd(nextScore)
-                        
+                    alpha = max(alpha, bestScore)
                 else :
 
                     if bestScore == None or nextScore < bestScore:
                         
-                        if(bestScore is not None) : e += self.getMoveStrengthToAdd(bestScore)
                         bestScore = nextScore
-                        bestMove = move
+                        bestMove = currentMove
                         
-                    else : 
-                        e += self.getMoveStrengthToAdd(nextScore)
+                    beta = min(beta, bestScore)
 
-        return bestScore + e, bestMove
+                moveIndex += 1
+                    
+        return bestScore, bestMove
+
+    def orderMoves(self, moves : list[Move], board : Board) -> list[Move] :
+        
+        centerColumn = board.getWidth() // 2
+        centerLine = board.getHeight() // 2
+        
+        def euclidianDistanceFromCenter(move: Move) -> int: return abs(centerColumn - move.getCoordinate().getColumn()) + abs(centerLine - move.getCoordinate().getLine())
+        sortedMoves = sorted(moves, key=lambda move: (euclidianDistanceFromCenter(move), move.getCoordinate().getColumn(), move.getCoordinate().getLine()))
+        
+        return sortedMoves
 
     def getMoveStrengthToAdd(self, score : int) -> int : 
         return score / 1000

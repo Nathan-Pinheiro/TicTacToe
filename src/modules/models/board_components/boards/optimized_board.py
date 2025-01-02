@@ -38,6 +38,8 @@ Methods:
 # Import #
 from modules.models.board_components.board import Board
 from modules.models.board_components.entity import Entity
+from modules.models.board_components.boards.optimized_board_components.bitboard import BitBoard
+from modules.models.board_components.boards.optimized_board_components.bitboards.numpy_bit_board import NumpyBitBoard
 from modules.utils.decorator import private_method
 
 import numpy as np
@@ -46,7 +48,8 @@ import random
 # Class #
 class OptimizedBoard(Board):
 
-    def __init__(self, width : int, height : int, playerEntities : list[Entity]) -> None:
+    def __init__(self, width : int, height : int, playerEntities : list[Entity]) -> None :
+        
         """Constructor for the Board class.
 
         Args:
@@ -61,12 +64,13 @@ class OptimizedBoard(Board):
 
         assert(width * height <= 64)
         
-        self.__playerBoards__ = np.zeros(len(playerEntities), dtype=np.uint64)
-        self.__blockedCases__ : int = 0
+        self.__playerBoards__ : list[BitBoard] = [NumpyBitBoard(width, height) for _ in range(len(playerEntities))]
+        self.__blockedCases__ : BitBoard = NumpyBitBoard(width, height)
+        
         self.__blockedCaseCount__ : int = 0
         self.__pieceCount__ : int = 0
 
-        self.__generateMasks__()
+        self.__generateCheckWinMasks__()
 
         return None
 
@@ -78,7 +82,8 @@ class OptimizedBoard(Board):
         return line * self.__width__ + column
 
     @private_method
-    def __generateMasks__(self) -> int :
+    def __generateCheckWinMasks__(self) -> int :
+        
         """
         This method allow initializing masks foreach possible line lenght, that allow then finding correctly 
         if there is alignments in any positions, for any given line length
@@ -110,7 +115,7 @@ class OptimizedBoard(Board):
                         
                     if(lineIndex <= self.__height__ - alinmentLength and columnIndex >= alinmentLength - 1) : 
                         self.__ascendantDiagonalMasks__[alinmentLength] += (1 << (lineIndex * self.__width__ + columnIndex))
-    
+
     def isCaseAvaillable(self, line : int, column : int) -> bool :
         
         if(line < 0 or line >= self.getHeight()) : raise ValueError(f"Line is out of range. Should be from 0 to {self.getHeight()} but was <{line}>")
@@ -119,8 +124,8 @@ class OptimizedBoard(Board):
         bit_position = self.__get_bit_position(line, column)
 
         takenCases = 0
-        for player_board in self.__playerBoards__: takenCases |= player_board
-        takenCases |= self.__blockedCases__
+        for player_board in self.__playerBoards__ : takenCases |= player_board.getValue()
+        takenCases |= self.__blockedCases__.getValue()
 
         return (takenCases & (1 << bit_position)) == 0
     
@@ -131,7 +136,7 @@ class OptimizedBoard(Board):
 
         bit_position = self.__get_bit_position(line, column)
 
-        return (self.__blockedCases__ & (1 << bit_position)) != 0
+        return (self.__blockedCases__.getValue() & (1 << bit_position)) != 0
     
     def setIsCaseBlocked(self, line : int, column : int, isBlocked : bool) -> None :
         
@@ -140,10 +145,10 @@ class OptimizedBoard(Board):
 
         bit_position = self.__get_bit_position(line, column)
         
-        if(self.__blockedCases__ & (1 << bit_position) == 0 and isBlocked) : self.__blockedCaseCount__ += 1
-        elif(self.__blockedCases__ & (1 << bit_position) == 1 and not isBlocked) : self.__blockedCaseCount__ -= 1
+        if(self.__blockedCases__.getValue() & (1 << bit_position) == 0 and isBlocked) : self.__blockedCaseCount__ += 1
+        elif(self.__blockedCases__.getValue() & (1 << bit_position) == 1 and not isBlocked) : self.__blockedCaseCount__ -= 1
         
-        self.__blockedCases__ |= (1 << bit_position)
+        self.__blockedCases__.applyOr(1 << bit_position)
 
         return None
 
@@ -155,7 +160,7 @@ class OptimizedBoard(Board):
         bit_position = self.__get_bit_position(line, column)
 
         for playerIndex in range(0, len(self.__playerBoards__)) : 
-            if((self.__playerBoards__[playerIndex] & (1 << bit_position)) != 0) : return self.__playerEntities__[playerIndex]
+            if((self.__playerBoards__[playerIndex].getValue() & (1 << bit_position)) != 0) : return self.__playerEntities__[playerIndex]
 
         return None
     
@@ -167,7 +172,7 @@ class OptimizedBoard(Board):
         bit_position = self.__get_bit_position(line, column)
 
         for playerIndex in range(0, len(self.__playerBoards__)) : 
-            if((self.__playerBoards__[playerIndex] & (1 << bit_position)) != 0) : return True
+            if((self.__playerBoards__[playerIndex].getValue() & (1 << bit_position)) != 0) : return True
 
         return False
 
@@ -178,7 +183,7 @@ class OptimizedBoard(Board):
 
         bit_position = self.__get_bit_position(line, column)
         
-        self.__playerBoards__[playerIndex] |= (1 << bit_position)
+        self.__playerBoards__[playerIndex].applyOr(1 << bit_position)
         self.__pieceCount__ += 1
 
         return None
@@ -193,11 +198,11 @@ class OptimizedBoard(Board):
         for playerIndex in range(0, len(self.__playerBoards__)) : 
             
             # This mask allows making the bit to remove be considered as unsigned int by python interpreter
-            
             mask = (1 << 64) - 1
+            
             bitToRemove =  ~(1 << bit_position) & mask
 
-            self.__playerBoards__[playerIndex] &= bitToRemove
+            self.__playerBoards__[playerIndex].applyAnd(bitToRemove)
 
         self.__pieceCount__ -= 1
 
@@ -214,10 +219,10 @@ class OptimizedBoard(Board):
         # we can avoid having wrong results as for exemple bits that are together but that are not on the same line.
         # As those masks are computed one time only at the initialization of the object, it do not slow down the computation.
 
-        playerPieces : int = self.__playerBoards__[playerIndex]
+        playerPieces : int = self.__playerBoards__[playerIndex].getValue()
 
         # Lines
-        
+
         shift : int = 1
         casesWithNeibours : int = playerPieces
         for _ in range(alignLength - 1) : casesWithNeibours &= (casesWithNeibours >> shift)
@@ -267,8 +272,8 @@ class OptimizedBoard(Board):
     def blockRandomCase(self) -> None:
         
         takenCases = 0
-        for player_board in self.__playerBoards__: takenCases |= player_board
-        takenCases |= self.__blockedCases__
+        for player_board in self.__playerBoards__: takenCases |= player_board.getValue()
+        takenCases |= self.__blockedCases__.getValue()
 
         available_cases = []
         
@@ -280,7 +285,7 @@ class OptimizedBoard(Board):
         if len(available_cases) == 0 : raise ValueError("No available cases to block!")
 
         chosen_case = random.choice(available_cases)
-        self.__blockedCases__ |= (1 << chosen_case)
+        self.__blockedCases__.applyOr(1 << chosen_case)
         
         return None
         
@@ -293,3 +298,12 @@ class OptimizedBoard(Board):
         board.__pieceCount__ = self.__pieceCount__
 
         return board
+    
+    def __hash__(self):
+
+        hashSum : int = 0
+
+        for playerIndex in range(0, len(self.__playerBoards__)):
+            hashSum += hash(self.__playerBoards__[playerIndex])
+
+        return hash(hashSum)
