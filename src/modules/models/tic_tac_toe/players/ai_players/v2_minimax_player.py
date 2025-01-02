@@ -1,3 +1,4 @@
+from modules.models.tic_tac_toe.players.ai_player import AIPlayer
 from modules.models.tic_tac_toe.player import Player
 from modules.models.tic_tac_toe.game_state import GameState
 from modules.models.console_displayer import *
@@ -5,7 +6,7 @@ from modules.models.tic_tac_toe.move import Move
 from modules.models.tic_tac_toe.game_outcome import GameOutcomeStatus
 import random
 
-class MinimaxPlayer(Player):
+class MinimaxPlayer(AIPlayer):
     
     def __init__(self, maxDepth : int, debugOn : bool = False) -> None:
         

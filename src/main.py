@@ -28,12 +28,12 @@ from modules.models.entities.cross import Cross
 from modules.models.entities.triangle import Triangle
 from modules.models.entities.hexagon import Hexagon
 
-from modules.models.tic_tac_toe.players.v1_random_player import RandomPlayer
-from modules.models.tic_tac_toe.players.v2_minimax_player import MinimaxPlayer
-from modules.models.tic_tac_toe.players.v3_alpha_beta_pruning_player import AlphaBetaPruningPlayer
-from modules.models.tic_tac_toe.players.v4_better_move_order_player import MinimaxBetterMoveOrderingPlayer
-from modules.models.tic_tac_toe.players.v5_transpostion_table import MinimaxTranspositionTablePlayer
-from modules.models.tic_tac_toe.players.v6_iterative_deeping import MinimaxIterativeDeepingPlayer
+from modules.models.tic_tac_toe.players.ai_players.v1_random_player import RandomPlayer
+from modules.models.tic_tac_toe.players.ai_players.v2_minimax_player import MinimaxPlayer
+from modules.models.tic_tac_toe.players.ai_players.v3_alpha_beta_pruning_player import AlphaBetaPruningPlayer
+from modules.models.tic_tac_toe.players.ai_players.v4_better_move_order_player import MinimaxBetterMoveOrderingPlayer
+from modules.models.tic_tac_toe.players.ai_players.v5_transpostion_table import MinimaxTranspositionTablePlayer
+from modules.models.tic_tac_toe.players.ai_players.v6_iterative_deeping import MinimaxIterativeDeepingPlayer
 
 import os
 

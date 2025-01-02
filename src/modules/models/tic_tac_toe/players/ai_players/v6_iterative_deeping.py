@@ -1,3 +1,4 @@
+from modules.models.tic_tac_toe.players.ai_player import AIPlayer
 from modules.models.tic_tac_toe.player import Player
 from modules.models.tic_tac_toe.game_state import GameState
 from modules.models.console_displayer import *
@@ -7,7 +8,7 @@ from modules.models.tic_tac_toe.transposition_table import TranspositionTable
 import random
 import os
 
-class MinimaxIterativeDeepingPlayer(Player):
+class MinimaxIterativeDeepingPlayer(AIPlayer):
     
     def __init__(self, maxDepth : int, debugOn : bool = False, transpositionTableSize : int = 2_048) -> None:
         

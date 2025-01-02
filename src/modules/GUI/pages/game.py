@@ -5,7 +5,7 @@ import sv_ttk
 import time
 from modules.GUI.draft.grid import draw_grid
 from modules.models.tic_tac_toe.game_outcome import GameOutcomeStatus
-from modules.models.tic_tac_toe.players.alpha_beta_pruning_player import AlphaBetaPruningPlayer
+from modules.models.tic_tac_toe.players.ai_players.v5_transpostion_table import MinimaxTranspositionTablePlayer
 from modules.utils.decorator import private_method
 from modules.models.tic_tac_toe.tic_tac_toe_game import TicTacToeGame
 
@@ -88,7 +88,7 @@ class Game(ttk.Frame):
                     self.check_and_play_ai()
 
     def check_and_play_ai(self):
-        if isinstance(self.tic_tac_toe_game.get_player_to_play(), AlphaBetaPruningPlayer):
+        if isinstance(self.tic_tac_toe_game.get_player_to_play(), MinimaxTranspositionTablePlayer):
             self.after(500, self.play_next_ai_move)
 
     def play_next_ai_move(self):

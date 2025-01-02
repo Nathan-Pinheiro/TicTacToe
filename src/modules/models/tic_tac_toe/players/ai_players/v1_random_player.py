@@ -1,10 +1,10 @@
-from modules.models.tic_tac_toe.player import Player
+from modules.models.tic_tac_toe.players.ai_player import AIPlayer
 from modules.models.tic_tac_toe.game_state import GameState
 from modules.models.console_displayer import *
 from modules.models.tic_tac_toe.move import Move
 import random
 
-class RandomPlayer(Player):
+class RandomPlayer(AIPlayer):
     
     def __init__(self) -> None:
         super().__init__("Random AI")

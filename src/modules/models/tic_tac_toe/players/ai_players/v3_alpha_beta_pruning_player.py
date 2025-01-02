@@ -1,10 +1,13 @@
+from modules.models.tic_tac_toe.players.ai_player import AIPlayer
 from modules.models.tic_tac_toe.player import Player
 from modules.models.tic_tac_toe.game_state import GameState
+from modules.models.console_displayer import *
 from modules.models.tic_tac_toe.move import Move
 from modules.models.tic_tac_toe.game_outcome import GameOutcomeStatus
-from modules.models.board_components.board import Board
+import random
+import os
 
-class MinimaxBetterMoveOrderingPlayer(Player):
+class AlphaBetaPruningPlayer(AIPlayer):
     
     def __init__(self, maxDepth : int, debugOn : bool = False) -> None:
         
@@ -17,6 +20,8 @@ class MinimaxBetterMoveOrderingPlayer(Player):
         
         self.__nodeExplored__ = 0
         
+        print(hash(gameState.getBoard()))
+
         bestScore, bestMove = self.__minimax__(gameState, self.__maxDepth__, gameState.getPlayerToPlayIndex())   
 
         if(self.__debugOn__):
@@ -27,7 +32,6 @@ class MinimaxBetterMoveOrderingPlayer(Player):
         return bestMove
     
     def __minimax__(self, gameState: GameState, depth: int, playerIndex: int, alpha: int = float('-inf'), beta: int = float('inf')) -> tuple[int, Move]:
-        
         """
         Recursively evaluates the game state using the Minimax algorithm.
 
@@ -45,8 +49,9 @@ class MinimaxBetterMoveOrderingPlayer(Player):
 
         bestScore = None
         bestMove = None
+        e = 0
 
-        possibleMoves = gameState.getPossibleMoves()
+        possibleMoves : list[Move] = gameState.getPossibleMoves()
         possibleMoves = self.orderMoves(possibleMoves, gameState.getBoard())
 
         moveIndex = 0
@@ -78,7 +83,6 @@ class MinimaxBetterMoveOrderingPlayer(Player):
                         bestMove = currentMove
                         
                     alpha = max(alpha, bestScore)
-                    
                 else :
 
                     if bestScore == None or nextScore < bestScore:
@@ -102,13 +106,18 @@ class MinimaxBetterMoveOrderingPlayer(Player):
         
         return sortedMoves
 
+    def getMoveStrengthToAdd(self, score : int) -> int : 
+        return score / 1000
+
     def getWinReward(self, gameState : GameState) :
         
         maxMoves : int = gameState.getBoard().getHeight() * gameState.getBoard().getWidth()
+        
         return (maxMoves + 1) - gameState.getGameHistory().getMoveCount()
     
     def getLooseReward(self, gameState : GameState) :
         
         maxMoves : int = gameState.getBoard().getHeight() * gameState.getBoard().getWidth()
+        
         return gameState.getGameHistory().getMoveCount() - (maxMoves + 1)
        
