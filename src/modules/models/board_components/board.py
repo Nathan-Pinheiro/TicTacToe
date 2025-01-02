@@ -273,3 +273,6 @@ class Board:
             Board: A copy of the current board.
         """
         pass
+
+    def __hash__(self):
+        pass 

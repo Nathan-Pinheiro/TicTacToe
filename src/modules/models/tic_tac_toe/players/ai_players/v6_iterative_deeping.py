@@ -1,35 +1,38 @@
+from modules.models.tic_tac_toe.players.ai_player import AIPlayer
 from modules.models.tic_tac_toe.player import Player
 from modules.models.tic_tac_toe.game_state import GameState
 from modules.models.console_displayer import *
 from modules.models.tic_tac_toe.move import Move
 from modules.models.tic_tac_toe.game_outcome import GameOutcomeStatus
+from modules.models.tic_tac_toe.transposition_table import TranspositionTable
 import random
 import os
 
-class AlphaBetaPruningPlayer(Player):
+class MinimaxIterativeDeepingPlayer(AIPlayer):
     
-    def __init__(self, maxDepth : int, debugOn : bool = False) -> None:
+    def __init__(self, maxDepth : int, debugOn : bool = False, transpositionTableSize : int = 2_048) -> None:
         
         super().__init__("Minimax AI")
         
         self.__maxDepth__  : int = maxDepth
         self.__debugOn__ : bool = debugOn
+        self.__transpositionTable__ = TranspositionTable(size = transpositionTableSize)
     
     def get_choice(self, gameState : GameState) -> Move:
         
         self.__nodeExplored__ = 0
         
-        bestScore, bestMove = self.__minimax__(gameState, self.__maxDepth__, gameState.getPlayerToPlayIndex())   
+        bestScore, bestMove = self.__solve__(gameState, self.__maxDepth__, gameState.getPlayerToPlayIndex(), )
 
         if(self.__debugOn__):
             
             print("Explored : ", self.__nodeExplored__)
             print("Best score : ", bestScore)
-            os.system("pause")
         
         return bestMove
     
     def __minimax__(self, gameState: GameState, depth: int, playerIndex: int, alpha: int = float('-inf'), beta: int = float('inf')) -> tuple[int, Move]:
+        
         """
         Recursively evaluates the game state using the Minimax algorithm.
 
@@ -40,18 +43,25 @@ class AlphaBetaPruningPlayer(Player):
             
         Return : A tuple (score, move), where `score` is the evaluation of the board, and `move` is the best move to play.
         """
-
+        assert alpha < beta
+        
         self.__nodeExplored__ += 1
+        
+        # if(self.__debugOn__):
+        #     print("depth :", self.__maxDepth__ - depth)
+
+        cached_entry = self.__transpositionTable__.get(gameState.getBoard().__hash__(), depth)
+        if cached_entry != None : return cached_entry.score, cached_entry.move
 
         if depth == 0 : return gameState.evaluateForPlayer(playerIndex), None
 
         bestScore = None
         bestMove = None
-        e = 0
 
         possibleMoves = gameState.getPossibleMoves()
-        moveIndex = 0
+        possibleMoves = self.orderMoves(possibleMoves, gameState.getBoard())
 
+        moveIndex = 0
         while moveIndex < len(possibleMoves) and alpha < beta:
             
             currentMove = possibleMoves[moveIndex]
@@ -76,42 +86,83 @@ class AlphaBetaPruningPlayer(Player):
 
                     if bestScore == None or nextScore > bestScore:
                         
-                        if(bestScore is not None) : e += self.getMoveStrengthToAdd(bestScore) 
                         bestScore = nextScore
                         bestMove = currentMove
                         
-                    else : 
-                        e += self.getMoveStrengthToAdd(nextScore)
-                        
                     alpha = max(alpha, bestScore)
+                    
                 else :
 
                     if bestScore == None or nextScore < bestScore:
                         
-                        if(bestScore is not None) : e += self.getMoveStrengthToAdd(bestScore)
                         bestScore = nextScore
                         bestMove = currentMove
-                        
-                    else : e += self.getMoveStrengthToAdd(nextScore)
                         
                     beta = min(beta, bestScore)
 
                 moveIndex += 1
-                    
-        return bestScore + e, bestMove
 
-    def getMoveStrengthToAdd(self, score : int) -> int : 
-        return score / 1000
+        self.__transpositionTable__.put(gameState.getBoard().__hash__(), depth, bestScore, bestMove)
+        return bestScore, bestMove
+
+    def orderMoves(self, moves : list[Move], board : Board) -> list[Move] :
+        
+        centerColumn = board.getWidth() // 2
+        centerLine = board.getHeight() // 2
+        
+        def euclidianDistanceFromCenter(move: Move) -> int: return abs(centerColumn - move.getCoordinate().getColumn()) + abs(centerLine - move.getCoordinate().getLine())
+        sortedMoves = sorted(moves, key=lambda move: (euclidianDistanceFromCenter(move), move.getCoordinate().getColumn(), move.getCoordinate().getLine()))
+        
+        return sortedMoves
 
     def getWinReward(self, gameState : GameState) :
         
         maxMoves : int = gameState.getBoard().getHeight() * gameState.getBoard().getWidth()
-        
-        return (maxMoves + 1) - gameState.getGameHistory().getMoveCount()
+        return (maxMoves + 1 - gameState.getGameHistory().getMoveCount()) // 2
     
     def getLooseReward(self, gameState : GameState) :
         
         maxMoves : int = gameState.getBoard().getHeight() * gameState.getBoard().getWidth()
+        return (maxMoves - gameState.getGameHistory().getMoveCount()) // 2
+    
+    def __solve__(self, gameState : GameState, maxDepth : int, playerToPlayIndex : int) -> tuple[int, Move]:
+         
+        """
+        Solve the game using iterative deepening with null window search, limited by a maximum depth.
+
+        Parameters:
+            - gameState: The current state of the game.
+            - maxDepth: The maximum depth to search.
+            - playerToPlayIndex: The index of the player currently to play.
+
+        Returns:
+            - A tuple (score, move), where `score` is the evaluation of the best move,
+            and `move` is the best move to play.
+        """
         
-        return gameState.getGameHistory().getMoveCount() - (maxMoves + 1)
-       
+        maxMoves : int = gameState.getBoard().getHeight() * gameState.getBoard().getWidth()
+
+        min : int = -(maxMoves - gameState.getGameHistory().getMoveCount()) // 2
+        max : int = (maxMoves + 1 - gameState.getGameHistory().getMoveCount()) // 2
+
+        bestMove : Move = None
+
+        while(min < max) :
+            
+            med : int = min + (max - min) // 2
+
+            print("min", min)
+            print("max", max)
+            print("med", med)
+
+            if(med <= 0 and min // 2 < med) : med = min // 2
+            elif(med >= 0 and max // 2 > med) : med = max // 2
+
+            score, move = self.__minimax__(gameState, maxDepth, playerToPlayIndex, med, med + 1)
+
+            if score > min : bestMove = move
+
+            if(score <= med) : max = score
+            else : min = score
+
+        return min, bestMove

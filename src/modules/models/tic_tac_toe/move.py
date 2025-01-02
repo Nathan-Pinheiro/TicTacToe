@@ -22,6 +22,9 @@ class Move :
     def canPlay(cls, board : Board, line : int, column : int) -> bool:
         pass
     
+    def getCoordinate(self) -> Coordinate :
+        return self.__coordinate__
+
     def __str__(self):
         return self.__moveCode__ + encode(self.__coordinate__)
     

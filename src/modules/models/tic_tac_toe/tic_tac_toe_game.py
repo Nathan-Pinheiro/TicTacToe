@@ -8,19 +8,20 @@ from modules.models.entities.hexagon import Hexagon
 from modules.models.tic_tac_toe.game_director import GameDirector
 from modules.models.tic_tac_toe.win_conditions.align_victory import AlignVictory
 from modules.models.tic_tac_toe.players.human_player import HumanPlayer
-from modules.models.tic_tac_toe.players.alpha_beta_pruning_player import AlphaBetaPruningPlayer
+from modules.models.tic_tac_toe.players.ai_player import AIPlayer
+from modules.models.tic_tac_toe.players.ai_players.v5_transpostion_table import MinimaxTranspositionTablePlayer
 from modules.models.tic_tac_toe.player_data import PlayerData
 from modules.models.entities.circle import Circle
 from modules.models.entities.cross import Cross
 
 class TicTacToeGame:
     def __init__(self):
-        self.players = [HumanPlayer("Jean"), AlphaBetaPruningPlayer(4, False), AlphaBetaPruningPlayer(4, False)]
-        self.player_entities = [Cross(), Circle(), Triangle()]
-        self.players_data = [PlayerData([]), PlayerData([]), PlayerData([])]
-        self.board = BoardBuilder(self.player_entities).setHeight(7).setWidth(7).setShape(PyramidalShape()).buildOptimizedBoard()
-        self.win_condition = AlignVictory(3)
-        self.game_director = GameDirector(self.board, self.win_condition, self.players, self.players_data)
+        self.players = [HumanPlayer("Jean"), MinimaxTranspositionTablePlayer(10, False)]
+        self.player_entities = [Cross(), Circle()]
+        self.players_data = [PlayerData([]), PlayerData([])]
+        self.board = BoardBuilder(self.player_entities).setHeight(4).setWidth(4).buildOptimizedBoard()
+        self.win_condition = AlignVictory(4)
+        self.game_director = GameDirector(self.board, self.win_condition, self.players, self.players_data, 1)
         self.game_state = self.game_director.getGameState()
 
     def play_move(self, line, column):
@@ -34,7 +35,7 @@ class TicTacToeGame:
             return self.game_state.checkWin()
         
         # if the current player is an AI player, get the move from the AI and play it immediately
-        if isinstance(current_player, AlphaBetaPruningPlayer):
+        if isinstance(current_player, AIPlayer):
             move = current_player.get_choice(self.game_state)
             move.play(self.board, self.game_state.getPlayerToPlayIndex())
             return self.game_state.checkWin()
@@ -43,7 +44,7 @@ class TicTacToeGame:
 
     def play_ai_move(self):
         current_player = self.game_director.getPlayerToPlay()
-        if isinstance(current_player, AlphaBetaPruningPlayer):
+        if isinstance(current_player, AIPlayer):
             move = current_player.get_choice(self.game_state)
             move.play(self.board, self.game_state.getPlayerToPlayIndex())
             return self.game_state.checkWin()
