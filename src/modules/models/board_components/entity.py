@@ -55,7 +55,7 @@ from __future__ import annotations
 
 class Entity:
     
-    def __init__(self, name : str, iconPath : str = None):
+    def __init__(self, name : str, iconPath : str = None) -> None:
         """Constructor for the Pawn class.
 
         Args:

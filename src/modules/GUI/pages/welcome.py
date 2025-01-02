@@ -91,6 +91,10 @@ class Welcome(ttk.Frame):
         self.start_button: ttk.Button = ttk.Button(self, text="Start Game", command=self.start_game)
         self.start_button.grid(row=2, column=0, columnspan=2, pady=50, sticky="s")
 
+        # "Settings" button
+        self.settings_button: ttk.Button = ttk.Button(self, text="Settings", command=self.go_to_settings)
+        self.settings_button.grid(row=2, column=0, columnspan=2, pady=20, sticky="s")
+
         # Dynamic resizing
         self.bind("<Configure>", self.__onResize__)
 
@@ -235,3 +239,6 @@ class Welcome(ttk.Frame):
         self.controller.showFrame("Game")
         
         return None
+
+    def go_to_settings(self):
+        self.controller.showFrame("Settings")

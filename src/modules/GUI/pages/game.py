@@ -13,7 +13,7 @@ class Game(ttk.Frame):
     def __init__(self, parent: tk.Tk, controller: tk.Tk, size: int = 100, button_color: str = "#555") -> None:
         super().__init__(parent)
         self.controller = controller
-        self.tic_tac_toe_game = None
+        self.tic_tac_toe_game = TicTacToeGame()
         self.board = None
         self.width = size * 4  # Default width, will be updated when game starts
         self.height = size * 6  # Default height, will be updated when game starts
@@ -59,7 +59,6 @@ class Game(ttk.Frame):
         self.grid_canvas.bind("<Button-1>", self.__handle_click)
 
     def start_game(self):
-        self.tic_tac_toe_game = TicTacToeGame()
         self.board = self.tic_tac_toe_game.board
         self.width = self.cell_size * self.board.getWidth()
         self.height = self.cell_size * self.board.getHeight()

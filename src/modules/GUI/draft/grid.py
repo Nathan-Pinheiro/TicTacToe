@@ -1,7 +1,7 @@
 import tkinter as tk
 from modules.GUI.draft.symbols import drawCross, drawCircle, drawTriangle, drawHexagon, drawStar, drawSquare, drawRhombus, drawGrayCase
 
-def draw_grid(canvas: tk.Canvas, width: int, height: int, cell_size: int, board: list = None, line_color: str = "white", line_width: int = 1, coord: bool = False) -> None:
+def draw_grid(canvas: tk.Canvas, width: int, height: int, cell_size: int, board: list = None, line_color: str = "white", line_width: int = 1, color: str = "#ffffff", coord: bool = False) -> None:
     """Draw a tic-tac-toe grid on the given canvas.
 
     Args:
@@ -44,21 +44,21 @@ def draw_grid(canvas: tk.Canvas, width: int, height: int, cell_size: int, board:
                     drawGrayCase(canvas, x0, y0, cell_size)
                 # Draw 'X'
                 elif board[row][col] == 'X':
-                    drawCross(canvas, x0, y0, cell_size)
+                    drawCross(canvas, x0, y0, cell_size, color)
                 # Draw 'O'
                 elif board[row][col] == 'O':
-                    drawCircle(canvas, x0, y0, cell_size)
+                    drawCircle(canvas, x0, y0, cell_size, color)
                 # Draw other symbols if needed
                 elif board[row][col] == '△':
-                    drawTriangle(canvas, x0, y0, cell_size)
+                    drawTriangle(canvas, x0, y0, cell_size, color)
                 elif board[row][col] == '⬡':
-                    drawHexagon(canvas, x0, y0, cell_size)
+                    drawHexagon(canvas, x0, y0, cell_size, color)
                 elif board[row][col] == 'S':
-                    drawStar(canvas, x0, y0, cell_size)
+                    drawStar(canvas, x0, y0, cell_size, color)
                 elif board[row][col] == 'Q':
-                    drawSquare(canvas, x0, y0, cell_size)
+                    drawSquare(canvas, x0, y0, cell_size, color)
                 elif board[row][col] == 'R':
-                    drawRhombus(canvas, x0, y0, cell_size)
+                    drawRhombus(canvas, x0, y0, cell_size, color)
                     
     # Draw coordinates if coord is True
     if coord:

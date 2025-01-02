@@ -4,6 +4,7 @@ from modules.models.board_components.board import Board
 from modules.models.board_components.board_builder import BoardBuilder
 from modules.models.board_components.board_shapes.pyramidal_shape import PyramidalShape
 from modules.models.entities.triangle import Triangle
+from modules.models.entities.hexagon import Hexagon
 from modules.models.tic_tac_toe.game_director import GameDirector
 from modules.models.tic_tac_toe.win_conditions.align_victory import AlignVictory
 from modules.models.tic_tac_toe.players.human_player import HumanPlayer
@@ -50,3 +51,57 @@ class TicTacToeGame:
     
     def get_player_to_play(self):
         return self.game_director.getPlayerToPlay()
+
+    def set_number_of_players(self, num_players):
+        current_num_players = len(self.players)
+        
+        if num_players > current_num_players:
+            # Ajouter les nouveaux joueurs et leurs données
+            for i in range(current_num_players, num_players):
+                self.players.append(AlphaBetaPruningPlayer(4, False))  # Par défaut, un joueur IA
+                # On met un symbole différent pour chaque joueur
+                if i % 4 == 0:
+                    self.player_entities.append(Cross())
+                elif i % 4 == 1:
+                    self.player_entities.append(Circle())
+                elif i % 4 == 2:
+                    self.player_entities.append(Triangle())
+                elif i % 4 == 3:
+                    self.player_entities.append(Hexagon())
+                self.players_data.append(PlayerData([]))  # Initialisation des données du joueur
+        
+        elif num_players < current_num_players:
+            # Réduire les listes si le nombre de joueurs est diminué
+            self.players = self.players[:num_players]
+            self.player_entities = self.player_entities[:num_players]
+            self.players_data = self.players_data[:num_players]
+
+    def set_board_size(self, width, height):
+        self.board = BoardBuilder(self.player_entities).setHeight(height).setWidth(width).setShape(PyramidalShape()).buildOptimizedBoard()
+        self.game_director = GameDirector(self.board, self.win_condition, self.players, self.players_data)
+        self.game_state = self.game_director.getGameState()
+
+    def set_player_type(self, player_index, is_human):
+        if player_index >= len(self.players):
+            raise IndexError(f"Player index {player_index} is out of range. Total players: {len(self.players)}")
+        if is_human:
+            self.players[player_index] = HumanPlayer(f"Player {player_index + 1}")
+        else:
+            self.players[player_index] = AlphaBetaPruningPlayer(4, False)
+            
+    def set_player_symbol(self, player_index, symbol):
+        if player_index >= len(self.players):
+            raise IndexError(f"Player index {player_index} is out of range. Total players: {len(self.players)}")
+        if symbol == "X":
+            self.player_entities[player_index] = Cross()
+        elif symbol == "O":
+            self.player_entities[player_index] = Circle()
+        elif symbol == "∆":
+            self.player_entities[player_index] = Triangle()
+        elif symbol == "⬡":
+            self.player_entities[player_index] = Hexagon()
+            
+    def set_player_color(self, player_index, color):
+        if player_index >= len(self.players):
+            raise IndexError(f"Player index {player_index} is out of range. Total players: {len(self.players)}")
+        self.players[player_index].setColor(color)

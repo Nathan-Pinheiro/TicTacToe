@@ -132,6 +132,10 @@ class App(tk.Tk):
                         frame = cls(parent=container, controller=self)
                         self.frames[page_name] = frame
                         frame.grid(row=0, column=0, sticky="nsew")
+                        if page_name == "Settings":
+                            frame = cls(parent=container, controller=self)
+                            self.frames[page_name] = frame
+                            frame.grid(row=0, column=0, sticky="nsew")
             
         return None
 
