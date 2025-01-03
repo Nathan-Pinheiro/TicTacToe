@@ -7,33 +7,40 @@ This module provides the implementation of the welcome page for the Tic Tac Toe 
 
 Classes:
     Welcome: A class representing the welcome page of the Tic Tac Toe game.
-    
-Methods:
+
+Functions:
     __init__(self, parent: tk.Tk, controller: tk.Tk) -> None:
         Initialize the welcome page with the given parent and controller.
-    
-    __drawGrid__(self, size: int) -> None:
+        
+    __drawGrid__(self, size: int) -> bool:
         Private method.
         Draw the tic-tac-toe grid with symbols.
-    
-    __onResize__(self, event: tk.Tk) -> None:
+        
+    __adjustButtonSize__(self, width: int) -> bool:
+        Private method.
+        Adjust the size of the start button based on the window size.
+        
+    __onResize__(self, event: tk.Event) -> bool:
         Private method.
         Redraw widgets responsively when the window is resized.
-    
-    __adjustFontSizes__(self, width: int) -> None:
+        
+    __adjustFontSizes__(self, width: int) -> bool:
         Private method.
         Adjust the font sizes of the title and text labels based on the window size.
-    
-    __centerCanvas__(self) -> None:
+        
+    __centerCanvas__(self) -> bool:
         Private method.
         Center the canvas when the text label is hidden.
-    
-    __resetCanvasPosition__(self) -> None:
+        
+    __resetCanvasPosition__(self) -> bool:
         Private method.
         Reset the canvas position when the text label is visible.
-    
-    start_game(self) -> None:
+        
+    start_game(self) -> bool:
         Start the game when the "Start Game" button is pressed.
+        
+    go_to_settings(self) -> bool:
+        Navigate to the settings page.
 """
 
 # ---------------------------------------------------------------------------------------------------- #
@@ -43,22 +50,20 @@ Methods:
 # Import #
 import tkinter as tk
 from tkinter import ttk
-
 from modules.GUI.draft.grid import draw_grid
-
 from modules.utils.decorator import private_method
 
 class Welcome(ttk.Frame):
-    def __init__(self, parent: tk.Tk, controller: tk.Tk) -> None:
-        """Initialize the welcome page with the given parent and controller.
+    ## Initialize the welcome page with the given parent and controller.
+    #
+    # @param parent The parent widget.
+    # @param controller The controller of the application.
+    def __init__(self, parent: tk.Frame, controller: tk.Tk) -> None:
+        if not isinstance(parent, ttk.Frame):
+            raise TypeError("parent must be a tk.Frame instance")
+        if not isinstance(controller, tk.Tk):
+            raise TypeError("controller must be a tk.Tk instance")
 
-        Args:
-            parent (tk.Tk): The parent widget.
-            controller (tk.Tk): The controller of the application.
-
-        Returns:
-            None
-        """
         super().__init__(parent)
         self.controller: tk.Tk = controller
 
@@ -87,78 +92,69 @@ class Welcome(ttk.Frame):
         self.grid_canvas: tk.Canvas = tk.Canvas(self, bg="#333", highlightthickness=0)
         self.grid_canvas.grid(row=1, column=1, pady=0, padx=(10, 100), sticky="e")  # Reduce padding gap
 
-        # "Start Game" button
-        self.start_button: ttk.Button = ttk.Button(self, text="Start Game", command=self.start_game)
-        self.start_button.grid(row=2, column=0, columnspan=2, pady=50, sticky="s")
-
         # "Settings" button
         self.settings_button: ttk.Button = ttk.Button(self, text="Settings", command=self.go_to_settings)
-        self.settings_button.grid(row=2, column=0, columnspan=2, pady=20, sticky="s")
+        self.settings_button.grid(row=2, column=0, columnspan=2, pady=50, sticky="s")
 
         # Dynamic resizing
         self.bind("<Configure>", self.__onResize__)
 
-        
-        return None
-
+    ## Draw the tic-tac-toe grid with symbols.
+    #
+    # @param size The size of the grid.
+    # @return bool True if the function succeeds, False otherwise.
     @private_method
-    def __drawGrid__(self, size: int) -> None:
-        """Draw the tic-tac-toe grid with symbols.
+    def __drawGrid__(self, size: int) -> bool:
+        if not isinstance(size, int):
+            raise TypeError("size must be an integer")
 
-        Args:
-            size (int): The size of the grid.
-
-        Returns:
-            None
-        """
         # Cell size
         cell_size: int = size // 3
 
         # Example board configuration
-        board = [
+        board: list[list[str]] = [
             ['X', 'O', '△'],
             ['⬡', '★', '▢'],
             ['◊', '#', '']
         ]
 
         # Define player symbols and colors
-        player_symbols = ['X', 'O', '△', '⬡', '★', '▢', '◊']
-        player_colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFFFFF']
+        player_symbols: list[str] = ['X', 'O', '△', '⬡', '★', '▢', '◊']
+        player_colors: list[str] = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFFFFF']
 
         # Draw the grid with symbols
-        draw_grid(self.grid_canvas, size, size, cell_size, board, player_symbols=player_symbols, player_colors=player_colors)
+        if not draw_grid(self.grid_canvas, size, size, cell_size, board, player_symbols=player_symbols, player_colors=player_colors):
+            raise RuntimeError("Failed to draw grid")
 
-        return None
+        return True
 
+    ## Adjust the size of the start button based on the window size.
+    #
+    # @param width The width of the window.
+    # @return bool True if the function succeeds, False otherwise.
     @private_method
-    def __adjustButtonSize__(self, width: int) -> None:
-        """Adjust the size of the start button based on the window size.
+    def __adjustButtonSize__(self, width: int) -> bool:
+        if not isinstance(width, int):
+            raise TypeError("width must be an integer")
 
-        Args:
-            width (int): The width of the window.
-
-        Returns:
-            None
-        """
         # Calculate new font size for the button
-        button_font_size = max(18, int(width * 0.01))  # 2% of the window width
+        button_font_size: int = max(18, int(width * 0.01))  # 2% of the window width
 
         # Update button font size using ttk.Style
-        style = ttk.Style()
+        style: ttk.Style = ttk.Style()
         style.configure("TButton", font=("Arial", button_font_size))
 
-        return None
+        return True
 
+    ## Redraw widgets responsively when the window is resized.
+    #
+    # @param event The event object.
+    # @return bool True if the function succeeds, False otherwise.
     @private_method
-    def __onResize__(self, event: tk.Tk) -> None:
-        """Redraw widgets responsively when the window is resized.
+    def __onResize__(self, event: tk.Event) -> bool:
+        if not isinstance(event, tk.Event):
+            raise TypeError("event must be an tk.Event instance")
 
-        Args:
-            event (tk.Tk): The event object.
-
-        Returns:
-            None
-        """
         # Calculate the size of the square based on the window
         size: int = min(event.width, event.height) * 0.6  # Canvas size (50% of the window)
         size = int(size) - (int(size) % 2)  # Ensure the size is a multiple of 3
@@ -167,33 +163,34 @@ class Welcome(ttk.Frame):
         self.grid_canvas.config(width=size, height=size)
 
         # Redraw the grid and symbols
-        self.__drawGrid__(size)
+        if not self.__drawGrid__(size):
+            raise RuntimeError("Failed to draw grid")
 
         # Adjust font sizes
-        self.__adjustFontSizes__(event.width)
+        if not self.__adjustFontSizes__(event.width):
+            raise RuntimeError("Failed to adjust font sizes")
 
         # Adjust button size
-        self.__adjustButtonSize__(event.width)
+        if not self.__adjustButtonSize__(event.width):
+            raise RuntimeError("Failed to adjust button size")
 
-        return None
+        return True
 
-
+    ## Adjust the font sizes of the title and text labels based on the window size.
+    #
+    # @param width The width of the window.
+    # @return bool True if the function succeeds, False otherwise.
     @private_method
-    def __adjustFontSizes__(self, width: int) -> None:
-        """Adjust the font sizes of the title and text labels based on the window size.
+    def __adjustFontSizes__(self, width: int) -> bool:
+        if not isinstance(width, int):
+            raise TypeError("width must be an integer")
 
-        Args:
-            width (int): The width of the window.
-
-        Returns:
-            None
-        """
         # Calculate new font sizes
-        title_font_size = max(20, int(width * 0.03))  # 3% of the window width
-        text_font_size = max(12, int(width * 0.015))  # 2% of the window width
+        title_font_size: int = max(20, int(width * 0.03))  # 3% of the window width
+        text_font_size: int = max(12, int(width * 0.015))  # 2% of the window width
         
         # Calculate new wrap length for the text label
-        wrap_length = width/2 - 110 # 110 is the sum of the left and right paddings
+        wrap_length: float = width / 2 - 110  # 110 is the sum of the left and right paddings
 
         # Update font sizes
         self.title_label.config(font=("Arial", title_font_size, "bold"))
@@ -202,47 +199,44 @@ class Welcome(ttk.Frame):
         # Hide text_label if the width is too small
         if width < 900:  # Adjust this threshold as needed
             self.text_label.grid_remove()
-            self.__centerCanvas__()
+            if not self.__centerCanvas__():
+                raise RuntimeError("Failed to center canvas")
         else:
             self.text_label.grid()
-            self.__resetCanvasPosition__()
+            if not self.__resetCanvasPosition__():
+                raise RuntimeError("Failed to reset canvas position")
 
-        return None
+        return True
 
+    ## Center the canvas when the text label is hidden.
+    #
+    # @return bool True if the function succeeds, False otherwise.
     @private_method
-    def __centerCanvas__(self) -> None:
-        """Center the canvas when the text label is hidden.
-
-        Returns:
-            None
-        """
+    def __centerCanvas__(self) -> bool:
         self.grid_canvas.grid_configure(row=1, column=0, columnspan=2, pady=0, padx=0, sticky="nsew")
-        # Il faut que le canvas prenne seulement la taille de la grille
-        # Il faut que le canvas soit centré dans la fenêtre
         self.grid_canvas.place(relx=0.5, rely=0.5, anchor="center")
 
-        return None
+        return True
 
+    ## Reset the canvas position when the text label is visible.
+    #
+    # @return bool True if the function succeeds, False otherwise.
     @private_method
-    def __resetCanvasPosition__(self) -> None:
-        """Reset the canvas position when the text label is visible.
-
-        Returns:
-            None
-        """
+    def __resetCanvasPosition__(self) -> bool:
         self.grid_canvas.grid_configure(row=1, column=1, pady=0, padx=(10, 100), sticky="e")
 
-        return None
+        return True
 
-    def start_game(self) -> None:
-        """Start the game when the "Start Game" button is pressed.
-
-        Returns:
-            None
-        """
+    ## Start the game when the "Start Game" button is pressed.
+    #
+    # @return bool True if the function succeeds, False otherwise.
+    def start_game(self) -> bool:
         self.controller.showFrame("Game")
-        
-        return None
+        return True
 
-    def go_to_settings(self):
+    ## Navigate to the settings page.
+    #
+    # @return bool True if the function succeeds, False otherwise.
+    def go_to_settings(self) -> bool:
         self.controller.showFrame("Settings")
+        return True

@@ -35,18 +35,15 @@ class TicTacToeGame:
 
     def play_move(self, line, column):
         current_player = self.game_director.getPlayerToPlay()
-        board = self.board
         
         if isinstance(current_player, HumanPlayer):
             move = current_player.get_choice(self.game_state, line, column)
-            while not move.play(board, self.game_state.getPlayerToPlayIndex()):
-                move = current_player.get_choice(self.game_state, line, column)
+            move.play(self.board, self.game_state.getPlayerToPlayIndex())
             return self.game_state.checkWin()
         
         if isinstance(current_player, AIPlayer):
             move = current_player.get_choice(self.game_state)
-            while not  move.play(board, self.game_state.getPlayerToPlayIndex()):
-                move = current_player.get_choice(self.game_state)
+            move.play(self.board, self.game_state.getPlayerToPlayIndex())
             return self.game_state.checkWin()
         
         return None
@@ -55,8 +52,7 @@ class TicTacToeGame:
         current_player = self.game_director.getPlayerToPlay()
         if isinstance(current_player, AIPlayer):
             move = current_player.get_choice(self.game_state)
-            while not move.play(self.board, self.game_state.getPlayerToPlayIndex()) :
-                move = current_player.get_choice(self.game_state)
+            move.play(self.board, self.game_state.getPlayerToPlayIndex())
             return self.game_state.checkWin()
         return None
     
@@ -68,7 +64,7 @@ class TicTacToeGame:
         
         if num_players > current_num_players:
             for i in range(current_num_players, num_players):
-                self.players.append(MinimaxTranspositionTablePlayer(4, False))
+                self.players.append(MinimaxTranspositionTablePlayer(6, False))
                 self.player_entities.append(self.get_default_entity(i))
                 self.players_data.append(PlayerData([]))
         
@@ -76,10 +72,6 @@ class TicTacToeGame:
             self.players = self.players[:num_players]
             self.player_entities = self.player_entities[:num_players]
             self.players_data = self.players_data[:num_players]
-            
-    def set_player_name(self, player_list):
-        for i, name in enumerate(player_list):
-            self.players[i].setName(name)
 
     def set_board_size(self, width, height):
         self.width = width
@@ -91,7 +83,7 @@ class TicTacToeGame:
         if is_human:
             self.players[player_index] = HumanPlayer(f"Player {player_index + 1}")
         else:
-            self.players[player_index] = MinimaxTranspositionTablePlayer(4, False)
+            self.players[player_index] = MinimaxTranspositionTablePlayer(6, False)
             
     def set_player_symbol(self, player_index, symbol):
         if player_index >= len(self.players):
@@ -112,6 +104,10 @@ class TicTacToeGame:
         
     def set_symbols_to_align(self, symbols_to_align):
         self.win_condition = AlignVictory(symbols_to_align)
+        
+    def set_player_name(self, player_names):
+        for i in range(len(player_names)):
+            self.players[i].setName(player_names[i])
         
     def get_board(self):
         return self.board
