@@ -157,6 +157,9 @@ class App(tk.Tk):
         # Appeler start_game si la page est Game
         if page_name == "Game":
             frame.start_game()
+        elif page_name == "Welcome":
+            self.frames["Settings"].reset_settings()
+            self.frames["Game"].reset_game()
         
         return None
 

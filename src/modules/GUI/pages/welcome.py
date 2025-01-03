@@ -116,13 +116,17 @@ class Welcome(ttk.Frame):
 
         # Example board configuration
         board = [
-            ['X', 'O', 'T'],
-            ['H', 'S', 'Q'],
-            ['R', '#', '']
+            ['X', 'O', '△'],
+            ['⬡', '★', '▢'],
+            ['◊', '#', '']
         ]
 
+        # Define player symbols and colors
+        player_symbols = ['X', 'O', '△', '⬡', '★', '▢', '◊']
+        player_colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFFFFF']
+
         # Draw the grid with symbols
-        draw_grid(self.grid_canvas, size, size, cell_size, board)
+        draw_grid(self.grid_canvas, size, size, cell_size, board, player_symbols=player_symbols, player_colors=player_colors)
 
         return None
 

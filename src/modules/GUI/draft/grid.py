@@ -1,7 +1,7 @@
 import tkinter as tk
 from modules.GUI.draft.symbols import drawCross, drawCircle, drawTriangle, drawHexagon, drawStar, drawSquare, drawRhombus, drawGrayCase
 
-def draw_grid(canvas: tk.Canvas, width: int, height: int, cell_size: int, board: list = None, line_color: str = "white", line_width: int = 1, color: str = "#ffffff", coord: bool = False) -> None:
+def draw_grid(canvas: tk.Canvas, width: int, height: int, cell_size: int, board: list = None, line_color: str = "white", line_width: int = 1, player_symbols: list = None, player_colors: list = None, coord: bool = False) -> None:
     """Draw a tic-tac-toe grid on the given canvas.
 
     Args:
@@ -12,6 +12,8 @@ def draw_grid(canvas: tk.Canvas, width: int, height: int, cell_size: int, board:
                       '#' indicates a gray cell, 'X' for a cross, 'O' for a circle, and '' for an empty cell.
         line_color (str): The color of the grid lines.
         line_width (int): The width of the grid lines.
+        player_symbols (list): A list of symbols representing the players.
+        player_colors (list): A list of colors corresponding to the player symbols.
         coord (bool): Whether to draw coordinates around the grid.
 
     Returns:
@@ -33,32 +35,33 @@ def draw_grid(canvas: tk.Canvas, width: int, height: int, cell_size: int, board:
         canvas.create_line(i * cell_size, 0, i * cell_size, height, fill=line_color, width=line_width)
 
     # Draw symbols if a board is provided
-    if board:
+    if board and player_symbols and player_colors:
         for row in range(len(board)):
             for col in range(len(board[row])):
                 x0 = col * cell_size
                 y0 = row * cell_size
 
-                # Draw gray cases for '#'
-                if board[row][col] == '#':
+                symbol = board[row][col]
+                if symbol == '#':
                     drawGrayCase(canvas, x0, y0, cell_size)
-                # Draw 'X'
-                elif board[row][col] == 'X':
-                    drawCross(canvas, x0, y0, cell_size, color)
-                # Draw 'O'
-                elif board[row][col] == 'O':
-                    drawCircle(canvas, x0, y0, cell_size, color)
-                # Draw other symbols if needed
-                elif board[row][col] == '△':
-                    drawTriangle(canvas, x0, y0, cell_size, color)
-                elif board[row][col] == '⬡':
-                    drawHexagon(canvas, x0, y0, cell_size, color)
-                elif board[row][col] == 'S':
-                    drawStar(canvas, x0, y0, cell_size, color)
-                elif board[row][col] == 'Q':
-                    drawSquare(canvas, x0, y0, cell_size, color)
-                elif board[row][col] == 'R':
-                    drawRhombus(canvas, x0, y0, cell_size, color)
+                else:
+                    for i, player_symbol in enumerate(player_symbols):
+                        if symbol == player_symbol:
+                            color = player_colors[i]
+                            if symbol == 'X':
+                                drawCross(canvas, x0, y0, cell_size, color)
+                            elif symbol == 'O':
+                                drawCircle(canvas, x0, y0, cell_size, color)
+                            elif symbol == '△':
+                                drawTriangle(canvas, x0, y0, cell_size, color)
+                            elif symbol == '⬡':
+                                drawHexagon(canvas, x0, y0, cell_size, color)
+                            elif symbol == '★':
+                                drawStar(canvas, x0, y0, cell_size, color)
+                            elif symbol == '▢':
+                                drawSquare(canvas, x0, y0, cell_size, color)
+                            elif symbol == '◊':
+                                drawRhombus(canvas, x0, y0, cell_size, color)
                     
     # Draw coordinates if coord is True
     if coord:
