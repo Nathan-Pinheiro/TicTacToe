@@ -13,7 +13,7 @@ from modules.models.board_components.board_shapes.diamondShape import DiamondSha
 from modules.models.tic_tac_toe.game_director import GameDirector
 from modules.models.tic_tac_toe.player import Player
 from modules.models.tic_tac_toe.win_conditions.align_victory import AlignVictory
-from modules.models.tic_tac_toe.players.human_player import HumanPlayer
+from modules.models.tic_tac_toe.players.human_console_player import HumanConsolePlayer
 
 from modules.models.tic_tac_toe.player_data import PlayerData
 
@@ -39,7 +39,7 @@ import os
 
 if(__name__ == "__main__"):
 
-    players : list[Player] = [HumanPlayer("Jean"), MinimaxTranspositionTablePlayer(20, True, 409600)]
+    players : list[Player] = [HumanConsolePlayer("Nath"), MinimaxTranspositionTablePlayer(20, True)]
     playerEntities = [Cross(), Circle()]
     playersData : list[PlayerData] = [PlayerData([]), PlayerData([])]
     
