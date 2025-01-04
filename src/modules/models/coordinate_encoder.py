@@ -58,7 +58,7 @@ Functions:
 
 # Import #
 from modules.models.board_components.coordinate import Coordinate
-from modules.utils.decorator import private_method
+from modules.utils.decorator import privatemethod
 
 # Functions #
 def encode(coordinate : Coordinate) -> str :
@@ -91,7 +91,7 @@ def decode(coordinateCode : str) -> Coordinate :
     
     return Coordinate(__letterToNumber__(coordinateCode[0]), int(coordinateCode[1:]))
 
-@private_method
+@privatemethod
 def __numberToLetter__(n: int) -> str:
     """Convert a number to a letter.
 
@@ -108,7 +108,7 @@ def __numberToLetter__(n: int) -> str:
     if n < 1 or n > 26 : raise ValueError("Number out of range (must be 1-26)")
     return chr(n + 96)
 
-@private_method
+@privatemethod
 def __letterToNumber__(letter: str) -> int:
     """Convert a letter to a number.
 

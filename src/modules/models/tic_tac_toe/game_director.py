@@ -7,7 +7,7 @@ from modules.models.tic_tac_toe.players.human_player import HumanPlayer
 from modules.models.tic_tac_toe.win_condition import WinCondition
 from modules.models.tic_tac_toe.game_outcome import GameOutcome, GameOutcomeStatus
 from modules.models.console_displayer import *
-from modules.utils.decorator import private_method
+from modules.utils.decorator import privatemethod
 from modules.models.tic_tac_toe.move import Move 
 import random
 import os

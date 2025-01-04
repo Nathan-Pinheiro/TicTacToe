@@ -42,7 +42,7 @@ Methods:
 from __future__ import annotations
 
 from modules.models.board_components.entity import Entity
-from modules.utils.decorator import private_method
+from modules.utils.decorator import privatemethod
 
 # ---------------------------------------------------------------------------------------------------- #
 

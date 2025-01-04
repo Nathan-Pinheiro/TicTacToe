@@ -2,7 +2,7 @@ from modules.models.board_components.board import Board
 from modules.models.tic_tac_toe.win_condition import WinCondition
 from modules.models.tic_tac_toe.game_outcome import GameOutcome, GameOutcomeStatus
 from modules.models.tic_tac_toe.game_state import GameState
-from modules.utils.decorator import private_method
+from modules.utils.decorator import privatemethod
 
 MIN_ENTITY_TO_ALIGN = 3
 

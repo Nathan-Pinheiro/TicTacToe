@@ -1,6 +1,6 @@
 from typing import Callable, Any
 
-def private_method(func: Callable) -> Callable:
+def privatemethod(func: Callable) -> Callable:
     """Decorator to mark a method as private.
     
     Args:
