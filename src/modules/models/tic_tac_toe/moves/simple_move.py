@@ -12,19 +12,25 @@ class SimpleMove(Move) :
         
         return None
 
-    def play(self, board : Board, playerIndex : int) -> None :
+    def play(self, board : Board, playerIndex : int) -> bool :
 
         line : int = self.__coordinate__.getLine()
         column : int = self.__coordinate__.getColumn()
 
-        if(line < 0 or line > board.getHeight()) : raise ValueError(f"Line is out of range. Should be from 0 to {board.getHeight()} but was <{line}>")
-        if(column < 0 or column > board.getWidth()) : raise ValueError(f"Column is out of range. Should be from 0 to {board.getWidth()} but was <{column}>")
+        if(line < 0 or line > board.getHeight()) : 
+            #raise ValueError(f"Line is out of range. Should be from 0 to {board.getHeight()} but was <{line}>")
+            return False
+        if(column < 0 or column > board.getWidth()) : 
+            #raise ValueError(f"Column is out of range. Should be from 0 to {board.getWidth()} but was <{column}>")
+            return False
 
-        if(not board.isCaseAvaillable(line, column)) : raise ValueError(f"Can't play at line = {line}, column = {column}. Case is already taken.")
+        if(not board.isCaseAvaillable(line, column)) : 
+            #raise ValueError(f"Can't play at line = {line}, column = {column}. Case is already taken.")
+            return False
 
         board.addPlayerEntityAt(line, column, playerIndex)
         
-        return None
+        return True
 
     def undo(self, board : Board, playerIndex : int) -> None :
 

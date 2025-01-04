@@ -3,6 +3,7 @@ from modules.models.tic_tac_toe.game_state import GameState
 from modules.models.tic_tac_toe.player_data import PlayerData
 from modules.models.tic_tac_toe.player import Player
 from modules.models.tic_tac_toe.player_data import PlayerData
+from modules.models.tic_tac_toe.players.human_player import HumanPlayer
 from modules.models.tic_tac_toe.win_condition import WinCondition
 from modules.models.tic_tac_toe.game_outcome import GameOutcome, GameOutcomeStatus
 from modules.models.console_displayer import *
@@ -39,7 +40,10 @@ class GameDirector :
 
             start_time = time.time()
 
-            move : Move = playerToPlay.get_choice(self.__game_state__)
+            if isinstance(playerToPlay, HumanPlayer):
+                move : Move = playerToPlay.get_choice_2(self.__game_state__)
+            else:
+                move : Move = playerToPlay.get_choice(self.__game_state__)
 
             end_time = time.time()
             elapsed_time = end_time - start_time
