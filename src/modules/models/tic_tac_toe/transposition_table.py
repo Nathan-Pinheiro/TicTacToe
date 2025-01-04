@@ -67,5 +67,6 @@ class TranspositionTable:
         
         entry : TranspositionTableEntry = self.table.get(entryIndex)
         
-        if entry and entry.depth >= depth: return entry
+        #if entry and ((not (-1 < entry.score < 1)) or entry.depth >= depth): return entry
+        if entry and entry.depth >= depth : return entry
         return None

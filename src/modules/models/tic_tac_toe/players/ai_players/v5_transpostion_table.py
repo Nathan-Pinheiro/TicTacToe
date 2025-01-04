@@ -10,7 +10,7 @@ import os
 
 class MinimaxTranspositionTablePlayer(AIPlayer):
     
-    def __init__(self, maxDepth : int, debugOn : bool = False, transpositionTableSize : int = 2_048) -> None:
+    def __init__(self, maxDepth : int, debugOn : bool = False, transpositionTableSize : int = 4_009_600) -> None:
         
         super().__init__("Minimax AI")
         
