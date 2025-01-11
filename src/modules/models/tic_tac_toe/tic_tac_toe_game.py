@@ -77,6 +77,7 @@ from modules.models.tic_tac_toe.win_conditions.align_victory import AlignVictory
 from modules.models.tic_tac_toe.players.human_player import HumanPlayer
 from modules.models.tic_tac_toe.players.ai_player import AIPlayer
 from modules.models.tic_tac_toe.players.ai_players.v5_transpostion_table import MinimaxTranspositionTablePlayer
+from modules.models.tic_tac_toe.players.ai_players.v4_better_move_order_player import MinimaxBetterMoveOrderingPlayer
 from modules.models.tic_tac_toe.player_data import PlayerData
 from modules.models.entities.circle import Circle
 from modules.models.entities.cross import Cross
@@ -139,7 +140,7 @@ class TicTacToeGame:
             
             if numPlayers > currentNumPlayers:
                 for i in range(currentNumPlayers, numPlayers):
-                    self.players.append(MinimaxTranspositionTablePlayer(6, False))
+                    self.players.append(MinimaxBetterMoveOrderingPlayer(4, False))
                     self.playerEntities.append(self.__getDefaultEntity__(i))
                     self.playersData.append(PlayerData([]))
             
@@ -168,7 +169,7 @@ class TicTacToeGame:
             if isHuman:
                 self.players[playerIndex] = HumanPlayer(f"Player {playerIndex + 1}")
             else:
-                self.players[playerIndex] = MinimaxTranspositionTablePlayer(6, False)
+                self.players[playerIndex] = MinimaxBetterMoveOrderingPlayer(4, False)
             return True
         except Exception as e:
             print(f"Error setting player type: {e}")
