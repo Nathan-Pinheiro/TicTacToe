@@ -9,37 +9,22 @@ Classes:
     App: Represents the main application window.
     
     Attributes:
-        frames (dict[str, ttk.Frame]): A dictionary to hold the frames of the application.
+        frames (dict[str, Page]): A dictionary to hold the frames of the application.
 
-Methods:
-    __init__(self, title: str, first_page: str = "Welcome", geometry: Optional[str] = None) -> None:
-        Private method.
-        Constructor for the App class.
+Functions:
+    __init__(self, title: str, firstPage: PageName, geometry: Optional[str] = None) -> bool:
+        Initialize the application with the given title, first page, and geometry.
         
-        Args:
-            title (str): The title of the application.
-            geometry (Optional[str]): The geometry of the application.
-            first_page (str): The first page to display.
-        
-    __closeWindow__(self, event: Optional[tk.Event] = None) -> None:
+    __closeWindow__(self, event: Optional[tk.Event] = None) -> bool:
         Private method.
         Close the application window.
         
-        Args:
-            event (Optional[tk.Event]): The event that triggered the close action.
-        
-    __createFrames__(self, container: ttk.Frame) -> None:
+    __createFrames__(self, container: ttk.Frame) -> bool:
         Private method.
         Create the frames for the application.
         
-        Args:
-            container (ttk.Frame): The container to hold the frames.
-        
-    showFrame(self, page_name: str) -> None:
+    showFrame(self, pageName: PageName) -> bool:
         Show a specific frame.
-        
-        Args:
-            page_name (str): The name of the frame to show.
 """
 
 ## Implementation
@@ -51,23 +36,32 @@ from typing import Optional, Dict
 import sv_ttk
 import os
 import importlib
+from enum import Enum
 
-from modules.utils.decorator import private_method
+from modules.utils.decorator import privatemethod
+from modules.GUI.pages.page import Page
+
+class PageName(Enum):
+    WELCOME = "Welcome"
+    SETTINGS = "SettingsPage"
+    GAME = "Game"
 
 # Class #
 class App(tk.Tk):
-    def __init__(self, title: str, first_page: str = "Welcome", geometry: Optional[str] = None) -> None:
-        """Constructor for the App class.
-        
-        Args:
-            title (str): The title of the application.
-            geometry (Optional[str]): The geometry of the application.
-            first_page (str): The first page to display.
-            
-        Returns:
-            None
-        """
-        
+    ## Initialize the application with the given title, first page, and geometry.
+    #
+    # @param title The title of the application.
+    # @param firstPage The first page to display.
+    # @param geometry The geometry of the application.
+    # @return bool True if the function succeeds, False otherwise.
+    def __init__(self, title: str, firstPage: PageName = PageName.WELCOME, geometry: Optional[str] = None) -> None:
+        if not isinstance(title, str):
+            raise TypeError("title must be a string")
+        if not isinstance(firstPage, PageName):
+            raise TypeError("firstPage must be a PageName")
+        if geometry is not None and not isinstance(geometry, str):
+            raise TypeError("geometry must be a string or None")
+
         super().__init__()
         self.title(title)
         if geometry is not None:
@@ -76,90 +70,86 @@ class App(tk.Tk):
             self.attributes("-fullscreen", True)
             
         self.bind("<Escape>", self.__closeWindow__)
-        self.frames: Dict[str, ttk.Frame] = {}
+        self.frames: Dict[str, Page] = {}
 
-        container = ttk.Frame(self)
+        container: ttk.Frame = ttk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
-        self.__createFrames__(container)
-        self.showFrame(first_page)
+        if not self.__createFrames__(container):
+            raise RuntimeError("Failed to create frames")
+        if not self.showFrame(firstPage):
+            raise RuntimeError("Failed to show frame")
         
         sv_ttk.set_theme("dark")
         
         return None
         
-    @private_method
-    def __closeWindow__(self, event: Optional[tk.Event] = None) -> None:
-        """Close the application window.
-        
-        Args:
-            event (Optional[tk.Event]): The event that triggered the close action.
-            
-        Returns:
-            None
-        """
+    ## Close the application window.
+    #
+    # @param event The event that triggered the close action.
+    # @return bool True if the function succeeds, False otherwise.
+    @privatemethod
+    def __closeWindow__(self, event: Optional[tk.Event] = None) -> bool:
+        if event is not None and not isinstance(event, tk.Event):
+            raise TypeError("event must be a tk.Event instance or None")
+
         self.destroy()
         
-        return None
+        return True
 
-    @private_method
-    def __createFrames__(self, container: ttk.Frame) -> None:
-        """Create the frames for the application.
-        
-        Args:
-            container (ttk.Frame): The container to hold the frames.
-            
-        Returns:
-            None
-        """
+    ## Create the frames for the application.
+    #
+    # @param container The container to hold the frames.
+    # @return bool True if the function succeeds, False otherwise.
+    @privatemethod
+    def __createFrames__(self, container: ttk.Frame) -> bool:
+        if not isinstance(container, ttk.Frame):
+            raise TypeError("container must be a ttk.Frame instance")
 
-        pages_dir = os.path.join(os.path.dirname(__file__), 'pages')
+        pagesDir: str = os.path.join(os.path.dirname(__file__), 'pages')
         
-        if not os.path.exists(pages_dir):
-            print(f"Répertoire introuvable : {pages_dir}")
-            return None
+        if not os.path.exists(pagesDir):
+            print(f"Directory not found: {pagesDir}")
+            return False
         
-        for filename in os.listdir(pages_dir):
+        for filename in os.listdir(pagesDir):
             if filename.endswith('.py') and filename != '__init__.py':
-                module_name = f"modules.GUI.pages.{filename[:-3]}"
-                module = importlib.import_module(module_name)
+                moduleName: str = f"modules.GUI.pages.{filename[:-3]}"
+                module = importlib.import_module(moduleName)
                 for attr in dir(module):
                     cls = getattr(module, attr)
-                    if isinstance(cls, type) and issubclass(cls, ttk.Frame):
-                        page_name = cls.__name__.capitalize()
-                        frame = cls(parent=container, controller=self)
-                        self.frames[page_name] = frame
+                    if isinstance(cls, type) and issubclass(cls, Page) and cls is not Page:
+                        pageName: str = cls.__name__
+                        frame: Page = cls(parent=container, controller=self)
+                        self.frames[pageName] = frame
                         frame.grid(row=0, column=0, sticky="nsew")
-                        if page_name == "Settings":
-                            frame = cls(parent=container, controller=self)
-                            self.frames[page_name] = frame
-                            frame.grid(row=0, column=0, sticky="nsew")
             
-        return None
+        return True
 
-    def showFrame(self, page_name: str) -> None:
-        """Show a specific frame.
-        
-        Args:
-            page_name (str): The name of the frame to show.
-            
-        Returns:
-            None
-        """
-        frame: ttk.Frame = self.frames[page_name]
+    ## Show a specific frame.
+    #
+    # @param pageName The name of the frame to show.
+    # @return bool True if the function succeeds, False otherwise.
+    def showFrame(self, pageName: PageName) -> bool:
+        if not isinstance(pageName, PageName):
+            raise TypeError("pageName must be a PageName")
+
+        frame: Page = self.frames.get(pageName.value)
         if frame is None:
-            print(f"Error: No frame found with name '{page_name}'")
-            return None
+            print(f"Error: No frame found with name '{pageName.value}'")
+            return False
         frame.tkraise()
         
-        # Appeler start_game si la page est Game
-        if page_name == "Game":
-            frame.start_game()
+        # Call startGame if the page is Game
+        if pageName == PageName.GAME:
+            if not frame.startGame():
+                return False
+        elif pageName == PageName.WELCOME:
+            if not self.frames[PageName.SETTINGS.value].resetSettings():
+                return False
+            if not self.frames[PageName.GAME.value].resetGame():
+                return False
         
-        return None
-
-if __name__ == "__main__":
-    app = App("TicTacToe")
-    app.mainloop()
+        return True

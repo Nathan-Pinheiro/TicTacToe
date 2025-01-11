@@ -1,3 +1,8 @@
+<<<<<<< HEAD
 pillow
 sv-ttk
+=======
+sv-ttk
+pillow
+>>>>>>> 2530b31e373ccfbe069b3f22e27627e5ba9e476c
 numpy

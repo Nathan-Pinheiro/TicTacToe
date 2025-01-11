@@ -1,4 +1,4 @@
-from modules.utils.decorator import private_method
+from modules.utils.decorator import privatemethod
 from modules.models.board_components.boards.optimized_board_components.bitboard import BitBoard
 
 class SimpleBitBoard(BitBoard) :

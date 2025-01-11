@@ -40,7 +40,7 @@ from modules.models.board_components.boards.simple_board_components.case import 
 from modules.models.board_components.board import Board
 from modules.models.board_components.entity import Entity
 from modules.models.board_components.coordinate import Coordinate
-from modules.utils.decorator import private_method
+from modules.utils.decorator import privatemethod
 import random
 
 # Class #
@@ -66,7 +66,7 @@ class SimpleBoard(Board):
         
         return None
 
-    @private_method
+    @privatemethod
     def __initializeBoard__(self) -> None:
         """Initialize all cases of the board to availlable cases.
         

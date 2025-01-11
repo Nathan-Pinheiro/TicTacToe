@@ -40,7 +40,7 @@ from modules.models.board_components.board import Board
 from modules.models.board_components.entity import Entity
 from modules.models.board_components.boards.optimized_board_components.bitboard import BitBoard
 from modules.models.board_components.boards.optimized_board_components.bitboards.numpy_bit_board import NumpyBitBoard
-from modules.utils.decorator import private_method
+from modules.utils.decorator import privatemethod
 
 import numpy as np
 import random
@@ -74,14 +74,14 @@ class OptimizedBoard(Board):
 
         return None
 
-    @private_method
+    @privatemethod
     def __get_bit_position(self, line: int, column: int) -> int:
         
         """Convert (row, col) to a bit index."""
         
         return line * self.__width__ + column
 
-    @private_method
+    @privatemethod
     def __generateCheckWinMasks__(self) -> int :
         
         """
