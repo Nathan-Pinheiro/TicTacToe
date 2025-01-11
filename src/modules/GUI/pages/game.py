@@ -1,8 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
-import sv_ttk
-import time
 from modules.GUI.draft.grid import draw_grid
 from modules.models.tic_tac_toe.game_outcome import GameOutcomeStatus
 from modules.models.tic_tac_toe.players.ai_players.v5_transpostion_table import MinimaxTranspositionTablePlayer
