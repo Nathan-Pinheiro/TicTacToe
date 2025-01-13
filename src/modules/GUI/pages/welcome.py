@@ -32,10 +32,10 @@ class Welcome(Page):
             ),
             wraplength=600,
             justify="center",
-            font=("Arial", 26, "bold"),
+            font=("Arial", 36, "bold"),
             foreground="white"
         )
-        self.textTitleLabel.grid(row=1, column=0, pady=125, padx=125, sticky="wn")
+        self.textTitleLabel.grid(row=1, column=0, pady=125, padx=125, sticky="n")
         
         self.textDescriptionLabel = ttk.Label(
             self,
@@ -46,27 +46,20 @@ class Welcome(Page):
             ),
             wraplength=600,
             justify="center",
-            font=("Arial", 26),
+            font=("Arial", 28),
             foreground="white"
         )
-        self.textDescriptionLabel.grid(row=1, column=0, pady=125, padx=100, sticky="ws")
+        self.textDescriptionLabel.grid(row=1, column=0, pady=125, padx=100, sticky="s")
         
         self.Image = self.loadPngImage("./static/assets/Board.png")
         
         self.boardImage = ttk.Label(self, image=self.Image)
 
-        self.boardImage.grid(row=1, column=1, rowspan=2, padx=125, sticky="e")
+        self.boardImage.grid(row=1, column=1, rowspan=2, padx=125, sticky="ns")
 
         # Bouton "Go!"
-        self.startButton = ttk.Button(self, text="Go !", command=self.startGame, style="Custom.TButton")
+        self.startButton = ttk.Button(self, text="Go !", command=self.startGame)
         self.startButton.grid(row=3, columnspan=2, pady=(20, 40), sticky="s")
-
-        # Style pour les boutons
-        style = ttk.Style()
-        style.configure("Custom.TButton", font=("Arial", 24), padding=10, background="black", foreground="white")
-        style.map("Custom.TButton",
-                  background=[("active", "#555")],
-                  foreground=[("active", "white")])
 
         # Redimensionnement dynamique
         self.bind("<Configure>", self.__onResize__)
@@ -105,7 +98,7 @@ class Welcome(Page):
         return True
 
     def startGame(self) -> bool:
-        return self.controller.showFrame(PageName.GAME)
+        return self.controller.showFrame(PageName.SETTINGS)
     
     
     ## Load a PNG image from the given file path.
@@ -115,6 +108,6 @@ class Welcome(Page):
     def loadPngImage(self, filePath: str) -> ImageTk.PhotoImage:
         image = Image.open(filePath)
         image = np.array(image)
-        image = cv2.resize(image, (500, 500))
+        image = cv2.resize(image, (600, 600))
         image = Image.fromarray(image)
         return ImageTk.PhotoImage(image)

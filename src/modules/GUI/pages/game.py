@@ -66,7 +66,7 @@ from modules.GUI.pages.page import Page
 from modules.GUI.render import PageName
 
 
-from src.modules.models.tic_tac_toe.players.ai_player import AIPlayer
+from modules.models.tic_tac_toe.players.ai_player import AIPlayer
 
 
 class Game(Page):
