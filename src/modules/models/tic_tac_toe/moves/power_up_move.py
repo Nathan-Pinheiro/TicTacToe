@@ -1,9 +1,6 @@
-from modules.models.tic_tac_toe.move import Move
-from modules.models.board_components.coordinate import Coordinate
-from modules.models.board_components.board import Board
-from modules.models.tic_tac_toe.move import Move
-from modules.models.tic_tac_toe.power_up import PowerUp
-from modules.models.board_components.entity import Entity
+from modules.models.board_game.components.move import Move
+from modules.models.board_game.components.coordinate import Coordinate
+from modules.models.board_game.board.board import Board
 
 class PowerUpMove(Move):
     

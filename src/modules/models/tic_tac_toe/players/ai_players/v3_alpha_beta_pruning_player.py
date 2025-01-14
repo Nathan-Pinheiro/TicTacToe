@@ -1,11 +1,22 @@
 from modules.models.tic_tac_toe.players.ai_player import AIPlayer
-from modules.models.tic_tac_toe.player import Player
-from modules.models.tic_tac_toe.game_state import GameState
-from modules.models.console_displayer import *
-from modules.models.tic_tac_toe.move import Move
-from modules.models.tic_tac_toe.game_outcome import GameOutcomeStatus
+from modules.models.tic_tac_toe.tic_tac_toe_player import Player
+from modules.models.tic_tac_toe.tic_tac_toe_game_state import TicTacToeGameState
+from modules.models.utils.console_displayer import *
+from modules.models.board_game.components.move import Move
+from modules.models.board_game.game.game_outcome import GameOutcomeStatus
 import random
 import os
+
+# ************************************************
+# CLASS AlphaBetaPruningPlayer
+# ************************************************
+# ROLE : This AI can return the best moove for a given tic tac toe position
+# runnning the minimax alpha beta algorithm
+# ************************************************
+# VERSION : 1.0
+# AUTHOR : Nathan PINHEIRO
+# DATE : 10/01/2025
+# ************************************************
 
 class AlphaBetaPruningPlayer(AIPlayer):
     
@@ -16,7 +27,7 @@ class AlphaBetaPruningPlayer(AIPlayer):
         self.__maxDepth__  : int = maxDepth
         self.__debugOn__ : bool = debugOn
     
-    def get_choice(self, gameState : GameState) -> Move:
+    def get_choice(self, gameState : TicTacToeGameState) -> Move:
         
         self.__nodeExplored__ = 0
         
@@ -31,7 +42,7 @@ class AlphaBetaPruningPlayer(AIPlayer):
         
         return bestMove
     
-    def __minimax__(self, gameState: GameState, depth: int, playerIndex: int, alpha: int = float('-inf'), beta: int = float('inf')) -> tuple[int, Move]:
+    def __minimax__(self, gameState: TicTacToeGameState, depth: int, playerIndex: int, alpha: int = float('-inf'), beta: int = float('inf')) -> tuple[int, Move]:
         """
         Recursively evaluates the game state using the Minimax algorithm.
 
@@ -63,11 +74,15 @@ class AlphaBetaPruningPlayer(AIPlayer):
             
             if(gameOutcome.getGameStatus() != GameOutcomeStatus.UNFINISHED) : 
                 
+                score : int
+                
+                if gameOutcome.getGameStatus() == GameOutcomeStatus.DRAW : score = 0                 
+                elif gameOutcome.getWinner() == playerIndex : score : int = self.getWinReward(gameState)
+                else : score : int = - self.getWinReward(gameState)
+
                 gameState.undo(currentMove)
                 
-                if gameOutcome.getGameStatus() == GameOutcomeStatus.DRAW : return 0, currentMove
-                elif gameOutcome.getWinner() == playerIndex : return self.getWinReward(gameState), currentMove
-                else : return self.getLooseReward(gameState), currentMove
+                return score, currentMove
 
             else :
                 
@@ -106,18 +121,20 @@ class AlphaBetaPruningPlayer(AIPlayer):
         
         return sortedMoves
 
-    def getMoveStrengthToAdd(self, score : int) -> int : 
-        return score / 1000
+    def getWinReward(self, gameState : TicTacToeGameState) :
+        
+        """
+        Calculates the reward score for a winning state.
+        Prioritizes faster wins by providing higher scores.
 
-    def getWinReward(self, gameState : GameState) :
+        Args:
+            gameState (GameState): The current game state.
+            
+        Returns:
+            int: The calculated win reward.
+        """
         
         maxMoves : int = gameState.getBoard().getHeight() * gameState.getBoard().getWidth()
+        score : int = (maxMoves + 1) - gameState.getGameHistory().getMoveCount()
         
-        return (maxMoves + 1) - gameState.getGameHistory().getMoveCount()
-    
-    def getLooseReward(self, gameState : GameState) :
-        
-        maxMoves : int = gameState.getBoard().getHeight() * gameState.getBoard().getWidth()
-        
-        return gameState.getGameHistory().getMoveCount() - (maxMoves + 1)
-       
+        return score

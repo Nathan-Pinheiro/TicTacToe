@@ -1,4 +1,4 @@
-from modules.models.board_components.entity import Entity
+from modules.models.board_game.components.entity import Entity
 
 class Triangle(Entity):
     

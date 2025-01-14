@@ -1,12 +1,22 @@
 from modules.models.tic_tac_toe.players.ai_player import AIPlayer
-from modules.models.tic_tac_toe.player import Player
-from modules.models.tic_tac_toe.game_state import GameState
-from modules.models.console_displayer import *
-from modules.models.tic_tac_toe.move import Move
-from modules.models.tic_tac_toe.game_outcome import GameOutcomeStatus
-from modules.models.tic_tac_toe.transposition_table import TranspositionTable
-import random
-import os
+from modules.models.tic_tac_toe.tic_tac_toe_player import Player
+from modules.models.tic_tac_toe.tic_tac_toe_game_state import TicTacToeGameState
+from modules.models.utils.console_displayer import *
+from modules.models.board_game.components.move import Move
+from modules.models.board_game.game.game_outcome import GameOutcomeStatus
+from modules.models.board_game.board.board import Board
+from modules.models.board_game.components.transposition_table import TranspositionTable
+
+# ************************************************
+# CLASS MinimaxIterativeDeepingPlayer
+# ************************************************
+# ROLE : This AI can return the best moove for a given tic tac toe position
+# runnning the minimax alpha beta algorithm, by doing middle moves first
+# ************************************************
+# VERSION : 0.0 (in progress)
+# AUTHOR : Nathan PINHEIRO
+# DATE : 10/01/2025
+# ************************************************
 
 class MinimaxIterativeDeepingPlayer(AIPlayer):
     
@@ -18,7 +28,7 @@ class MinimaxIterativeDeepingPlayer(AIPlayer):
         self.__debugOn__ : bool = debugOn
         self.__transpositionTable__ = TranspositionTable(size = transpositionTableSize)
     
-    def get_choice(self, gameState : GameState) -> Move:
+    def get_choice(self, gameState : TicTacToeGameState) -> Move:
         
         self.__nodeExplored__ = 0
         
@@ -31,7 +41,7 @@ class MinimaxIterativeDeepingPlayer(AIPlayer):
         
         return bestMove
     
-    def __minimax__(self, gameState: GameState, depth: int, playerIndex: int, alpha: int = float('-inf'), beta: int = float('inf')) -> tuple[int, Move]:
+    def __minimax__(self, gameState: TicTacToeGameState, depth: int, playerIndex: int, alpha: int = float('-inf'), beta: int = float('inf')) -> tuple[int, Move]:
         
         """
         Recursively evaluates the game state using the Minimax algorithm.
@@ -115,17 +125,17 @@ class MinimaxIterativeDeepingPlayer(AIPlayer):
         
         return sortedMoves
 
-    def getWinReward(self, gameState : GameState) :
+    def getWinReward(self, gameState : TicTacToeGameState) :
         
         maxMoves : int = gameState.getBoard().getHeight() * gameState.getBoard().getWidth()
         return (maxMoves + 1 - gameState.getGameHistory().getMoveCount()) // 2
     
-    def getLooseReward(self, gameState : GameState) :
+    def getLooseReward(self, gameState : TicTacToeGameState) :
         
         maxMoves : int = gameState.getBoard().getHeight() * gameState.getBoard().getWidth()
         return (maxMoves - gameState.getGameHistory().getMoveCount()) // 2
     
-    def __solve__(self, gameState : GameState, maxDepth : int, playerToPlayIndex : int) -> tuple[int, Move]:
+    def __solve__(self, gameState : TicTacToeGameState, maxDepth : int, playerToPlayIndex : int) -> tuple[int, Move]:
          
         """
         Solve the game using iterative deepening with null window search, limited by a maximum depth.

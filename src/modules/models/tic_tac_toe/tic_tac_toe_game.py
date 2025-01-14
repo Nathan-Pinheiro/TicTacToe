@@ -69,15 +69,15 @@ from modules.models.board_components.board_shapes.pyramidal_shape import Pyramid
 from modules.models.board_components.entity import Entity
 from modules.models.entities.triangle import Triangle
 from modules.models.entities.hexagon import Hexagon
-from modules.models.tic_tac_toe.game_director import GameDirector
+from modules.models.tic_tac_toe.tic_tac_toe_game_director import GameDirector
 from modules.models.tic_tac_toe.game_outcome import GameOutcome
-from modules.models.tic_tac_toe.game_state import GameState
-from modules.models.tic_tac_toe.player import Player
+from modules.models.tic_tac_toe.tic_tac_toe_game_state import TicTacToeGameState
+from modules.models.tic_tac_toe.tic_tac_toe_player import Player
 from modules.models.tic_tac_toe.win_conditions.align_victory import AlignVictory
 from modules.models.tic_tac_toe.players.human_player import HumanPlayer
 from modules.models.tic_tac_toe.players.ai_player import AIPlayer
 from modules.models.tic_tac_toe.players.ai_players.v5_transpostion_table import MinimaxTranspositionTablePlayer
-from modules.models.tic_tac_toe.player_data import PlayerData
+from modules.models.tic_tac_toe.tic_tac_toe_player_data import PlayerData
 from modules.models.entities.circle import Circle
 from modules.models.entities.cross import Cross
 from modules.models.entities.star import Star
@@ -232,7 +232,7 @@ class TicTacToeGame:
         entities = [Cross(), Circle(), Triangle(), Hexagon()]
         return entities[index % len(entities)]
     
-    def getGameState(self) -> GameState:
+    def getGameState(self) -> TicTacToeGameState:
         return self.gameState
 
     @privatemethod
@@ -246,7 +246,6 @@ class TicTacToeGame:
             '▢': Square,
             '◊': Rhombus
         }
-        if symbol in entityClasses:
-            return entityClasses[symbol]()
-        else:
-            raise ValueError(f"Unknown symbol: {symbol}")
+        
+        if symbol in entityClasses : return entityClasses[symbol]()
+        else : raise ValueError(f"Unknown symbol: {symbol}")
