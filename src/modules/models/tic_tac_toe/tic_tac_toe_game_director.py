@@ -56,6 +56,7 @@ class GameDirector :
             display_sep()
 
             display(f"Player : {playerToPlay.getName()} played {move}")
+            print("player index", self.getGameState().getPlayerToPlayIndex())
             display(f"It took {elapsed_time:.6f} seconds")
 
             display_sep()

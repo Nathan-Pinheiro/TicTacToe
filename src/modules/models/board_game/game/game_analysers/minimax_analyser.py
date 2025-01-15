@@ -55,9 +55,22 @@ class MinimaxAnalyser(GameAnalyser):
 
         for moveIndex, move in enumerate(gameState.getPossibleMoves()):
             
-            nextState = gameState.play(move)
-            score, _ = self.__minimax__(nextState, self.__depth__ - 1, maximizingPlayerIndex)
-            gameState.undo(move)
+            gameOutcome : GameOutcomeStatus = gameState.play(move)
+            
+            score : int
+
+            if(gameOutcome.getGameStatus() != GameOutcomeStatus.UNFINISHED) : 
+                
+                if gameOutcome.getGameStatus() == GameOutcomeStatus.DRAW : score = 0                 
+                elif gameOutcome.getWinner() == maximizingPlayerIndex : score = self.getWinReward(gameState)
+                else : score = - self.getWinReward(gameState)
+
+                gameState.undo(move)
+                
+            else :
+
+                score, _ = self.__minimax__(gameState, self.__depth__ - 1, maximizingPlayerIndex, float('-inf'), float('inf'))
+                gameState.undo(move)
             
             moveScores[move] = score
             

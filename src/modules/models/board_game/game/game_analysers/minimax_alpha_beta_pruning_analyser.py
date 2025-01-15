@@ -1,6 +1,6 @@
 from modules.models.tic_tac_toe.tic_tac_toe_game_state import GameState
 from modules.models.board_game.components.move import Move
-from modules.models.board_game.game.game_outcome import GameOutcomeStatus
+from modules.models.board_game.game.game_outcome import GameOutcomeStatus, GameOutcome
 from modules.models.board_game.game.game_analyser import GameAnalyser
 
 class AlphaBetaPruningAnalyser(GameAnalyser):
@@ -41,9 +41,23 @@ class AlphaBetaPruningAnalyser(GameAnalyser):
         moveScores = {}
 
         for moveIndex, move in enumerate(gameState.getPossibleMoves()):
-            gameState.play(move)
-            score, _ = self.__minimax__(gameState, self.__depth__ - 1, maximizingPlayerIndex, float('-inf'), float('inf'))
-            gameState.undo(move)
+            
+            gameOutcome : GameOutcomeStatus = gameState.play(move)
+
+            if(gameOutcome.getGameStatus() != GameOutcomeStatus.UNFINISHED) : 
+                
+                score : int
+                
+                if gameOutcome.getGameStatus() == GameOutcomeStatus.DRAW : score = 0                 
+                elif gameOutcome.getWinner() == maximizingPlayerIndex : score = self.getWinReward(gameState)
+                else : score = - self.getWinReward(gameState)
+
+                gameState.undo(move)
+                
+            else :
+
+                score, _ = self.__minimax__(gameState, self.__depth__ - 1, maximizingPlayerIndex, float('-inf'), float('inf'))
+                gameState.undo(move)
 
             moveScores[move] = score
 

@@ -31,9 +31,9 @@ import os
 
 if(__name__ == "__main__"):
 
-    players : list[Player] = [HumanConsolePlayer("Lana"), HumanConsolePlayer("Lana")]
-    playerEntities = [Cross(), Circle()]
-    playersData : list[PlayerData] = [TicTacToePlayerData([BombMove]), TicTacToePlayerData([BombMove])]
+    players : list[Player] = [HumanConsolePlayer("Lana"), HardAIPlayer()]
+    playerEntities = [Circle(), Cross()]
+    playersData : list[PlayerData] = [TicTacToePlayerData([BombMove]), TicTacToePlayerData([])]
     
     board : Board = BoardBuilder(playerEntities).setHeight(3).setWidth(3).buildOptimizedBoard()
     winCondition = AlignVictory(3)

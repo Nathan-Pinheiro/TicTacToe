@@ -50,6 +50,15 @@ class BitBoard(ABC) :
         pass
     
     @abstractmethod
+    def applyXor(self, value : int) -> None :
+
+        """
+        Apply OR bitwise operation to the bitboard with a int mask
+        """
+
+        pass
+
+    @abstractmethod
     def applyAnd(self, value : int) -> None :
 
         """

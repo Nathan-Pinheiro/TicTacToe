@@ -21,10 +21,9 @@ class Move(ABC) :
 
     def __init__(self, moveCode : str, coordinate : Coordinate) -> None :
         
-        self.__moveCode__ = moveCode
-        self.__coordinate__ = coordinate
-        
-        return None
+        self.__moveCode__ : str = moveCode
+        self.__coordinate__ : Coordinate = coordinate
+        self.__isMoveDone__ : bool = False
     
     @abstractmethod
     def play(self, board : Board, playerIndex : int) -> None :

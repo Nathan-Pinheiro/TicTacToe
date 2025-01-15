@@ -123,6 +123,10 @@ class NumpyBitBoard(BitBoard) :
     @override
     def applyOr(self, value : int) -> None :
         self.__bits__ |= self.__convertIntToBitArray__(value)
+        
+    @override
+    def applyXor(self, value : int) -> None :
+        self.__bits__ ^= self.__convertIntToBitArray__(value)
     
     @override
     def applyAnd(self, value : int) -> None :

@@ -50,15 +50,15 @@ class TicTacToeGameState(GameState):
         Returns:
             GameOutcome: The result of the game after the move.
         """
-        
         self.getGameHistory().addMove(move)
+
         move.play(self.getBoard(), self.getPlayerToPlayIndex())
-        
-        if move.__class__ != SimpleMove:
-            self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().remove(move.__class__)
-        
+        if move.__class__ != SimpleMove : self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().remove(move.__class__) 
+
         gameOutcome : GameOutcome = self.checkWinForCurrentPlayer()
+        
         self.__nextTurn__()
+        
         return gameOutcome
 
     def undo(self, move: Move) -> None:
@@ -70,16 +70,14 @@ class TicTacToeGameState(GameState):
             move (Move): The move to undo.
         """
         
-        if self.getGameHistory().getMoveCount() <= 0:
-            return
+        if self.getGameHistory().getMoveCount() <= 0: return
+
+        self.__previousTurn__()
 
         self.getGameHistory().undo()
         move.undo(self.getBoard(), self.getPlayerToPlayIndex())
 
-        if move.__class__ != SimpleMove:
-            self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().append(move.__class__)
-        
-        self.__previousTurn__()
+        if move.__class__ != SimpleMove : self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().append(move.__class__)
 
     def goBack(self, move: Move) -> None:
         

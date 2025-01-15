@@ -127,6 +127,21 @@ class Board(ABC):
             None
         """
         pass
+    
+    @abstractmethod
+    def addEntityAt(self, line: int, column: int, entity : Entity) -> None:
+        """
+        Adds an entity at the specified line and column.
+
+        Args:
+            line (int): The line number of the case.
+            column (int): The column number of the case.
+            playerIndex (int): The index of the player whose entity is being added.
+
+        Returns:
+            None
+        """
+        pass
 
     @abstractmethod
     def removeEntityAt(self, line: int, column: int) -> None:

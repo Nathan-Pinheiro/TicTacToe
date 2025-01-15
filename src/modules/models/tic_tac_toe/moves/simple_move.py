@@ -17,14 +17,14 @@ class SimpleMove(Move) :
         column : int = self.__coordinate__.getColumn()
 
         if(line < 0 or line > board.getHeight()) : 
-            #raise ValueError(f"Line is out of range. Should be from 0 to {board.getHeight()} but was <{line}>")
+            raise ValueError(f"Line is out of range. Should be from 0 to {board.getHeight()} but was <{line}>")
             return False
         if(column < 0 or column > board.getWidth()) : 
-            #raise ValueError(f"Column is out of range. Should be from 0 to {board.getWidth()} but was <{column}>")
+            raise ValueError(f"Column is out of range. Should be from 0 to {board.getWidth()} but was <{column}>")
             return False
 
         if(not board.isCaseAvaillable(line, column)) : 
-            #raise ValueError(f"Can't play at line = {line}, column = {column}. Case is already taken.")
+            raise ValueError(f"Can't play at line = {line}, column = {column}. Case is already taken.")
             return False
 
         board.addPlayerEntityAt(line, column, playerIndex)

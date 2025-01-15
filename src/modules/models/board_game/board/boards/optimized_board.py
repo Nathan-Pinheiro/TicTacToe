@@ -158,12 +158,15 @@ class OptimizedBoard(Board):
 
         bit_position = self.__get_bit_position(line, column)
         
-        if(self.__blockedCases__.getValue() & (1 << bit_position) == 0 and isBlocked) : self.__blockedCaseCount__ += 1
-        elif(self.__blockedCases__.getValue() & (1 << bit_position) == 1 and not isBlocked) : self.__blockedCaseCount__ -= 1
-        
-        self.__blockedCases__.applyOr(1 << bit_position)
-
-        return None
+        if(self.__blockedCases__.getValue() & (1 << bit_position) == 0 and isBlocked) :
+             
+            self.__blockedCaseCount__ += 1
+            self.__blockedCases__.applyOr(1 << bit_position)
+            
+        elif(self.__blockedCases__.getValue() & (1 << bit_position) == 1 and not isBlocked) :
+            
+            self.__blockedCaseCount__ -= 1
+            self.__blockedCases__.applyXor(1 << bit_position)
 
     def getEntityAt(self, line : int, column : int) -> Entity :
         
@@ -235,6 +238,40 @@ class OptimizedBoard(Board):
 
         return None
     
+    def addEntityAt(self, line: int, column: int, entity : Entity) -> None:
+        """
+        Adds an entity at the specified line and column.
+
+        Args:
+            line (int): The line number of the case.
+            column (int): The column number of the case.
+            playerIndex (int): The index of the player whose entity is being added.
+
+        Returns:
+            None
+        """
+        
+        if(line < 0 or line >= self.getHeight()) : raise ValueError(f"Line is out of range. Should be from 0 to {self.getHeight()} but was <{line}>")
+        if(column < 0 or column >= self.getWidth()) : raise ValueError(f"Column is out of range. Should be from 0 to {self.getWidth()} but was <{column}>")
+
+        playerIndex : int = 0
+        playerEntityFound : bool = False
+        
+        while playerIndex < len(self.__playerEntities__) and not playerEntityFound:
+            if(self.__playerEntities__[playerIndex] == entity): playerEntityFound = True
+            playerIndex += 1
+
+        playerIndex -= 1
+
+        if(playerIndex == len(self.__playerEntities__)) : raise ValueError(f"No player have this symbol : {entity}")
+
+        bit_position = self.__get_bit_position(line, column)
+        
+        self.__playerBoards__[playerIndex].applyOr(1 << bit_position)
+        self.__pieceCount__ += 1
+
+        return None
+
     def removeEntityAt(self, line : int, column : int) -> None:
         
         """
