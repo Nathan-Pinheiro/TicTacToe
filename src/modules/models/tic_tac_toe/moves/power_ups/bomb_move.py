@@ -5,10 +5,7 @@ from modules.models.board_game.board.board import Board
 class BombMove(PowerUpMove):
     
     def __init__(self, coordinate : Coordinate) -> None:
-        
         super().__init__("b", coordinate)
-
-        return None
     
     def play(self, board : Board, playerIndex : int) -> None :
         
@@ -21,10 +18,12 @@ class BombMove(PowerUpMove):
         for currentLine in range(line - 1, line + 2):
             for currentColumn in range(column - 1, column + 2):
                 if(0 <= currentLine < board.getHeight() and 0 <= currentColumn < board.getWidth()):
+                    
                     board.removeEntityAt(currentLine, currentColumn)
                     board.setIsCaseBlocked(currentLine, currentColumn, False)
 
-        return None
+    def undo(self, board : Board, playerIndex : int) -> None:
+        return
         
     @classmethod
     def canPlay(cls, board : Board, line : int, column : int) -> bool:

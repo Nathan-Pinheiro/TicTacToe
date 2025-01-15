@@ -5,7 +5,7 @@ from modules.models.utils.console_displayer import *
 from modules.models.board_game.components.move import Move
 from modules.models.board_game.game.game_outcome import GameOutcomeStatus
 from modules.models.board_game.board.board import Board
-from modules.models.board_game.components.transposition_table import TranspositionTable
+from modules.models.board_game.game.game_analysers.components.transposition_table import TranspositionTable
 
 # ************************************************
 # CLASS MinimaxTranspositionTablePlayer

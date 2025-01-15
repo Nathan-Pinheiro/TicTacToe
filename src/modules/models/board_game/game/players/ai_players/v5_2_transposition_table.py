@@ -5,26 +5,29 @@ from modules.models.utils.console_displayer import *
 from modules.models.board_game.components.move import Move
 from modules.models.board_game.game.game_outcome import GameOutcomeStatus
 from modules.models.board_game.board.board import Board
+from modules.models.board_game.game.game_analysers.components.transposition_table import TranspositionTable
 
 # ************************************************
-# CLASS MinimaxBetterMoveOrderingPlayer
+# CLASS MinimaxTranspositionTablePlayer
 # ************************************************
 # ROLE : This AI can return the best moove for a given tic tac toe position
-# runnning the minimax alpha beta algorithm, by doing middle moves first
+# runnning the minimax alpha beta algorithm, by doing middle moves first and using a transposition table mechanism
 # ************************************************
-# VERSION : 1.0
+# VERSION : 0.0 (in progress)
 # AUTHOR : Nathan PINHEIRO
 # DATE : 10/01/2025
 # ************************************************
 
-class MinimaxBetterMoveOrderingPlayer(AIPlayer):
+class MinimaxTranspositionTablePlayer(AIPlayer):
     
-    def __init__(self, maxDepth : int, debugOn : bool = False) -> None:
-        
+    def __init__(self, maxDepth : int, debugOn : bool = False, transpositionTableSize = 391939) -> None:
+
         super().__init__("Minimax AI")
         
         self.__maxDepth__  : int = maxDepth
         self.__debugOn__ : bool = debugOn
+
+        self.__transpositionTable__ = TranspositionTable(size = transpositionTableSize)
     
     def get_choice(self, gameState : TicTacToeGameState) -> Move:
         
@@ -36,7 +39,7 @@ class MinimaxBetterMoveOrderingPlayer(AIPlayer):
             
             print("Explored : ", self.__nodeExplored__)
             print("Best score : ", bestScore)
-        
+
         return bestMove
     
     def __minimax__(self, gameState: TicTacToeGameState, depth: int, playerIndex: int, alpha: int = float('-inf'), beta: int = float('inf')) -> tuple[int, Move]:
@@ -54,7 +57,15 @@ class MinimaxBetterMoveOrderingPlayer(AIPlayer):
 
         self.__nodeExplored__ += 1
 
-        if depth == 0 : return gameState.evaluateForPlayer(playerIndex), None
+        cached_entry = self.__transpositionTable__.get(hash(gameState.getBoard()), depth)
+        if cached_entry != None : return cached_entry.score, cached_entry.move
+
+        if depth == 0 : 
+            
+            score : int = gameState.evaluateForPlayer(playerIndex)
+            # self.__transpositionTable__.put(hash(gameState.getBoard()), depth, score, None)
+            
+            return score, None
 
         bestScore = None
         bestMove = None
@@ -77,6 +88,8 @@ class MinimaxBetterMoveOrderingPlayer(AIPlayer):
                 elif gameOutcome.getWinner() == playerIndex : score : int = self.getWinReward(gameState)
                 else : score : int = - self.getWinReward(gameState)
 
+                # self.__transpositionTable__.put(hash(gameState.getBoard()), depth, score, currentMove)
+                
                 gameState.undo(currentMove)
                 
                 return score, currentMove
@@ -107,9 +120,7 @@ class MinimaxBetterMoveOrderingPlayer(AIPlayer):
 
                 moveIndex += 1
 
-        if(self.__debugOn__):
-            display_board(gameState.getBoard())
-            print(f"depth : {depth}, bestScore : {bestScore}, bestMove : {bestMove}")
+        self.__transpositionTable__.put(hash(gameState.getBoard()), depth, bestScore, bestMove)
 
         return bestScore, bestMove
 
@@ -120,7 +131,7 @@ class MinimaxBetterMoveOrderingPlayer(AIPlayer):
         
         def euclidianDistanceFromCenter(move: Move) -> int: return abs(centerColumn - move.getCoordinate().getColumn()) + abs(centerLine - move.getCoordinate().getLine())
         sortedMoves = sorted(moves, key=lambda move: (euclidianDistanceFromCenter(move), move.getCoordinate().getColumn(), move.getCoordinate().getLine()))
-        
+            
         return sortedMoves
 
     def getWinReward(self, gameState : TicTacToeGameState) :
@@ -137,6 +148,6 @@ class MinimaxBetterMoveOrderingPlayer(AIPlayer):
         """
         
         maxMoves : int = gameState.getBoard().getHeight() * gameState.getBoard().getWidth()
-        score : int = (maxMoves + 1) - gameState.getGameHistory().getMoveCount()
-        
+        score : int = ((maxMoves + 3) - gameState.getBoard().getPieceCount()) // 2
+
         return score

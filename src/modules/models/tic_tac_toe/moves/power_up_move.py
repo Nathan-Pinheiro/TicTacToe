@@ -1,6 +1,7 @@
 from modules.models.board_game.components.move import Move
 from modules.models.board_game.components.coordinate import Coordinate
 from modules.models.board_game.board.board import Board
+from abc import abstractmethod
 
 class PowerUpMove(Move):
     
@@ -10,9 +11,14 @@ class PowerUpMove(Move):
 
         return None
     
+    @abstractmethod
     def play(self, board : Board, playerIndex : int) -> None :
         pass
         
+    @abstractmethod
+    def undo(self, board : Board, playerIndex : int) -> None :
+        pass
+
     @classmethod
     def canPlay(cls, board : Board, line : int, column : int) -> bool:
         pass
