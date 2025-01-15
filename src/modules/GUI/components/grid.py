@@ -22,7 +22,7 @@ Functions:
 
 # Import
 import tkinter as tk
-from modules.GUI.draft.symbols import drawCross, drawCircle, drawTriangle, drawHexagon, drawStar, drawSquare, drawRhombus, drawGrayCase
+from modules.GUI.components.symbols import drawCross, drawCircle, drawTriangle, drawHexagon, drawStar, drawSquare, drawRhombus, drawGrayCase
 from modules.utils.validators import isValidSymbol, isHexColor
 
 ## Draw a tic-tac-toe grid on the given canvas.
@@ -39,7 +39,7 @@ from modules.utils.validators import isValidSymbol, isHexColor
 # @param playerColors A list of colors corresponding to the player symbols.
 # @param coord Whether to draw coordinates around the grid.
 # @return bool True if the function succeeds, False otherwise.
-def drawGrid(canvas: tk.Canvas, width: int, height: int, cellSize: int, board: list[list[str]] = None, lineColor: str = "white", lineWidth: int = 1, playerSymbols: list[str] = None, playerColors: list[str] = None, coord: bool = False) -> bool:
+def drawGrid(canvas: tk.Canvas, width: int, height: int, cellSize: int, board: list[list[str]] = None, lineColor: str = "white", lineWidth: int = 1, playerSymbols: list[str] = ["X", "O"], playerColors: list[str] = ["#FFFFFF", "#FF00FF"], coord: bool = True) -> bool:
     # Validate parameters
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
@@ -68,7 +68,7 @@ def drawGrid(canvas: tk.Canvas, width: int, height: int, cellSize: int, board: l
     canvas.delete("all")
 
     # Draw the gray square (background)
-    canvas.create_rectangle(0, 0, height, width, fill="#333", outline="")
+    canvas.create_rectangle(0, 0, height, width, fill="#4b4b4b", outline="")
 
     # Draw white lines (horizontal and vertical)
     for i in range(1, height // cellSize):

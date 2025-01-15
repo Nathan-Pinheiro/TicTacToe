@@ -22,7 +22,7 @@ class HardAIPlayer(AIPlayer):
     given by a game analyzer, using the softmax function to calculate probabilities.
     """
     
-    def __init__(self) -> None:
+    def __init__(self, name="Hard AI") -> None:
         
         """
         Initializes the EasyAI player with a name and links to a game analyser.
@@ -31,7 +31,7 @@ class HardAIPlayer(AIPlayer):
             name (str): The name of the player.
         """
         
-        super().__init__("Hard AI")
+        super().__init__(name)
         
         self.__strength__ : int = 3
     
