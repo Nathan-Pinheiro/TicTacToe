@@ -1,222 +1,113 @@
-## Interface
-
-"""
-Welcome Page Module
-
-This module provides the implementation of the welcome page for the Tic Tac Toe game using the tkinter library.
-
-Classes:
-    Welcome: Represents the welcome page of the Tic Tac Toe game.
-
-Functions:
-    __init__(self, parent: tk.Frame, controller: tk.Tk) -> bool:
-        Initialize the welcome page with the given parent and controller.
-        
-    show(self) -> bool:
-        Show the welcome page.
-        
-    hide(self) -> bool:
-        Hide the welcome page.
-        
-    startGame(self) -> bool:
-        Start the game when the "Start Game" button is pressed.
-    
-    __drawGrid__(self, size: int) -> bool:
-        private method
-        Draw the grid on the canvas.
-        
-    __adjustButtonSize__(self, width: int) -> bool:
-        private method
-        Adjust the button size based on the window width.
-    
-    __onResize__(self, event: tk.Event) -> bool:
-        private method
-        Resize the elements on the page based on the window size.
-        
-    __adjustFontSizes__(self, width: int) -> bool:
-        private method
-        Adjust the font sizes based on the window width.
-        
-    __centerCanvas__(self) -> bool:
-        private method
-        Center the canvas on the page.
-        
-    __resetCanvasPosition__(self) -> bool:
-        private method
-        Reset the canvas position on the page.
-        
-    goToSettings(self) -> bool:
-        Navigate to the settings page.
-"""
-
-# ---------------------------------------------------------------------------------------------------- #
-
-## Implementation
-
-# Import #
 import tkinter as tk
 from tkinter import ttk
 from modules.GUI.draft.grid import drawGrid
 from modules.utils.decorator import privatemethod
 from modules.GUI.pages.page import Page
 from modules.GUI.render import PageName
+from PIL import Image, ImageTk
+import cv2
+import numpy as np
 
 class Welcome(Page):
-    ## Initialize the welcome page with the given parent and controller.
-    #
-    # @param parent The parent frame.
-    # @param controller The controller for the page.
-    # @return bool True if the function succeeds, False otherwise.
     def __init__(self, parent: tk.Frame, controller: tk.Tk) -> None:
         super().__init__(parent, controller)
 
-        # Main grid configuration
+        # Configuration principale de la grille
         self.grid_rowconfigure(0, weight=1)
-        self.grid_rowconfigure(1, weight=2)
+        self.grid_rowconfigure(1, weight=5)
         self.grid_rowconfigure(2, weight=1)
+        self.grid_rowconfigure(3, weight=1)
         self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=2)
+        self.grid_columnconfigure(1, weight=1)
 
-        # Title "Tic Tac Toe"
-        self.titleLabel = ttk.Label(self, text="Tic Tac Toe", font=("Arial", 48, "bold"))
-        self.titleLabel.grid(row=0, column=0, columnspan=2, pady=(50, 0), padx=0, sticky="n")
+        # Titre "Tic Tac Toe"
+        self.titleLabel = ttk.Label(self, text="Tic Tac Toe", font=("Arial", 48, "bold"), foreground="white")
+        self.titleLabel.grid(row=0, columnspan=2, pady=(20, 10), sticky="n")
 
-        # Lorem Ipsum text
-        self.textLabel = ttk.Label(self, 
-                                    text=("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent rutrum tellus "
-                                          "non ante euismod, id blandit massa auctor. Quisque urna tellus, sodales at ante nec," 
-                                          " pharetra tincidunt ante."), 
-                                    wraplength=600, 
-                                    justify="left",
-                                    font=("Arial", 20))
-        self.textLabel.grid(row=1, column=0, pady=(5, 5), padx=(100, 10), sticky="w")
+        # Texte d'introduction
+        self.textTitleLabel = ttk.Label(
+            self,
+            text=(
+                "Ready to take on the challenge?\n\n"
+            ),
+            wraplength=600,
+            justify="center",
+            font=("Arial", 36, "bold"),
+            foreground="white"
+        )
+        self.textTitleLabel.grid(row=1, column=0, pady=125, padx=125, sticky="n")
+        
+        self.textDescriptionLabel = ttk.Label(
+            self,
+            text=(
+                "Challenge your friends or test your skills against the computer in thrilling games of Tic-Tac-Toe! "
+                "Simple yet strategic, every move can change the course of the game. Choose your symbol, place it, "
+                "and be the first to align three symbols (or not) to win!"
+            ),
+            wraplength=600,
+            justify="center",
+            font=("Arial", 28),
+            foreground="white"
+        )
+        self.textDescriptionLabel.grid(row=1, column=0, pady=125, padx=100, sticky="s")
+        
+        self.Image = self.loadPngImage("./static/assets/Board.png")
+        
+        self.boardImage = ttk.Label(self, image=self.Image)
 
-        # Unique canvas for the grid and symbols
-        self.gridCanvas = tk.Canvas(self, bg="#333", highlightthickness=0)
-        self.gridCanvas.grid(row=1, column=1, pady=0, padx=(10, 100), sticky="e")
+        self.boardImage.grid(row=1, column=1, rowspan=2, padx=125, sticky="ns")
 
-        # "Settings" button
-        self.settingsButton = ttk.Button(self, text="Settings", command=self.goToSettings)
-        self.settingsButton.grid(row=2, column=0, columnspan=2, pady=50, sticky="s")
+        # Bouton "Go!"
+        self.startButton = ttk.Button(self, text="Go !", command=self.startGame)
+        self.startButton.grid(row=3, columnspan=2, pady=(20, 40), sticky="s")
 
-        # Dynamic resizing
+        # Redimensionnement dynamique
         self.bind("<Configure>", self.__onResize__)
 
-        return None
-
-    ## Show the welcome page.
-    #
-    # @return bool True if the function succeeds, False otherwise.
     def show(self) -> bool:
         self.grid()
         return True
 
-    ## Hide the welcome page.
-    #
-    # @return bool True if the function succeeds, False otherwise.
     def hide(self) -> bool:
-        self.gridRemove()
+        self.grid_remove()
         return True
 
     @privatemethod
     def __drawGrid__(self, size: int) -> bool:
-        if not isinstance(size, int):
-            raise TypeError("size must be an integer")
-
         cellSize = size // 3
 
         board = [
             ['X', 'O', '△'],
-            ['⬡', '★', '▢'],
-            ['◊', '#', '']
+            ['', '', ''],
+            ['', '', '']
         ]
 
-        playerSymbols = ['X', 'O', '△', '⬡', '★', '▢', '◊']
-        playerColors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFFFFF']
+        playerSymbols = ['X', 'O', '△']
+        playerColors = ['#FF0000', '#00FF00', '#0000FF']
 
-        if not drawGrid(self.gridCanvas, size, size, cellSize, board, playerSymbols=playerSymbols, playerColors=playerColors):
-            raise RuntimeError("Failed to draw grid")
-
-        return True
-
-    @privatemethod
-    def __adjustButtonSize__(self, width: int) -> bool:
-        if not isinstance(width, int):
-            raise TypeError("width must be an integer")
-
-        buttonFontSize = max(18, int(width * 0.01))
-
-        style = ttk.Style()
-        style.configure("TButton", font=("Arial", buttonFontSize))
-
+        drawGrid(self.gridCanvas, size, size, cellSize, board, playerSymbols=playerSymbols, playerColors=playerColors)
         return True
 
     @privatemethod
     def __onResize__(self, event: tk.Event) -> bool:
-        if not isinstance(event, tk.Event):
-            raise TypeError("event must be an tk.Event instance")
-
-        size = min(event.width, event.height) * 0.6
+        size = min(event.width, event.height) * 0.5
         size = int(size) - (int(size) % 2)
 
         self.gridCanvas.config(width=size, height=size)
-
-        if not self.__drawGrid__(size):
-            raise RuntimeError("Failed to draw grid")
-
-        if not self.__adjustFontSizes__(event.width):
-            raise RuntimeError("Failed to adjust font sizes")
-
-        if not self.__adjustButtonSize__(event.width):
-            raise RuntimeError("Failed to adjust button size")
-
+        self.__drawGrid__(size)
         return True
 
-    @privatemethod
-    def __adjustFontSizes__(self, width: int) -> bool:
-        if not isinstance(width, int):
-            raise TypeError("width must be an integer")
-
-        titleFontSize = max(20, int(width * 0.03))
-        textFontSize = max(12, int(width * 0.015))
-        
-        wrapLength = width / 2 - 110
-
-        self.titleLabel.config(font=("Arial", titleFontSize, "bold"))
-        self.textLabel.config(font=("Arial", textFontSize), wraplength=wrapLength)
-
-        if width < 900:
-            self.textLabel.gridRemove()
-            if not self.__centerCanvas__():
-                raise RuntimeError("Failed to center canvas")
-        else:
-            self.textLabel.grid()
-            if not self.__resetCanvasPosition__():
-                raise RuntimeError("Failed to reset canvas position")
-
-        return True
-
-    @privatemethod
-    def __centerCanvas__(self) -> bool:
-        self.gridCanvas.grid_configure(row=1, column=0, columnspan=2, pady=0, padx=0, sticky="nsew")
-        self.gridCanvas.place(relx=0.5, rely=0.5, anchor="center")
-
-        return True
-
-    @privatemethod
-    def __resetCanvasPosition__(self) -> bool:
-        self.gridCanvas.grid_configure(row=1, column=1, pady=0, padx=(10, 100), sticky="e")
-
-        return True
-
-    ## Start the game when the "Start Game" button is pressed.
-    #
-    # @return bool True if the function succeeds, False otherwise.
     def startGame(self) -> bool:
-        return self.controller.showFrame(PageName.GAME)
-
-    ## Navigate to the settings page.
-    #
-    # @return bool True if the function succeeds, False otherwise.
-    def goToSettings(self) -> bool:
         return self.controller.showFrame(PageName.SETTINGS)
+    
+    
+    ## Load a PNG image from the given file path.
+    #
+    # @param filePath The path to the PNG file.
+    # @return ImageTk.PhotoImage The loaded image.
+    def loadPngImage(self, filePath: str) -> ImageTk.PhotoImage:
+        image = Image.open(filePath)
+        image = np.array(image)
+        image = cv2.resize(image, (600, 600))
+        image = Image.fromarray(image)
+        return ImageTk.PhotoImage(image)

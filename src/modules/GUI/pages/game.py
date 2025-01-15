@@ -58,10 +58,16 @@ from PIL import Image, ImageTk
 from modules.GUI.draft.grid import drawGrid
 from modules.models.tic_tac_toe.game_outcome import GameOutcomeStatus
 from modules.models.tic_tac_toe.players.ai_players.v5_transpostion_table import MinimaxTranspositionTablePlayer
+from modules.models.tic_tac_toe.players.ai_players.v4_better_move_order_player import MinimaxBetterMoveOrderingPlayer
+from modules.models.tic_tac_toe.players.ai_player import AIPlayer
 from modules.utils.decorator import privatemethod
 from modules.models.tic_tac_toe.tic_tac_toe_game import TicTacToeGame
 from modules.GUI.pages.page import Page
 from modules.GUI.render import PageName
+
+
+from modules.models.tic_tac_toe.players.ai_player import AIPlayer
+
 
 class Game(Page):
     ## Initialize the game page with the given parent and controller.
@@ -224,7 +230,7 @@ class Game(Page):
     # @return bool True if the function succeeds, False otherwise.
     def checkAndPlayAi(self) -> bool:
         try:
-            if isinstance(self.ticTacToeGame.getPlayerToPlay(), MinimaxTranspositionTablePlayer):
+            if isinstance(self.ticTacToeGame.getPlayerToPlay(), MinimaxBetterMoveOrderingPlayer):
                 self.after(500, self.__playNextAiMove__)
             return True
         except Exception as e:
