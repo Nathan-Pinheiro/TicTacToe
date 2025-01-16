@@ -7,7 +7,7 @@ class TypeSelector(ctk.CTkFrame):
 
     def __init__(self, parent, type="human", **kwargs):
         super().__init__(parent, **kwargs)
-        self.types = ["human", "easy"]
+        self.types = ["human", "easy", "medium", "hard"]
         if type not in self.types:
             type = self.types[0]
         self.type = type
@@ -25,7 +25,9 @@ class TypeSelector(ctk.CTkFrame):
     def load_images(self):
         self.images = {
             "human": ImageTk.PhotoImage(Image.open("./assets/Human.png").resize((100, 100))),
-            "easy": ImageTk.PhotoImage(Image.open("./assets/Robot.png").resize((100, 100)))
+            "easy": ImageTk.PhotoImage(Image.open("./assets/Easy.png").resize((100, 100))),
+            "medium": ImageTk.PhotoImage(Image.open("./assets/Medium.png").resize((100, 100))),
+            "hard": ImageTk.PhotoImage(Image.open("./assets/Hard.png").resize((100, 100)))
         }
 
     def draw_type(self):

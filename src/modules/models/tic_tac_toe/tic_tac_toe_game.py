@@ -90,6 +90,7 @@ from modules.models.entities.star import Star
 from modules.models.entities.rhombus import Rhombus
 from modules.models.entities.square import Square
 from modules.utils.decorator import privatemethod
+from modules.models.tic_tac_toe.moves.power_ups.bomb_move import BombMove
 import random
 
 class TicTacToeGame:
@@ -139,6 +140,8 @@ class TicTacToeGame:
             return UnalignVictory(self.settings['game']['nbSymbols'], 2)
         
     def __createPlayersData__(self, nbPlayers) -> list[TicTacToePlayerData]:
+        #if self.settings['game']['gamemode'] == 'Bomb mod':
+        #    return [TicTacToePlayerData([BombMove]) for _ in range(nbPlayers)]
         return [TicTacToePlayerData([]) for _ in range(nbPlayers)]
     
     def __createStartingPlayer__(self) -> int:
