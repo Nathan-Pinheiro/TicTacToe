@@ -39,7 +39,7 @@ from modules.utils.validators import isValidSymbol, isHexColor
 # @param playerColors A list of colors corresponding to the player symbols.
 # @param coord Whether to draw coordinates around the grid.
 # @return bool True if the function succeeds, False otherwise.
-def drawGrid(canvas: tk.Canvas, width: int, height: int, cellSize: int, board: list[list[str]] = None, lineColor: str = "white", lineWidth: int = 1, playerSymbols: list[str] = ["X", "O"], playerColors: list[str] = ["#FFFFFF", "#FF00FF"], coord: bool = True) -> bool:
+def drawGrid(canvas: tk.Canvas, width: int, height: int, cellSize: int, board: list[list[str]] = None, lineColor: str = "#FFFFFF", lineWidth: int = 1, playerSymbols: list[str] = ["X", "O"], playerColors: list[str] = ["#FFFFFF", "#FF00FF"], coord: bool = True) -> bool:
     # Validate parameters
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
@@ -68,13 +68,7 @@ def drawGrid(canvas: tk.Canvas, width: int, height: int, cellSize: int, board: l
     canvas.delete("all")
 
     # Draw the gray square (background)
-    canvas.create_rectangle(0, 0, height, width, fill="#4b4b4b", outline="")
-
-    # Draw white lines (horizontal and vertical)
-    for i in range(1, height // cellSize):
-        canvas.create_line(0, i * cellSize, width, i * cellSize, fill=lineColor, width=lineWidth)
-    for i in range(1, width // cellSize):
-        canvas.create_line(i * cellSize, 0, i * cellSize, height, fill=lineColor, width=lineWidth)
+    canvas.create_rectangle(0, 0, width, height, fill="#4b4b4b", outline="")
 
     # Draw symbols if a board is provided
     if board and playerSymbols and playerColors:
@@ -94,6 +88,12 @@ def drawGrid(canvas: tk.Canvas, width: int, height: int, cellSize: int, board: l
     if coord:
         if not drawCoordinates(canvas, width, height, cellSize):
             raise RuntimeError("Failed to draw coordinates")
+
+    # Draw white lines (horizontal and vertical)
+    for i in range(1, height // cellSize):
+        canvas.create_line(0, i * cellSize, width, i * cellSize, fill=lineColor, width=lineWidth)
+    for i in range(1, width // cellSize):
+        canvas.create_line(i * cellSize, 0, i * cellSize, height, fill=lineColor, width=lineWidth)
 
     return True
 

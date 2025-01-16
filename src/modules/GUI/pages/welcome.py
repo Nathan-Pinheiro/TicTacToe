@@ -33,8 +33,8 @@ class Welcome(Page):
         
         # Right image
         image = ctk.CTkImage(   
-                            light_image=Image.open("./src/assets/Board.png"),
-                            dark_image=Image.open("./src/assets/Board.png"),
+                            light_image=Image.open("./assets/Board.png"),
+                            dark_image=Image.open("./assets/Board.png"),
                             size=(int(600 * width_ratio), int(600 * height_ratio))
                                 )          
         ctk.CTkLabel(self, image=image, text="").grid(row=1, column=1, pady=(int(80 * height_ratio),0))

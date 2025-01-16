@@ -24,8 +24,8 @@ class TypeSelector(ctk.CTkFrame):
 
     def load_images(self):
         self.images = {
-            "human": ImageTk.PhotoImage(Image.open("./src/assets/Human.png").resize((100, 100))),
-            "easy": ImageTk.PhotoImage(Image.open("./src/assets/Robot.png").resize((100, 100)))
+            "human": ImageTk.PhotoImage(Image.open("./assets/Human.png").resize((100, 100))),
+            "easy": ImageTk.PhotoImage(Image.open("./assets/Robot.png").resize((100, 100)))
         }
 
     def draw_type(self):

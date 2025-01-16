@@ -71,7 +71,7 @@ class App(ctk.CTk):
         if geometry is not None:
             self.geometry(geometry)
         else:
-            self.attributes("-fullscreen", True)
+            self.attributes("-fullscreen", False)
             
         self.bind("<Escape>", self.__closeWindow__)
         self.frames: Dict[str, Page] = {}

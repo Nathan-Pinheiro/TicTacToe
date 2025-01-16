@@ -98,12 +98,13 @@ class TicTacToeGame:
         self.board = self.__createBoard__()
         self.gameDirector = self.__initializeGame__()
         self.gameState = self.gameDirector.getGameState()
+        self.gameHistory = []
         return None
     
     def __createBoard__(self) -> OptimizedBoard:
-        entities = [self.__getEntityBySymbol__(self.settings['player1']['symbol']), self.__getEntityBySymbol__(self.settings['player2']['symbol'])]
+        self.entities = [self.__getEntityBySymbol__(self.settings['player1']['symbol']), self.__getEntityBySymbol__(self.settings['player2']['symbol'])]
 
-        board = BoardBuilder(entities).setWidth(self.settings['board']['width']).setHeight(self.settings['board']['height'])
+        board = BoardBuilder(self.entities).setWidth(self.settings['board']['width']).setHeight(self.settings['board']['height'])
         
         shape = {
             'Pyramidal': PyramidalShape(),
@@ -159,11 +160,15 @@ class TicTacToeGame:
         if isinstance(currentPlayer, HumanPlayer):
             move = currentPlayer.get_choice(self.gameState, line, column)
             move.play(self.board, self.gameState.getPlayerToPlayIndex())
+            self.gameHistory.append(move)
+            print(self.gameHistory)
             return self.gameState.checkWin()
         
         if isinstance(currentPlayer, AIPlayer):
             move = currentPlayer.get_choice(self.gameState)
             move.play(self.board, self.gameState.getPlayerToPlayIndex())
+            self.gameHistory.append(move)
+            print(self.gameHistory)
             return self.gameState.checkWin()
         
         return None
@@ -173,113 +178,28 @@ class TicTacToeGame:
         if isinstance(currentPlayer, AIPlayer):
             move = currentPlayer.get_choice(self.gameState)
             move.play(self.board, self.gameState.getPlayerToPlayIndex())
+            self.gameHistory.append(move)
+            print(self.gameHistory)
             return self.gameState.checkWin()
         return None
     
     def getPlayerToPlay(self) -> Player:
         return self.gameDirector.getPlayerToPlay()
-
-    def setNumberOfPlayers(self, numPlayers: int) -> bool:
-        try:
-            currentNumPlayers = len(self.players)
-            
-            if numPlayers > currentNumPlayers:
-                for i in range(currentNumPlayers, numPlayers):
-                    self.players.append(MinimaxBetterMoveOrderingPlayer(4, False))
-                    self.playerEntities.append(self.__getDefaultEntity__(i))
-                    self.playersData.append(PlayerData([]))
-            
-            elif numPlayers < currentNumPlayers:
-                self.players = self.players[:numPlayers]
-                self.playerEntities = self.playerEntities[:numPlayers]
-                self.playersData = self.playersData[:numPlayers]
-            return True
-        except Exception as e:
-            print(f"Error setting number of players: {e}")
-            return False
-
-    def setBoardSize(self, width: int, height: int) -> bool:
-        try:
-            self.width = width
-            self.height = height
-            return True
-        except Exception as e:
-            print(f"Error setting board size: {e}")
-            return False
-
-    def setPlayerType(self, playerIndex: int, isHuman: bool) -> bool:
-        try:
-            if playerIndex >= len(self.players):
-                raise IndexError(f"Player index {playerIndex} is out of range. Total players: {len(self.players)}")
-            if isHuman:
-                self.players[playerIndex] = HumanPlayer(f"Player {playerIndex + 1}")
-            else:
-                self.players[playerIndex] = MinimaxBetterMoveOrderingPlayer(4, False)
-            return True
-        except Exception as e:
-            print(f"Error setting player type: {e}")
-            return False
-            
-    def setPlayerSymbol(self, playerIndex: int, symbol: str) -> bool:
-        try:
-            if playerIndex >= len(self.players):
-                raise IndexError(f"Player index {playerIndex} is out of range. Total players: {len(self.players)}")
-            self.playerEntities[playerIndex] = self.__getEntityBySymbol__(symbol)
-            return True
-        except Exception as e:
-            print(f"Error setting player symbol: {e}")
-            return False
-            
-    def setPlayerColor(self, playerIndex: int, color: str) -> bool:
-        try:
-            if playerIndex >= len(self.players):
-                raise IndexError(f"Player index {playerIndex} is out of range. Total players: {len(self.players)}")
-            self.players[playerIndex].setColor(color)
-            return True
-        except Exception as e:
-            print(f"Error setting player color: {e}")
-            return False
-        
-    def setIsPyramidal(self, isPyramidal: bool) -> bool:
-        try:
-            if isPyramidal:
-                self.board = BoardBuilder(self.playerEntities).setHeight(self.height).setWidth(self.width).setShape(PyramidalShape()).buildOptimizedBoard()
-            else:
-                self.board = BoardBuilder(self.playerEntities).setHeight(self.height).setWidth(self.width).buildOptimizedBoard()
-            if not self.initializeGame():
-                return False
-            return True
-        except Exception as e:
-            print(f"Error setting isPyramidal: {e}")
-            return False
-        
-    def setSymbolsToAlign(self, symbolsToAlign: int) -> bool:
-        try:
-            self.winCondition = AlignVictory(symbolsToAlign)
-            return True
-        except Exception as e:
-            print(f"Error setting symbols to align: {e}")
-            return False
-        
-    def setPlayerName(self, playerNames: list[str]) -> bool:
-        try:
-            for i in range(len(playerNames)):
-                self.players[i].setName(playerNames[i])
-            return True
-        except Exception as e:
-            print(f"Error setting player names: {e}")
-            return False
         
     def getBoard(self) -> Board:
         return self.board
-
-    @privatemethod
-    def __getDefaultEntity__(self, index: int) -> Entity:
-        entities = [Cross(), Circle(), Triangle(), Hexagon()]
-        return entities[index % len(entities)]
     
     def getGameState(self) -> TicTacToeGameState:
         return self.gameState
+
+    def getGameDirector(self) -> GameDirector:
+        return self.gameDirector
+
+    def getEntities(self) -> list[Entity]:
+        return self.entities
+
+    def getGameHistory(self) -> list:
+        return self.gameHistory
 
     @privatemethod
     def __getEntityBySymbol__(self, symbol: str) -> Entity:
