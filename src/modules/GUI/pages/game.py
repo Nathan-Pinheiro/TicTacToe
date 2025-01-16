@@ -11,6 +11,7 @@ from modules.models.board_game.game.game_outcome import GameOutcomeStatus
 from modules.models.tic_tac_toe.players.ai_players.easy_ai_player import EasyAIPlayer
 from modules.models.tic_tac_toe.players.ai_players.medium_ai_player import MediumAIPlayer
 from modules.models.tic_tac_toe.players.ai_players.hard_ai_player import HardAIPlayer
+from modules.models.tic_tac_toe.players.human_player import HumanPlayer
 
 class Game(Page):
     def __init__(self, parent: ctk.CTkFrame, controller: ctk.CTk) -> None:
@@ -20,6 +21,8 @@ class Game(Page):
         self.board = None
         self.cellSize = 100
         self.moveHistory = []
+        self.turn = 1
+        self.gameOutCome = None
         self.grid_columnconfigure(0, weight=2)
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -33,7 +36,7 @@ class Game(Page):
         return True
     
     def __createWidgets__(self) -> None:
-        width_ratio, height_ratio = self.getScreenRatio()
+        self.width_ratio, self.height_ratio = self.getScreenRatio()
         
         # Right board
         nbCellWidth = 7
@@ -45,57 +48,57 @@ class Game(Page):
         self.grid_canvas.grid(row=0, rowspan=2, column=0)
         
         # Right frame
-        right_frame = ctk.CTkFrame(self, fg_color="#333333")
-        right_frame.grid(row=0, rowspan=3, column=1, sticky="nsew")
-        right_frame.grid_columnconfigure(0, weight=1)
-        right_frame.grid_columnconfigure(1, weight=1)
-        right_frame.grid_columnconfigure(2, weight=1)
-        right_frame.grid_columnconfigure(3, weight=1)
-        right_frame.grid_rowconfigure(0, weight=1)
-        right_frame.grid_rowconfigure(1, weight=1)
-        right_frame.grid_rowconfigure(2, weight=1)
+        self.right_frame = ctk.CTkFrame(self, fg_color="#333333")
+        self.right_frame.grid(row=0, rowspan=3, column=1, sticky="nsew")
+        self.right_frame.grid_columnconfigure(0, weight=1)
+        self.right_frame.grid_columnconfigure(1, weight=1)
+        self.right_frame.grid_columnconfigure(2, weight=1)
+        self.right_frame.grid_columnconfigure(3, weight=1)
+        self.right_frame.grid_rowconfigure(0, weight=1)
+        self.right_frame.grid_rowconfigure(1, weight=1)
+        self.right_frame.grid_rowconfigure(2, weight=1)
         
         # Turn label
-        self.turn_label = ctk.CTkLabel(right_frame, text="Turn 1", justify="center", font=("Arial", int(32 * height_ratio), "bold"), text_color="#FFFFFF")
-        self.turn_label.grid(row=0, column=0, columnspan=4, pady=(int(20 * height_ratio), 0), sticky="n")
+        self.turn_label = ctk.CTkLabel(self.right_frame, text="Turn 1", justify="center", font=("Arial", int(32 * self.height_ratio), "bold"), text_color="#FFFFFF")
+        self.turn_label.grid(row=0, column=0, columnspan=4, pady=(int(20 * self.height_ratio), 0), sticky="n")
         
         # Player turn label
-        self.player_turn_label = ctk.CTkLabel(right_frame, text="It's up to Player 1 to play", justify="center", font=("Arial", int(24 * height_ratio)), text_color="#FFFFFF")
-        self.player_turn_label.grid(row=0, column=0, columnspan=4, pady=(int(80 * height_ratio), 0), sticky="n")
+        self.player_turn_label = ctk.CTkLabel(self.right_frame, text="It's up to Player 1 to play", justify="center", font=("Arial", int(24 * self.height_ratio)), text_color="#FFFFFF")
+        self.player_turn_label.grid(row=0, column=0, columnspan=4, pady=(int(80 * self.height_ratio), 0), sticky="n")
         
         # Scrollable frame with history of plays
-        self.scrollFrame = ctk.CTkScrollableFrame(right_frame, width=200, height=200)
-        self.scrollFrame.grid(row=1, column=0, columnspan=4, padx=int(60 * width_ratio), sticky="nsew")
+        self.scrollFrame = ctk.CTkScrollableFrame(self.right_frame, width=200, height=200)
+        self.scrollFrame.grid(row=1, column=0, columnspan=4, padx=int(60 * self.width_ratio), sticky="nsew")
         
         # Bomb button + undo button + redo button + help button
         bomb_image = ctk.CTkImage(   
                             light_image=Image.open("./assets/Bomb.png"),
                             dark_image=Image.open("./assets/Bomb.png"),
-                            size=(int(40 * width_ratio), int(40 * height_ratio))
+                            size=(int(40 * self.width_ratio), int(40 * self.height_ratio))
                                 )    
         bulb_image = ctk.CTkImage(
                             light_image=Image.open("./assets/Bulb.png"),
                             dark_image=Image.open("./assets/Bulb.png"),
-                            size=(int(24 * width_ratio), int(40 * height_ratio))
+                            size=(int(24 * self.width_ratio), int(40 * self.height_ratio))
                                 )
         undo_image = ctk.CTkImage(
                             light_image=Image.open("./assets/Undo.png"),
                             dark_image=Image.open("./assets/Undo.png"),
-                            size=(int(12 * width_ratio), int(24 * height_ratio))
+                            size=(int(12 * self.width_ratio), int(24 * self.height_ratio))
                                 )
         redo_image = ctk.CTkImage(
                             light_image=Image.open("./assets/Redo.png"),
                             dark_image=Image.open("./assets/Redo.png"),
-                            size=(int(12 * width_ratio), int(24 * height_ratio))
+                            size=(int(12 * self.width_ratio), int(24 * self.height_ratio))
                                 )
         
-        ctk.CTkButton(right_frame, text="", image=bomb_image, font=("Arial", int(18 * height_ratio)), command=lambda: self.bomb(), width=40, height=40).grid(row=2, column=0, pady=(0, int(20 * height_ratio)), sticky="es")
-        ctk.CTkButton(right_frame, text="", image=undo_image, font=("Arial", int(18 * height_ratio)), command=lambda: self.undo(), width=40, height=40).grid(row=2, column=1, pady=(0, int(20 * height_ratio)), sticky="s")
-        ctk.CTkButton(right_frame, text="", image=redo_image, font=("Arial", int(18 * height_ratio)), command=lambda: self.redo(), width=40, height=40).grid(row=2, column=2, pady=(0, int(20 * height_ratio)), sticky="s")
-        ctk.CTkButton(right_frame, text="", image=bulb_image, font=("Arial", int(18 * height_ratio)), command=lambda: self.help(), width=40, height=40).grid(row=2, column=3, pady=(0, int(20 * height_ratio)), sticky="ws")
+        ctk.CTkButton(self.right_frame, text="", image=bomb_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.bomb(), width=40, height=40).grid(row=2, column=0, pady=(0, int(20 * self.height_ratio)), sticky="es")
+        ctk.CTkButton(self.right_frame, text="", image=undo_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.undo(), width=40, height=40).grid(row=2, column=1, pady=(0, int(20 * self.height_ratio)), sticky="s")
+        ctk.CTkButton(self.right_frame, text="", image=redo_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.redo(), width=40, height=40).grid(row=2, column=2, pady=(0, int(20 * self.height_ratio)), sticky="s")
+        ctk.CTkButton(self.right_frame, text="", image=bulb_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.help(), width=40, height=40).grid(row=2, column=3, pady=(0, int(20 * self.height_ratio)), sticky="ws")
         
         # Play button
-        ctk.CTkButton(self, text="Leave", font=("Arial", int(32 * height_ratio)), command=lambda: self.redirect()).grid(row=2, column=0)
+        ctk.CTkButton(self, text="Leave", font=("Arial", int(32 * self.height_ratio)), command=lambda: self.redirect()).grid(row=2, column=0)
         
         # Set click event on the grid_canvas
         self.grid_canvas.bind("<Button-1>", self.__handle_click__)
@@ -128,35 +131,44 @@ class Game(Page):
             return False
 
         try:
+            currentPlayer = self.game.getPlayerToPlay()
+            if not isinstance(currentPlayer, HumanPlayer):
+                return False
+            
+            if self.gameOutCome != None and self.gameOutCome.getGameStatus() != GameOutcomeStatus.UNFINISHED:
+                return False
+
             col = event.x // self.cellSize
             row = event.y // self.cellSize
 
             if 0 <= row < self.board.getHeight() and 0 <= col < self.board.getWidth():
                 if self.board.isCaseAvaillable(row, col):
-                    gameOutcome = self.ticTacToeGame.playMove(row, col)
+                    currentPlayer = self.game.getPlayerToPlay()
+                    self.gameOutCome = self.game.playHumainMove(row, col)
                     if not self.__drawBoard__():
                         return False
-                    if gameOutcome.getGameStatus() != GameOutcomeStatus.UNFINISHED:
-                        if not self.__showGameResult__(gameOutcome):
+                    if not self.__updateMoveHistory__(currentPlayer):
+                        return False
+                    if not self.__setTurnLabel__():
+                        return False
+                    if not self.__setPlayerTurn__():
+                        return False
+                    if self.gameOutCome.getGameStatus() != GameOutcomeStatus.UNFINISHED:
+                        if not self.__showGameResult__():
                             return False
+                        return True
                     else:
-                        self.game.gameState.__nextTurn__()
-                        if not self.__setPlayerTurn__():
-                            return False
-                        if not self.__updateMoveHistory__():
-                            return False
                         self.__checkAndPlayAi__()
             return True
         except Exception as e:
             print(f"Error handling click: {e}")
             return False
 
-    def __updateMoveHistory__(self) -> bool:
+    def __updateMoveHistory__(self, currentPlayer) -> bool:
         move = self.game.getGameHistory()[-1]
         moveLine = move.getCoordinate().getLine()
         moveColumn = move.getCoordinate().getColumn()
-        playerIndex = (self.game.getGameState().getPlayerToPlayIndex() + 1) % 2  # Fix player index
-        self.moveHistory.append(f"Player {playerIndex + 1} played at ({chr(65 + moveColumn)}, {moveLine + 1})")
+        self.moveHistory.append(f"{currentPlayer.getName()} played at ({chr(65 + moveColumn)}, {moveLine + 1})")
         for widget in self.scrollFrame.winfo_children():
             widget.destroy()
         for move in self.moveHistory:
@@ -184,6 +196,11 @@ class Game(Page):
         self.game = None
         self.board = None
         self.moveHistory = []
+        self.turn = 1
+        for widget in self.scrollFrame.winfo_children():
+            widget.destroy()
+        self.grid_canvas.delete("all")
+        self.gameOutCome = None
         return True
     
     def start_game(self, settings) -> bool:
@@ -202,8 +219,6 @@ class Game(Page):
         return True
     
     def __setPlayerTurn__(self) -> bool:
-        if not isinstance(self.game, TicTacToeGame):
-            return False
         currentPlayer = self.game.getPlayerToPlay()
         self.player_turn_label.configure(text=f"It's up to {currentPlayer.getName()} to play")
         return True 
@@ -222,24 +237,39 @@ class Game(Page):
         
     def __playNextAiMove__(self) -> bool:
         try:
-            gameOutcome = self.game.playAiMove()
+            currentPlayer = self.game.getPlayerToPlay()
+            self.gameOutCome = self.game.playAiMove()
             if not self.__drawBoard__():
                 return False
-            if gameOutcome.getGameStatus() != GameOutcomeStatus.UNFINISHED:
-                if not self.__showGameResult__(gameOutcome):
-                    return False
-            else:
-                self.game.gameState.__nextTurn__()
-                self.__checkAndPlayAi__()
+            if not self.__updateMoveHistory__(currentPlayer):
+                return False
+            if not self.__setTurnLabel__():
+                return False
             if not self.__setPlayerTurn__():
                 return False
-            if not self.__updateMoveHistory__():
-                return False
+            if self.gameOutCome.getGameStatus() != GameOutcomeStatus.UNFINISHED:
+                if not self.__showGameResult__():
+                    return False
+                return True
+            else:
+                self.__checkAndPlayAi__()
             return True
         except Exception as e:
             print(f"Error playing next AI move: {e}")
             return False
         
-    def __showGameResult__(self, gameOutcome) -> bool:
-        print(f"Game outcome: {gameOutcome}")
+    def __setTurnLabel__(self) -> bool:
+        self.turn += 1
+        self.turn_label.configure(text=f"Turn {int(self.turn/2)}")
+        return True
+        
+    def __showGameResult__(self) -> bool:
+        if self.gameOutCome.getGameStatus() == GameOutcomeStatus.VICTORY:
+            winner = self.gameOutCome.getWinner()
+            resultText = f"{self.settings['player1']['name']} won!" if winner == 0 else f"{self.settings['player2']['name']} won!"
+        else:
+            resultText = "It's a draw!"
+        
+        self.turn_label.configure(text=resultText)
+        self.player_turn_label.configure(text="")
         return True

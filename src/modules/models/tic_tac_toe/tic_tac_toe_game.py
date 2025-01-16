@@ -154,21 +154,14 @@ class TicTacToeGame:
         
         return GameDirector(self.board, winCondition, players, playersData, startingPlayer)
 
-    def playMove(self, line: int, column: int) -> GameOutcome:
+    def playHumainMove(self, line: int, column: int) -> GameOutcome:
         currentPlayer = self.gameDirector.getPlayerToPlay()
         
         if isinstance(currentPlayer, HumanPlayer):
             move = currentPlayer.get_choice(self.gameState, line, column)
             move.play(self.board, self.gameState.getPlayerToPlayIndex())
             self.gameHistory.append(move)
-            print(self.gameHistory)
-            return self.gameState.checkWin()
-        
-        if isinstance(currentPlayer, AIPlayer):
-            move = currentPlayer.get_choice(self.gameState)
-            move.play(self.board, self.gameState.getPlayerToPlayIndex())
-            self.gameHistory.append(move)
-            print(self.gameHistory)
+            self.gameState.__nextTurn__()
             return self.gameState.checkWin()
         
         return None
@@ -179,7 +172,7 @@ class TicTacToeGame:
             move = currentPlayer.get_choice(self.gameState)
             move.play(self.board, self.gameState.getPlayerToPlayIndex())
             self.gameHistory.append(move)
-            print(self.gameHistory)
+            self.gameState.__nextTurn__()
             return self.gameState.checkWin()
         return None
     

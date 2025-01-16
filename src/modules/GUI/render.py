@@ -156,6 +156,9 @@ class App(ctk.CTk):
             if not self.frames[PageName.FIRSTSETTINGS.value].reset_settings():
                 print("Error: Failed to reset settings for FirstSettings")
                 return False
+            if not self.frames[PageName.GAME.value].reset_game():
+                print("Error: Failed to reset game for Game")
+                return False
         elif pageName == PageName.FIRSTSETTINGS:
             if not self.frames[PageName.SECONDSETTINGS.value].reset_settings():
                 print("Error: Failed to reset settings for FirstSettings")
