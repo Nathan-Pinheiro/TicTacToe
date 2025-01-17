@@ -205,7 +205,6 @@ class Game(Page):
     
     def start_game(self, settings) -> bool:
         self.settings = settings
-        print(f"Starting game with settings: {settings}")
         self.game = TicTacToeGame(self.settings)
         self.board = self.game.getBoard()
         self.grid_canvas.configure(width=self.cellSize * self.board.getWidth(), height=self.cellSize * self.board.getHeight())

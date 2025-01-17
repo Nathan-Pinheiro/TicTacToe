@@ -140,8 +140,8 @@ class TicTacToeGame:
             return UnalignVictory(self.settings['game']['nbSymbols'], 2)
         
     def __createPlayersData__(self, nbPlayers) -> list[TicTacToePlayerData]:
-        #if self.settings['game']['gamemode'] == 'Bomb mod':
-        #    return [TicTacToePlayerData([BombMove]) for _ in range(nbPlayers)]
+        if self.settings['game']['gamemode'] == 'Bomb mod':
+            return [TicTacToePlayerData([BombMove]) for _ in range(nbPlayers)]
         return [TicTacToePlayerData([]) for _ in range(nbPlayers)]
     
     def __createStartingPlayer__(self) -> int:
