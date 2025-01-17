@@ -174,6 +174,7 @@ class TicTacToeGame:
         if isinstance(currentPlayer, AIPlayer):
             move = currentPlayer.get_choice(self.gameState)
             move.play(self.board, self.gameState.getPlayerToPlayIndex())
+            print(self.gameState.getPlayerData(self.gameState.getPlayerToPlayIndex()).getPowerUpMoves())
             self.gameHistory.append(move)
             self.gameState.__nextTurn__()
             return self.gameState.checkWin()
