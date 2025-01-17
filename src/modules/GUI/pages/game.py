@@ -171,8 +171,9 @@ class Game(Page):
         self.moveHistory.append(f"{currentPlayer.getName()} played at ({chr(65 + moveColumn)}, {moveLine + 1})")
         for widget in self.scrollFrame.winfo_children():
             widget.destroy()
-        for move in self.moveHistory:
-            ctk.CTkLabel(self.scrollFrame, text=move, font=("Arial", 14), text_color="#FFFFFF").pack(anchor="w")
+        for move, player in zip(self.moveHistory, self.game.getPlayers()):
+            color = self.settings['player1']['color'] if player.getName() == self.settings['player1']['name'] else self.settings['player2']['color']
+            ctk.CTkLabel(self.scrollFrame, text=move, font=("Arial", 14), text_color=color).pack(anchor="w")
         return True
 
     def bomb(self) -> bool:
