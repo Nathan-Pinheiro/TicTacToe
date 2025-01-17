@@ -63,62 +63,108 @@ Functions:
         Get the entity corresponding to a symbol.
 """
 
-from modules.models.board_components.board import Board
-from modules.models.board_components.board_builder import BoardBuilder
-from modules.models.board_components.board_shapes.pyramidal_shape import PyramidalShape
-from modules.models.board_components.entity import Entity
+from modules.models.board_game.board.board import Board
+from modules.models.board_game.board.board_builder import BoardBuilder
+from modules.models.board_game.board.components.board_shapes.pyramidal_shape import PyramidalShape
+from modules.models.board_game.board.components.board_shapes.circular_shape import CircularShape
+from modules.models.board_game.board.components.board_shapes.diamond_shape import DiamondShape
+from modules.models.board_game.components.entity import Entity
 from modules.models.entities.triangle import Triangle
 from modules.models.entities.hexagon import Hexagon
 from modules.models.tic_tac_toe.tic_tac_toe_game_director import GameDirector
-from modules.models.tic_tac_toe.game_outcome import GameOutcome
+from modules.models.board_game.game.game_outcome import GameOutcome
 from modules.models.tic_tac_toe.tic_tac_toe_game_state import TicTacToeGameState
 from modules.models.tic_tac_toe.tic_tac_toe_player import Player
 from modules.models.tic_tac_toe.win_conditions.align_victory import AlignVictory
+from modules.models.tic_tac_toe.win_conditions.unalign_victory import UnalignVictory
 from modules.models.tic_tac_toe.players.human_player import HumanPlayer
 from modules.models.tic_tac_toe.players.ai_player import AIPlayer
-from modules.models.tic_tac_toe.players.ai_players.v5_transpostion_table import MinimaxTranspositionTablePlayer
-from modules.models.tic_tac_toe.players.ai_players.v4_better_move_order_player import MinimaxBetterMoveOrderingPlayer
-from modules.models.tic_tac_toe.player_data import PlayerData
+from modules.models.tic_tac_toe.players.ai_players.easy_ai_player import EasyAIPlayer
+from modules.models.tic_tac_toe.players.ai_players.medium_ai_player import MediumAIPlayer
+from modules.models.tic_tac_toe.players.ai_players.hard_ai_player import HardAIPlayer
+from modules.models.board_game.board.boards.optimized_board import OptimizedBoard
+from modules.models.tic_tac_toe.tic_tac_toe_player_data import TicTacToePlayerData
 from modules.models.entities.circle import Circle
 from modules.models.entities.cross import Cross
 from modules.models.entities.star import Star
 from modules.models.entities.rhombus import Rhombus
 from modules.models.entities.square import Square
 from modules.utils.decorator import privatemethod
+from modules.models.tic_tac_toe.moves.power_ups.bomb_move import BombMove
+import random
 
 class TicTacToeGame:
-    def __init__(self) -> None:
-        self.players = []
-        self.playerEntities = []
-        self.playersData = []
-        self.width = 3
-        self.height = 3
-        self.board = None
-        self.winCondition = AlignVictory(3)
-        self.gameDirector = None
-        self.gameState = None
+    def __init__(self, settings) -> None:
+        self.settings = settings
+        self.board = self.__createBoard__()
+        self.gameDirector = self.__initializeGame__()
+        self.gameState = self.gameDirector.getGameState()
+        self.gameHistory = []
         return None
+    
+    def __createBoard__(self) -> OptimizedBoard:
+        self.entities = [self.__getEntityBySymbol__(self.settings['player1']['symbol']), self.__getEntityBySymbol__(self.settings['player2']['symbol'])]
 
-    def initializeGame(self) -> bool:
-        try:
-            self.gameDirector = GameDirector(self.board, self.winCondition, self.players, self.playersData, 1)
-            self.gameState = self.gameDirector.getGameState()
-            return True
-        except Exception as e:
-            print(f"Error initializing game: {e}")
-            return False
+        board = BoardBuilder(self.entities).setWidth(self.settings['board']['width']).setHeight(self.settings['board']['height'])
+        
+        shape = {
+            'Pyramidal': PyramidalShape(),
+            'Circular': CircularShape(),
+            'Diamond': DiamondShape(),
+            'Random': random.choice([PyramidalShape(), CircularShape(), DiamondShape()]),
+            'No special shape': None
+        }[self.settings['board']['shape']]
+        
+        if shape:
+            board.setShape(shape)
+        
+        return board.buildOptimizedBoard()
+    
+    def __createPlayers__(self) -> list[Player]:
+        playerType = {
+            'human': HumanPlayer,
+            'easy': EasyAIPlayer,
+            'medium': MediumAIPlayer,
+            'hard': HardAIPlayer
+        }
+        
+        playerOne = playerType[self.settings['player1']['type']](self.settings['player1']['name'])
+        playerTwo = playerType[self.settings['player2']['type']](self.settings['player2']['name'])
+        
+        return [playerOne, playerTwo]
+    
+    def __createWinCondition__(self) -> AlignVictory | UnalignVictory:
+        if self.settings['game']['alignToWin']:
+            return AlignVictory(self.settings['game']['nbSymbols'])
+        else:
+            return UnalignVictory(self.settings['game']['nbSymbols'], 2)
+        
+    def __createPlayersData__(self, nbPlayers) -> list[TicTacToePlayerData]:
+        if self.settings['game']['gamemode'] == 'Bomb mod':
+            return [TicTacToePlayerData([BombMove]) for _ in range(nbPlayers)]
+        return [TicTacToePlayerData([]) for _ in range(nbPlayers)]
+    
+    def __createStartingPlayer__(self) -> int:
+        if self.settings['game']['startingPlayer'] == 'Random':
+            return -1
+        return 0 if self.settings['game']['startingPlayer'] == self.settings['player1']['name'] else 1
+    
+    def __initializeGame__(self) -> GameDirector:
+        players = self.__createPlayers__()
+        winCondition = self.__createWinCondition__()
+        playersData = self.__createPlayersData__(len(players))
+        startingPlayer = self.__createStartingPlayer__()
+        
+        return GameDirector(self.board, winCondition, players, playersData, startingPlayer)
 
-    def playMove(self, line: int, column: int) -> GameOutcome:
+    def playHumainMove(self, line: int, column: int) -> GameOutcome:
         currentPlayer = self.gameDirector.getPlayerToPlay()
         
         if isinstance(currentPlayer, HumanPlayer):
             move = currentPlayer.get_choice(self.gameState, line, column)
             move.play(self.board, self.gameState.getPlayerToPlayIndex())
-            return self.gameState.checkWin()
-        
-        if isinstance(currentPlayer, AIPlayer):
-            move = currentPlayer.get_choice(self.gameState)
-            move.play(self.board, self.gameState.getPlayerToPlayIndex())
+            self.gameHistory.append(move)
+            self.gameState.__nextTurn__()
             return self.gameState.checkWin()
         
         return None
@@ -128,124 +174,39 @@ class TicTacToeGame:
         if isinstance(currentPlayer, AIPlayer):
             move = currentPlayer.get_choice(self.gameState)
             move.play(self.board, self.gameState.getPlayerToPlayIndex())
+            self.gameHistory.append(move)
+            self.gameState.__nextTurn__()
             return self.gameState.checkWin()
         return None
     
     def getPlayerToPlay(self) -> Player:
         return self.gameDirector.getPlayerToPlay()
-
-    def setNumberOfPlayers(self, numPlayers: int) -> bool:
-        try:
-            currentNumPlayers = len(self.players)
-            
-            if numPlayers > currentNumPlayers:
-                for i in range(currentNumPlayers, numPlayers):
-                    self.players.append(MinimaxBetterMoveOrderingPlayer(4, False))
-                    self.playerEntities.append(self.__getDefaultEntity__(i))
-                    self.playersData.append(PlayerData([]))
-            
-            elif numPlayers < currentNumPlayers:
-                self.players = self.players[:numPlayers]
-                self.playerEntities = self.playerEntities[:numPlayers]
-                self.playersData = self.playersData[:numPlayers]
-            return True
-        except Exception as e:
-            print(f"Error setting number of players: {e}")
-            return False
-
-    def setBoardSize(self, width: int, height: int) -> bool:
-        try:
-            self.width = width
-            self.height = height
-            return True
-        except Exception as e:
-            print(f"Error setting board size: {e}")
-            return False
-
-    def setPlayerType(self, playerIndex: int, isHuman: bool) -> bool:
-        try:
-            if playerIndex >= len(self.players):
-                raise IndexError(f"Player index {playerIndex} is out of range. Total players: {len(self.players)}")
-            if isHuman:
-                self.players[playerIndex] = HumanPlayer(f"Player {playerIndex + 1}")
-            else:
-                self.players[playerIndex] = MinimaxBetterMoveOrderingPlayer(4, False)
-            return True
-        except Exception as e:
-            print(f"Error setting player type: {e}")
-            return False
-            
-    def setPlayerSymbol(self, playerIndex: int, symbol: str) -> bool:
-        try:
-            if playerIndex >= len(self.players):
-                raise IndexError(f"Player index {playerIndex} is out of range. Total players: {len(self.players)}")
-            self.playerEntities[playerIndex] = self.__getEntityBySymbol__(symbol)
-            return True
-        except Exception as e:
-            print(f"Error setting player symbol: {e}")
-            return False
-            
-    def setPlayerColor(self, playerIndex: int, color: str) -> bool:
-        try:
-            if playerIndex >= len(self.players):
-                raise IndexError(f"Player index {playerIndex} is out of range. Total players: {len(self.players)}")
-            self.players[playerIndex].setColor(color)
-            return True
-        except Exception as e:
-            print(f"Error setting player color: {e}")
-            return False
-        
-    def setIsPyramidal(self, isPyramidal: bool) -> bool:
-        try:
-            if isPyramidal:
-                self.board = BoardBuilder(self.playerEntities).setHeight(self.height).setWidth(self.width).setShape(PyramidalShape()).buildOptimizedBoard()
-            else:
-                self.board = BoardBuilder(self.playerEntities).setHeight(self.height).setWidth(self.width).buildOptimizedBoard()
-            if not self.initializeGame():
-                return False
-            return True
-        except Exception as e:
-            print(f"Error setting isPyramidal: {e}")
-            return False
-        
-    def setSymbolsToAlign(self, symbolsToAlign: int) -> bool:
-        try:
-            self.winCondition = AlignVictory(symbolsToAlign)
-            return True
-        except Exception as e:
-            print(f"Error setting symbols to align: {e}")
-            return False
-        
-    def setPlayerName(self, playerNames: list[str]) -> bool:
-        try:
-            for i in range(len(playerNames)):
-                self.players[i].setName(playerNames[i])
-            return True
-        except Exception as e:
-            print(f"Error setting player names: {e}")
-            return False
         
     def getBoard(self) -> Board:
         return self.board
-
-    @privatemethod
-    def __getDefaultEntity__(self, index: int) -> Entity:
-        entities = [Cross(), Circle(), Triangle(), Hexagon()]
-        return entities[index % len(entities)]
     
     def getGameState(self) -> TicTacToeGameState:
         return self.gameState
 
+    def getGameDirector(self) -> GameDirector:
+        return self.gameDirector
+
+    def getEntities(self) -> list[Entity]:
+        return self.entities
+
+    def getGameHistory(self) -> list:
+        return self.gameHistory
+
     @privatemethod
     def __getEntityBySymbol__(self, symbol: str) -> Entity:
         entityClasses = {
-            'X': Cross,
-            'O': Circle,
-            '△': Triangle,
-            '⬡': Hexagon,
-            '★': Star,
-            '▢': Square,
-            '◊': Rhombus
+            'cross': Cross,
+            'circle': Circle,
+            'triangle': Triangle,
+            'hexagon': Hexagon,
+            'star': Star,
+            'square': Square,
+            'rhombus': Rhombus
         }
         
         if symbol in entityClasses : return entityClasses[symbol]()

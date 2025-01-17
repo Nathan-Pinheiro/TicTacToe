@@ -1,113 +1,45 @@
-import tkinter as tk
-from tkinter import ttk
-from modules.GUI.draft.grid import drawGrid
-from modules.utils.decorator import privatemethod
-from modules.GUI.pages.page import Page
+import customtkinter as ctk
+from modules.GUI.page import Page
 from modules.GUI.render import PageName
-from PIL import Image, ImageTk
-import cv2
-import numpy as np
+from PIL import Image
 
 class Welcome(Page):
-    def __init__(self, parent: tk.Frame, controller: tk.Tk) -> None:
+    
+    def __init__(self, parent: ctk.CTkFrame, controller: ctk.CTk) -> None:
         super().__init__(parent, controller)
-
-        # Configuration principale de la grille
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_rowconfigure(1, weight=5)
-        self.grid_rowconfigure(2, weight=1)
-        self.grid_rowconfigure(3, weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
-
-        # Titre "Tic Tac Toe"
-        self.titleLabel = ttk.Label(self, text="Tic Tac Toe", font=("Arial", 48, "bold"), foreground="white")
-        self.titleLabel.grid(row=0, columnspan=2, pady=(20, 10), sticky="n")
-
-        # Texte d'introduction
-        self.textTitleLabel = ttk.Label(
-            self,
-            text=(
-                "Ready to take on the challenge?\n\n"
-            ),
-            wraplength=600,
-            justify="center",
-            font=("Arial", 36, "bold"),
-            foreground="white"
-        )
-        self.textTitleLabel.grid(row=1, column=0, pady=125, padx=125, sticky="n")
-        
-        self.textDescriptionLabel = ttk.Label(
-            self,
-            text=(
-                "Challenge your friends or test your skills against the computer in thrilling games of Tic-Tac-Toe! "
-                "Simple yet strategic, every move can change the course of the game. Choose your symbol, place it, "
-                "and be the first to align three symbols (or not) to win!"
-            ),
-            wraplength=600,
-            justify="center",
-            font=("Arial", 28),
-            foreground="white"
-        )
-        self.textDescriptionLabel.grid(row=1, column=0, pady=125, padx=100, sticky="s")
-        
-        self.Image = self.loadPngImage("./static/assets/Board.png")
-        
-        self.boardImage = ttk.Label(self, image=self.Image)
-
-        self.boardImage.grid(row=1, column=1, rowspan=2, padx=125, sticky="ns")
-
-        # Bouton "Go!"
-        self.startButton = ttk.Button(self, text="Go !", command=self.startGame)
-        self.startButton.grid(row=3, columnspan=2, pady=(20, 40), sticky="s")
-
-        # Redimensionnement dynamique
-        self.bind("<Configure>", self.__onResize__)
-
-    def show(self) -> bool:
-        self.grid()
-        return True
-
-    def hide(self) -> bool:
-        self.grid_remove()
-        return True
-
-    @privatemethod
-    def __drawGrid__(self, size: int) -> bool:
-        cellSize = size // 3
-
-        board = [
-            ['X', 'O', '△'],
-            ['', '', ''],
-            ['', '', '']
-        ]
-
-        playerSymbols = ['X', 'O', '△']
-        playerColors = ['#FF0000', '#00FF00', '#0000FF']
-
-        drawGrid(self.gridCanvas, size, size, cellSize, board, playerSymbols=playerSymbols, playerColors=playerColors)
-        return True
-
-    @privatemethod
-    def __onResize__(self, event: tk.Event) -> bool:
-        size = min(event.width, event.height) * 0.5
-        size = int(size) - (int(size) % 2)
-
-        self.gridCanvas.config(width=size, height=size)
-        self.__drawGrid__(size)
-        return True
-
-    def startGame(self) -> bool:
-        return self.controller.showFrame(PageName.SETTINGS)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=1)
+        self.__createWidgets__()
+        return None
     
+    def redirect(self) -> bool:
+        self.controller.showFrame(PageName.FIRSTSETTINGS)
+        return True
     
-    ## Load a PNG image from the given file path.
-    #
-    # @param filePath The path to the PNG file.
-    # @return ImageTk.PhotoImage The loaded image.
-    def loadPngImage(self, filePath: str) -> ImageTk.PhotoImage:
-        image = Image.open(filePath)
-        image = np.array(image)
-        image = cv2.resize(image, (600, 600))
-        image = Image.fromarray(image)
-        return ImageTk.PhotoImage(image)
+    def __createWidgets__(self) -> None:
+        width_ratio, height_ratio = self.getScreenRatio()
+        
+        # Title
+        ctk.CTkLabel(self, text="Tic Tac Toe", font=("Inter", int(72 * height_ratio), "bold"), text_color="#FFFFFF").grid(row=0, columnspan=2, pady=(int(20 * height_ratio),0))
+        
+        # Left text
+        text = "Ready to take on the challenge?"
+        ctk.CTkLabel(self, text=text, font=("Arial", int(36 * height_ratio), "bold"), wraplength=int(600 * width_ratio)).grid(row=1, column=0, pady=(int(210 * height_ratio),0), sticky="n")
+        text = "Challenge your friends or test your skills against the computer in thrilling games of Tic-Tac-Toe! Simple yet strategic, every move can change the course of the game. Choose your symbol, place it, and be the first to align three symbols (or not) to win!"
+        ctk.CTkLabel(self, text=text, font=("Arial", int(32 * height_ratio)), wraplength=int(675 * width_ratio)).grid(row=1, column=0, pady=(int(210 * height_ratio),0))
+        
+        # Right image
+        image = ctk.CTkImage(   
+                            light_image=Image.open("./assets/Board.png"),
+                            dark_image=Image.open("./assets/Board.png"),
+                            size=(int(600 * width_ratio), int(600 * height_ratio))
+                                )          
+        ctk.CTkLabel(self, image=image, text="").grid(row=1, column=1, pady=(int(80 * height_ratio),0))
+        
+        # Play button
+        ctk.CTkButton(self, text="Play", font=("Arial", int(32 * height_ratio)), command=lambda: self.redirect()).grid(row=2, columnspan=2, pady=(int(100 * height_ratio),0))
+        
+        return None

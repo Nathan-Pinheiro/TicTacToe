@@ -30,24 +30,26 @@ Functions:
 ## Implementation
 
 # Import #
-import tkinter as tk
-from tkinter import ttk
 from typing import Optional, Dict
-import sv_ttk
 import os
 import importlib
 from enum import Enum
 
-from modules.utils.decorator import privatemethod
-from modules.GUI.pages.page import Page
+import customtkinter as ctk
+import tkinter as tk
+from tkinter import ttk
+
+from modules.GUI.page import Page
 
 class PageName(Enum):
     WELCOME = "Welcome"
-    SETTINGS = "SettingsPage"
+    FIRSTSETTINGS = "FirstSettings"
+    SECONDSETTINGS = "SecondSettings"
     GAME = "Game"
 
 # Class #
-class App(tk.Tk):
+class App(ctk.CTk):
+    
     ## Initialize the application with the given title, first page, and geometry.
     #
     # @param title The title of the application.
@@ -63,7 +65,9 @@ class App(tk.Tk):
             raise TypeError("geometry must be a string or None")
 
         super().__init__()
+        
         self.title(title)
+        
         if geometry is not None:
             self.geometry(geometry)
         else:
@@ -80,9 +84,8 @@ class App(tk.Tk):
         if not self.__createFrames__(container):
             raise RuntimeError("Failed to create frames")
         if not self.showFrame(firstPage):
+            print(f"Error: Failed to show frame '{firstPage.value}'")
             raise RuntimeError("Failed to show frame")
-        
-        sv_ttk.set_theme("dark")
         
         return None
         
@@ -90,7 +93,6 @@ class App(tk.Tk):
     #
     # @param event The event that triggered the close action.
     # @return bool True if the function succeeds, False otherwise.
-    @privatemethod
     def __closeWindow__(self, event: Optional[tk.Event] = None) -> bool:
         if event is not None and not isinstance(event, tk.Event):
             raise TypeError("event must be a tk.Event instance or None")
@@ -103,7 +105,6 @@ class App(tk.Tk):
     #
     # @param container The container to hold the frames.
     # @return bool True if the function succeeds, False otherwise.
-    @privatemethod
     def __createFrames__(self, container: ttk.Frame) -> bool:
         if not isinstance(container, ttk.Frame):
             raise TypeError("container must be a ttk.Frame instance")
@@ -132,7 +133,7 @@ class App(tk.Tk):
     #
     # @param pageName The name of the frame to show.
     # @return bool True if the function succeeds, False otherwise.
-    def showFrame(self, pageName: PageName) -> bool:
+    def showFrame(self, pageName: PageName, **kwargs) -> bool:
         if not isinstance(pageName, PageName):
             raise TypeError("pageName must be a PageName")
 
@@ -144,12 +145,23 @@ class App(tk.Tk):
         
         # Call startGame if the page is Game
         if pageName == PageName.GAME:
-            if not frame.startGame():
+            if not frame.start_game(**kwargs):
+                print("Error: Failed to start game")
+                return False
+        elif pageName == PageName.SECONDSETTINGS:
+            if not frame.setValues(**kwargs):
+                print("Error: Failed to set values for SecondSettings")
                 return False
         elif pageName == PageName.WELCOME:
-            if not self.frames[PageName.SETTINGS.value].resetSettings():
+            if not self.frames[PageName.FIRSTSETTINGS.value].reset_settings():
+                print("Error: Failed to reset settings for FirstSettings")
                 return False
-            if not self.frames[PageName.GAME.value].resetGame():
+            if not self.frames[PageName.GAME.value].reset_game():
+                print("Error: Failed to reset game for Game")
+                return False
+        elif pageName == PageName.FIRSTSETTINGS:
+            if not self.frames[PageName.SECONDSETTINGS.value].reset_settings():
+                print("Error: Failed to reset settings for FirstSettings")
                 return False
         
         return True
