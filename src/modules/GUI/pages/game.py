@@ -17,6 +17,16 @@ from modules.models.tic_tac_toe.players.ai_players.easy_ai_player import EasyAIP
 from modules.models.tic_tac_toe.players.ai_players.medium_ai_player import MediumAIPlayer
 from modules.models.tic_tac_toe.players.ai_players.hard_ai_player import HardAIPlayer
 
+# ************************************************
+# CLASS Game
+# ************************************************
+# ROLE : The goal of this class is to represent the game page
+# ************************************************
+# VERSION : 1.0
+# AUTHOR : Hugo MERY
+# DATE : 18/01/2025
+# ************************************************
+
 class Game(Page):
     
     """
@@ -528,7 +538,6 @@ class Game(Page):
         Returns:
             bool: True if the function succeeds, False otherwise.
         """
-        
         try:
             self.gameOutCome = self.game.playAiMove()
             if not self.__drawBoard__():
@@ -553,7 +562,7 @@ class Game(Page):
                 self.__checkAndPlayAi__()
             return True
         except Exception as e:
-            print(f"Error playing next AI move: {e}")
+            print(f"Error playing AI move: {e}")
             return False
         
     @privatemethod

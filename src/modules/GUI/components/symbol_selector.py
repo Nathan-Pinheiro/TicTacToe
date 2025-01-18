@@ -9,6 +9,16 @@ from modules.GUI.components.symbols import (
     drawCross, drawCircle, drawTriangle, drawStar, drawSquare, drawHexagon, drawRhombus
 )
 
+# ************************************************
+# CLASS SymbolSelector
+# ************************************************
+# ROLE : This class is used to create a symbol selector
+# ************************************************
+# VERSION : 1.0
+# AUTHOR : Hugo MERY
+# DATE : 18/01/2025
+# ************************************************
+
 class SymbolSelector(ctk.CTkFrame):
     
     """

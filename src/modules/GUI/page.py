@@ -4,6 +4,16 @@ import customtkinter as ctk
 
 from modules.utils.decorator import privatemethod
 
+# ************************************************
+# CLASS Page
+# ************************************************
+# ROLE : The goal of this class is to represent an abstract page
+# ************************************************
+# VERSION : 1.0
+# AUTHOR : Hugo MERY
+# DATE : 18/01/2025
+# ************************************************
+
 class Page(ctk.CTkFrame, ABC):
     
     """

@@ -5,6 +5,16 @@ from modules.GUI.page import Page
 from modules.GUI.render import PageName
 from modules.GUI.components.int_selector import IntSelector
 
+# ************************************************
+# CLASS SecondSettings
+# ************************************************
+# ROLE : The goal of this class is to represent the second settings page
+# ************************************************
+# VERSION : 1.0
+# AUTHOR : Hugo MERY
+# DATE : 18/01/2025
+# ************************************************
+
 class SecondSettings(Page):
     
     """

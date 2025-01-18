@@ -3,6 +3,16 @@ from CTkColorPicker import AskColor
 
 from modules.utils.decorator import privatemethod
 
+# ************************************************
+# CLASS ColorSelector
+# ************************************************
+# ROLE : This class is used to create a color selector
+# ************************************************
+# VERSION : 1.0
+# AUTHOR : Hugo MERY
+# DATE : 18/01/2025
+# ************************************************
+
 class ColorSelector(ctk.CTkFrame):
     
     """

@@ -37,6 +37,16 @@ from modules.models.tic_tac_toe.moves.power_ups.bomb_move import BombMove
 
 from modules.utils.decorator import privatemethod
 
+# ************************************************
+# CLASS TicTacToeGame
+# ************************************************
+# ROLE : Manage the Tic Tac Toe game in GUI
+# ************************************************
+# VERSION : 1.0
+# AUTHOR : Hugo MERY
+# DATE : 18/01/2025
+# ************************************************
+
 class TicTacToeGame:
     
     """

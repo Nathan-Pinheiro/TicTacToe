@@ -10,6 +10,16 @@ from tkinter import ttk
 from modules.utils.decorator import privatemethod
 from modules.GUI.page import Page
 
+# ************************************************
+# CLASS App
+# ************************************************
+# ROLE : Used to create the main application
+# ************************************************
+# VERSION : 1.0
+# AUTHOR : Hugo MERY
+# DATE : 18/01/2025
+# ************************************************
+
 class PageName(Enum):
     WELCOME = "Welcome"
     FIRSTSETTINGS = "FirstSettings"

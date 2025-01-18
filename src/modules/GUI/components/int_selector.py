@@ -2,6 +2,16 @@ import customtkinter as ctk
 
 from modules.utils.decorator import privatemethod
 
+# ************************************************
+# CLASS IntSelector
+# ************************************************
+# ROLE : This class is used to create a symbol selector
+# ************************************************
+# VERSION : 1.0
+# AUTHOR : Hugo MERY
+# DATE : 18/01/2025
+# ************************************************
+
 class IntSelector(ctk.CTkFrame):
     
     """

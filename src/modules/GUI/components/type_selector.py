@@ -4,6 +4,16 @@ from PIL import Image, ImageTk
 from CTkColorPicker import *
 from typing import Optional, List, Any, Dict
 
+# ************************************************
+# CLASS TypeSelector
+# ************************************************
+# ROLE : This class is used to create a symbol selector
+# ************************************************
+# VERSION : 1.0
+# AUTHOR : Hugo MERY
+# DATE : 18/01/2025
+# ************************************************
+
 class TypeSelector(ctk.CTkFrame):
     
     """

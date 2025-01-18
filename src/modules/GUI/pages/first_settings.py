@@ -10,6 +10,16 @@ from modules.GUI.components.type_selector import TypeSelector
 
 from modules.utils.decorator import privatemethod
 
+# ************************************************
+# CLASS FirstSettings
+# ************************************************
+# ROLE : The goal of this class is to represent the first settings page
+# ************************************************
+# VERSION : 1.0
+# AUTHOR : Hugo MERY
+# DATE : 18/01/2025
+# ************************************************
+
 class FirstSettings(Page):
     
     """
