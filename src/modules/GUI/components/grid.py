@@ -22,7 +22,7 @@ Functions:
 
 # Import
 import tkinter as tk
-from modules.GUI.components.symbols import drawCross, drawCircle, drawTriangle, drawHexagon, drawStar, drawSquare, drawRhombus, drawGrayCase
+from modules.GUI.components.symbols import drawCross, drawCircle, drawTriangle, drawHexagon, drawStar, drawSquare, drawRhombus, drawGrayCase, drawGreenCase
 from modules.utils.validators import isValidSymbol, isHexColor
 
 ## Draw a tic-tac-toe grid on the given canvas.
@@ -38,8 +38,9 @@ from modules.utils.validators import isValidSymbol, isHexColor
 # @param playerSymbols A list of symbols representing the players.
 # @param playerColors A list of colors corresponding to the player symbols.
 # @param coord Whether to draw coordinates around the grid.
+# @param advice A list containing the row and column of the advised move.
 # @return bool True if the function succeeds, False otherwise.
-def drawGrid(canvas: tk.Canvas, width: int, height: int, cellSize: int, board: list[list[str]] = None, lineColor: str = "#FFFFFF", lineWidth: int = 1, playerSymbols: list[str] = ["X", "O"], playerColors: list[str] = ["#FFFFFF", "#FF00FF"], coord: bool = True) -> bool:
+def drawGrid(canvas: tk.Canvas, width: int, height: int, cellSize: int, board: list[list[str]] = None, lineColor: str = "#FFFFFF", lineWidth: int = 1, playerSymbols: list[str] = ["X", "O"], playerColors: list[str] = ["#FFFFFF", "#FF00FF"], coord: bool = True, advice: tuple = ()) -> bool:
     # Validate parameters
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
@@ -80,6 +81,9 @@ def drawGrid(canvas: tk.Canvas, width: int, height: int, cellSize: int, board: l
                 if symbol == '#':
                     if not drawGrayCase(canvas, x0, y0, cellSize):
                         raise RuntimeError("Failed to draw gray case")
+                if len(advice) == 2 and [row, col] == [advice[0], advice[1]]:
+                    if not drawGreenCase(canvas, x0, y0, cellSize):
+                        raise RuntimeError("Failed to draw green case")
                 else:
                     if not drawSymbol(canvas, x0, y0, cellSize, symbol, playerSymbols, playerColors):
                         raise RuntimeError("Failed to draw symbol")

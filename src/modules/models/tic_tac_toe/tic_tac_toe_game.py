@@ -91,6 +91,8 @@ from modules.models.entities.rhombus import Rhombus
 from modules.models.entities.square import Square
 from modules.utils.decorator import privatemethod
 from modules.models.tic_tac_toe.moves.power_ups.bomb_move import BombMove
+from modules.models.board_game.game.game_analysers.minimax_alpha_beta_pruning_analyser import AlphaBetaPruningAnalyser
+from modules.models.board_game.components.move import Move
 import random
 
 class TicTacToeGame:
@@ -99,8 +101,7 @@ class TicTacToeGame:
         self.board = self.__createBoard__()
         self.gameDirector = self.__initializeGame__()
         self.gameState = self.gameDirector.getGameState()
-        self.gameHistory = []
-        self.gameNextMoves = []
+        self.analyser = AlphaBetaPruningAnalyser(self.__getDepth__())
         return None
     
     def __createBoard__(self) -> OptimizedBoard:
@@ -150,6 +151,16 @@ class TicTacToeGame:
             return -1
         return 0 if self.settings['game']['startingPlayer'] == self.settings['player1']['name'] else 1
     
+    def __getDepth__(self) -> int:
+        board_size = self.settings['board']['width'] * self.settings['board']['height']
+        if board_size <= 9:
+            depth = 8
+        elif board_size <= 25:
+            depth = 6
+        else:
+            depth = 4
+        return depth
+    
     def __initializeGame__(self) -> GameDirector:
         players = self.__createPlayers__()
         winCondition = self.__createWinCondition__()
@@ -164,8 +175,6 @@ class TicTacToeGame:
         if isinstance(currentPlayer, HumanPlayer):
             move = currentPlayer.get_choice(self.gameState, line, column, bomb)
             self.gameState.play(move)
-            self.gameHistory.append(move)
-            self.gameNextMoves = []
             return self.gameState.checkWin()
         
         return None
@@ -175,8 +184,6 @@ class TicTacToeGame:
         if isinstance(currentPlayer, AIPlayer):
             move = currentPlayer.get_choice(self.gameState)
             self.gameState.play(move)
-            self.gameHistory.append(move)
-            self.gameNextMoves = []
             return self.gameState.checkWin()
         return None
     
@@ -185,6 +192,9 @@ class TicTacToeGame:
     
     def redo(self):
         self.gameState.goNext()
+        
+    def getAdvice(self) -> Move:
+        return self.analyser.getBestMove(self.gameState)
     
     def getPlayerToPlay(self) -> Player:
         return self.gameDirector.getPlayerToPlay()
@@ -202,7 +212,10 @@ class TicTacToeGame:
         return self.entities
 
     def getGameHistory(self) -> list:
-        return self.gameHistory
+        return self.gameState.getGameHistory().getMoves()
+    
+    def getPlayerPowerUpMoves(self, playerIndex: int) -> list:
+        return self.gameState.getPlayerData(playerIndex).getPowerUpMoves()
 
     @privatemethod
     def __getEntityBySymbol__(self, symbol: str) -> Entity:

@@ -51,7 +51,7 @@ class TicTacToeGameState(GameState):
             GameOutcome: The result of the game after the move.
         """
         self.getGameHistory().addMove(move)
-
+        
         move.play(self.getBoard(), self.getPlayerToPlayIndex())
         if move.__class__ != SimpleMove : self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().remove(move.__class__) 
 
@@ -79,40 +79,36 @@ class TicTacToeGameState(GameState):
 
         if move.__class__ != SimpleMove : self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().append(move.__class__)
 
-    def goBack(self, move: Move) -> None:
-        
+    def goBack(self) -> None:
+
         """
         Goes back one move in the game history.
-
-        Parameters:
-            move (Move): The move to revert to.
         """
-        
-        if self.getGameHistory().getCurrentMoveIndex() <= 0 : return
 
-        self.getGameHistory().goBack()
+        if self.getGameHistory().getCurrentMoveIndex() < 0 : return
+
+        move : Move = self.getGameHistory().getCurrentMove()
         move.undo(self.getBoard(), self.getPlayerToPlayIndex())
-
         if move.__class__ != SimpleMove : self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().append(move.__class__)
         
+        self.getGameHistory().goBack()
+
         self.__previousTurn__()
 
-    def goNext(self, move: Move) -> None :
-        
+    def goNext(self) -> None :
+
         """
         Moves forward in the game history.
-
-        Parameters:
-            move (Move): The move to reapply.
         """
-        
-        if self.getGameHistory().getCurrentMoveIndex() >= self.getGameHistory().getMoveCount() : return
 
+        if self.getGameHistory().getCurrentMoveIndex() >= (self.getGameHistory().getMoveCount() - 1) : return
+        
         self.getGameHistory().goNext()
-        self.getGameHistory().getCurrentMove().play(self.getBoard(), self.getPlayerToPlayIndex())
 
+        move : Move = self.getGameHistory().getCurrentMove()
+        move.play(self.getBoard(), self.getPlayerToPlayIndex())
         if move.__class__ != SimpleMove : self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().remove(move.__class__)
-        
+
         self.__nextTurn__()
 
     def getPossibleMoves(self) -> list[Move]:

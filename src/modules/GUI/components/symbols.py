@@ -276,3 +276,22 @@ def drawGrayCase(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#5c
     
     canvas.create_rectangle(x + 1, y + 1, x + size, y + size, fill=color, outline="")
     return True
+
+## Draw a green square centered in a cell.
+#
+# @param canvas The canvas object to draw on.
+# @param x The x-coordinate of the top-left corner of the cell.
+# @param y The y-coordinate of the top-left corner of the cell.
+# @param size The size of the cell.
+# @param color The color of the square (default is green).
+# @return bool True if the function succeeds, False otherwise.
+def drawGreenCase(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#005500") -> bool:
+    if not isinstance(canvas, tk.Canvas):
+        raise TypeError("canvas must be a tk.Canvas instance")
+    if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
+        raise TypeError("x, y, and size must be integers")
+    if not isinstance(color, str):
+        raise TypeError("color must be a string")
+    
+    canvas.create_rectangle(x + 1, y + 1, x + size, y + size, fill=color, outline = "")
+    return True

@@ -13,6 +13,8 @@ from modules.models.tic_tac_toe.players.ai_players.medium_ai_player import Mediu
 from modules.models.tic_tac_toe.players.ai_players.hard_ai_player import HardAIPlayer
 from modules.models.tic_tac_toe.players.human_player import HumanPlayer
 
+from modules.models.tic_tac_toe.moves.simple_move import SimpleMove
+
 class Game(Page):
     def __init__(self, parent: ctk.CTkFrame, controller: ctk.CTk) -> None:
         super().__init__(parent, controller)
@@ -20,8 +22,7 @@ class Game(Page):
         self.game = None
         self.board = None
         self.cellSize = 100
-        self.moveHistory = []
-        self.turn = 1
+        self.turn = 0
         self.bombMove = False
         self.gameOutCome = None
         self.grid_columnconfigure(0, weight=2)
@@ -71,6 +72,14 @@ class Game(Page):
         self.scrollFrame = ctk.CTkScrollableFrame(self.right_frame, width=200, height=200)
         self.scrollFrame.grid(row=1, column=0, columnspan=4, padx=int(60 * self.width_ratio), sticky="nsew")
         
+        # Frame for buttons
+        self.buttons_frame = ctk.CTkFrame(self.right_frame, height=40, fg_color="#333333")
+        self.buttons_frame.grid(row=2, column=0, columnspan=4, pady=(0, int(60 * self.height_ratio)), sticky="sew")
+        self.buttons_frame.grid_columnconfigure(0, weight=1)
+        self.buttons_frame.grid_columnconfigure(1, weight=1)
+        self.buttons_frame.grid_columnconfigure(2, weight=1)
+        self.buttons_frame.grid_columnconfigure(3, weight=1)
+        
         # Bomb button + undo button + redo button + help button
         bomb_image = ctk.CTkImage(   
                             light_image=Image.open("./assets/Bomb.png"),
@@ -93,14 +102,14 @@ class Game(Page):
                             size=(int(12 * self.width_ratio), int(24 * self.height_ratio))
                                 )
         
-        self.bombButton = ctk.CTkButton(self.right_frame, text="", image=bomb_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.bomb(), width=40, height=40)
-        self.bombButton.grid(row=2, column=0, pady=(0, int(20 * self.height_ratio)), sticky="es")
-        self.undoButton = ctk.CTkButton(self.right_frame, text="", image=undo_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.undo(), width=40, height=40)
-        self.undoButton.grid(row=2, column=1, pady=(0, int(20 * self.height_ratio)), sticky="s")
-        self.redoButton = ctk.CTkButton(self.right_frame, text="", image=redo_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.redo(), width=40, height=40)
-        self.redoButton.grid(row=2, column=2, pady=(0, int(20 * self.height_ratio)), sticky="s")
-        self.bulbButton = ctk.CTkButton(self.right_frame, text="", image=bulb_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.help(), width=40, height=40)
-        self.bulbButton.grid(row=2, column=3, pady=(0, int(20 * self.height_ratio)), sticky="ws")
+        self.bombButton = ctk.CTkButton(self.buttons_frame, text="", image=bomb_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.bomb(), width=40, height=40)
+        self.bombButton.grid(row=0, column=0, sticky="es")
+        self.undoButton = ctk.CTkButton(self.buttons_frame, text="", image=undo_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.undo(), width=40, height=40)
+        self.undoButton.grid(row=0, column=1, sticky="s")
+        self.redoButton = ctk.CTkButton(self.buttons_frame, text="", image=redo_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.redo(), width=40, height=40)
+        self.redoButton.grid(row=0, column=2, sticky="s")
+        self.bulbButton = ctk.CTkButton(self.buttons_frame, text="", image=bulb_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.advice(), width=40, height=40)
+        self.bulbButton.grid(row=0, column=3, sticky="ws")
         
         # Play button
         ctk.CTkButton(self, text="Leave", font=("Arial", int(32 * self.height_ratio)), command=lambda: self.redirect()).grid(row=2, column=0)
@@ -113,9 +122,10 @@ class Game(Page):
     ## Draw the game board on the canvas.
     #
     # @return bool True if the function succeeds, False otherwise.
-    def __drawBoard__(self) -> bool:
+    def __drawBoard__(self, advice = ()) -> bool:
         try:
             boardState = [['' for _ in range(self.board.getWidth())] for _ in range(self.board.getHeight())]
+            self.grid_canvas.delete("all")
             for row in range(self.board.getHeight()):
                 for col in range(self.board.getWidth()):
                     if self.board.isCaseBlocked(row, col):
@@ -124,7 +134,7 @@ class Game(Page):
                         entity = self.board.getEntityAt(row, col)
                         boardState[row][col] = entity.getName()
             if not drawGrid(self.grid_canvas, self.cellSize * self.board.getWidth(), self.cellSize * self.board.getHeight(), self.cellSize, boardState,
-                            playerSymbols=[self.game.getEntities()[0].getName(), self.game.getEntities()[1].getName()], playerColors=[self.settings['player1']['color'], self.settings['player2']['color']], coord=True):
+                            playerSymbols=[self.game.getEntities()[0].getName(), self.game.getEntities()[1].getName()], playerColors=[self.settings['player1']['color'], self.settings['player2']['color']], coord=True, advice=advice):
                 raise RuntimeError("Failed to draw grid")
             return True
         except Exception as e:
@@ -160,7 +170,13 @@ class Game(Page):
                         self.bombButton.configure(fg_color="#1f6aa5", hover_color="#144870")
                     if not self.__drawBoard__():
                         return False
-                    if not self.__updateMoveHistory__(currentPlayer):
+                    if not self.__updateMoveHistory__():
+                        return False
+                    if not self.__updateBombButton__():
+                        return False
+                    if not self.__updateUndoRedoButtons__():
+                        return False
+                    if not self.__updateBulbButton__():
                         return False
                     if not self.__setTurnLabel__():
                         return False
@@ -177,16 +193,48 @@ class Game(Page):
             print(f"Error handling click: {e}")
             return False
 
-    def __updateMoveHistory__(self, currentPlayer) -> bool:
-        move = self.game.getGameHistory()[-1]
-        moveLine = move.getCoordinate().getLine()
-        moveColumn = move.getCoordinate().getColumn()
-        self.moveHistory.append((f"{currentPlayer.getName()} played at ({chr(65 + moveColumn)}, {moveLine + 1})", currentPlayer))
+    def __updateMoveHistory__(self) -> bool:
+        moves = self.game.getGameHistory()
+        playerIndex = 1 if self.settings['game']['startingPlayer'] == self.settings['player1']['name'] else 0
         for widget in self.scrollFrame.winfo_children():
             widget.destroy()
-        for move, player in self.moveHistory:
-            color = self.settings['player1']['color'] if player.getName() == self.settings['player1']['name'] else self.settings['player2']['color']
-            ctk.CTkLabel(self.scrollFrame, text=move, font=("Arial", 14), text_color=color).pack(anchor="w")
+        for move in moves:
+            playerIndex = 1 - playerIndex
+            if isinstance(move, SimpleMove):
+                moveText = f"{self.settings[f'player{playerIndex+1}']['name']} played at {chr(65 + move.getCoordinate().getColumn())}{move.getCoordinate().getLine() + 1}"
+            else:
+                moveText = f"{self.settings[f"player{playerIndex+1}"]["name"]} played a bomb at {chr(65 + move.getCoordinate().getColumn())}, {move.getCoordinate().getLine() + 1}"
+            ctk.CTkLabel(self.scrollFrame, text=moveText, font=("Arial", int(16 * self.height_ratio)), text_color=self.settings[f"player{playerIndex+1}"]["color"]).pack(anchor="w")
+        return True
+    
+    def __updateBombButton__(self) -> bool:
+        currentPlayer = self.game.getPlayerToPlay()
+        if isinstance(currentPlayer, HumanPlayer):
+            playerIndex = 0 if currentPlayer.getName() == self.settings['player1']['name'] else 1
+            if not self.game.getPlayerPowerUpMoves(playerIndex):
+                self.bombButton.configure(state="disabled", fg_color="#666666", hover_color="#666666")
+            else:
+                self.bombButton.configure(state="normal", fg_color="#1f6aa5", hover_color="#144870")
+        else:
+            self.bombButton.configure(state="disabled", fg_color="#666666", hover_color="#666666")
+        return True
+    
+    def __updateUndoRedoButtons__(self) -> bool:
+        currentPlayer = self.game.getPlayerToPlay()
+        if isinstance(currentPlayer, HumanPlayer):
+            self.undoButton.configure(state="normal", fg_color="#1f6aa5", hover_color="#144870")
+            self.redoButton.configure(state="normal", fg_color="#1f6aa5", hover_color="#144870")
+        else:
+            self.undoButton.configure(state="disabled", fg_color="#666666", hover_color="#666666")
+            self.redoButton.configure(state="disabled", fg_color="#666666", hover_color="#666666")
+        return True
+    
+    def __updateBulbButton__(self) -> bool:
+        currentPlayer = self.game.getPlayerToPlay()
+        if isinstance(currentPlayer, HumanPlayer):
+            self.bulbButton.configure(state="normal", fg_color="#1f6aa5", hover_color="#144870")
+        else:
+            self.bulbButton.configure(state="disabled", fg_color="#666666", hover_color="#666666")
         return True
 
     def bomb(self) -> bool:
@@ -201,16 +249,43 @@ class Game(Page):
         self.game.undo()
         if not self.__drawBoard__():
             return False
+        if not self.__updateBombButton__():
+            return False
+        if not self.__updateUndoRedoButtons__():
+            return False
+        if not self.__updateBulbButton__():
+            return False
+        self.turn -= 2
+        if not self.__setTurnLabel__():
+            return False
+        if not self.__setPlayerTurn__():
+            return False
+        self.after(500, self.__checkAndPlayAi__)
         return True
     
     def redo(self) -> bool:
         self.game.redo()
         if not self.__drawBoard__():
             return False
+        if not self.__updateBombButton__():
+            return False
+        if not self.__updateUndoRedoButtons__():
+            return False
+        if not self.__updateBulbButton__():
+            return False
+        if not self.__setTurnLabel__():
+            return False
+        if not self.__setPlayerTurn__():
+            return False
+        self.after(500, self.__checkAndPlayAi__)
         return True
     
-    def help(self) -> bool:
-        print("Help")
+    def advice(self) -> bool:
+        move = self.game.getAdvice()
+        move = (move.getCoordinate().getLine(), move.getCoordinate().getColumn())
+        if not self.__drawBoard__(advice=move):
+            return False
+        self.bulbButton.configure(state="disabled", fg_color="#666666", hover_color="#666666")
         return True
     
     def reset_game(self) -> bool:
@@ -242,6 +317,14 @@ class Game(Page):
         if not self.__setPlayerTurn__():
             print("Failed to set turn label")
             return False
+        if not self.__setTurnLabel__():
+            return False
+        if not self.__updateBombButton__():
+            return False
+        if not self.__updateUndoRedoButtons__():
+            return False
+        if not self.__updateBulbButton__():
+            return False
         self.after(500, self.__checkAndPlayAi__)
         return True
     
@@ -264,11 +347,16 @@ class Game(Page):
         
     def __playNextAiMove__(self) -> bool:
         try:
-            currentPlayer = self.game.getPlayerToPlay()
             self.gameOutCome = self.game.playAiMove()
             if not self.__drawBoard__():
                 return False
-            if not self.__updateMoveHistory__(currentPlayer):
+            if not self.__updateMoveHistory__():
+                return False
+            if not self.__updateBombButton__():
+                return False
+            if not self.__updateUndoRedoButtons__():
+                return False
+            if not self.__updateBulbButton__():
                 return False
             if not self.__setTurnLabel__():
                 return False
