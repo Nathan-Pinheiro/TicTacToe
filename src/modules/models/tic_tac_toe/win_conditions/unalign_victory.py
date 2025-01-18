@@ -11,7 +11,7 @@ class UnalignVictory(WinCondition) :
     This inversion of traditional win conditions creates a game dynamic where players must avoid forming alignments.
     """
 
-    def __init__(self, alignLength : int, playerAmount : int) -> None:
+    def __init__(self, alignLength : int) -> None:
         
         """
         Initializes the UnalignVictory condition with alignment length and total player count.
@@ -27,7 +27,6 @@ class UnalignVictory(WinCondition) :
         if(alignLength < MIN_ENTITY_TO_ALIGN): raise ValueError(f"Can't create an UnalignVictory with {alignLength} entity to align. It must be higher or equals than {MIN_ENTITY_TO_ALIGN}")
         
         self.__alignLength__ : int = alignLength
-        self.__playerAmount__ : int = playerAmount
         
         return None
 
@@ -46,7 +45,7 @@ class UnalignVictory(WinCondition) :
 
         winnerIndex : int = board.checkIfPlayerHaveAlignment(self.__alignLength__)
 
-        if(winnerIndex != -1) : return GameOutcome(GameOutcomeStatus.VICTORY, (winnerIndex + 1) % self.playerAmount)
+        if(winnerIndex != -1) : return GameOutcome(GameOutcomeStatus.VICTORY, (winnerIndex + 1) % len(board.getPlayerEntities()))
         elif(board.isFull()) : return GameOutcome(GameOutcomeStatus.DRAW)
         else : return GameOutcome(GameOutcomeStatus.UNFINISHED)
     
@@ -64,7 +63,7 @@ class UnalignVictory(WinCondition) :
             GameOutcome: VICTORY for the next player, DRAW if the board is full, or UNFINISHED if the game continues.
         """
 
-        if(board.checkAlignmentForPlayer(playerIndex, self.__alignLength__)) : return GameOutcome(GameOutcomeStatus.VICTORY, (playerIndex + 1) % self.playerAmount)
+        if(board.checkAlignmentForPlayer(playerIndex, self.__alignLength__)) : return GameOutcome(GameOutcomeStatus.VICTORY, (playerIndex + 1) % len(board.getPlayerEntities()))
         elif(board.isFull()) : return GameOutcome(GameOutcomeStatus.DRAW)
         else : return GameOutcome(GameOutcomeStatus.UNFINISHED)
 
@@ -85,12 +84,18 @@ class UnalignVictory(WinCondition) :
         playerAlignStrength : int = 0
         oponentsAlignStrength : int = 0
 
-        for alignLength in range(2, self.__alignLength__):
+        for pieceCount in range(2, self.__alignLength__) :
             for playerIndex in range(0, len(board.getPlayerEntities())):
-                if(playerIndex == playerToEvaluateIndex): playerAlignStrength += 2**alignLength * board.checkAlignmentForPlayer(playerIndex, alignLength)
-                else : oponentsAlignStrength += 2**alignLength * board.checkAlignmentForPlayer(playerIndex, alignLength)
+                
+                if(playerIndex == playerToEvaluateIndex): playerAlignStrength += 2 * pieceCount * board.countAvaillableLineOfAtLeastGivenPiece(playerIndex, self.__alignLength__, pieceCount)
+                else : oponentsAlignStrength += 2 * pieceCount * board.countAvaillableLineOfAtLeastGivenPiece(playerIndex, self.__alignLength__, pieceCount)
 
         totalStrength = playerAlignStrength + oponentsAlignStrength
         
         if totalStrength == 0: return 0.0
-        else : return (oponentsAlignStrength - playerAlignStrength) / totalStrength
+        
+        score : int = (playerAlignStrength - oponentsAlignStrength) / totalStrength
+
+        if(score == 1.0) : return -0.99
+        elif(score == -1.0) : return 0.99
+        else : return - score

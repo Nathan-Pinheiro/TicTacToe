@@ -36,8 +36,8 @@ if(__name__ == "__main__"):
     playerEntities = [Circle(), Cross()]
     playersData : list[PlayerData] = [TicTacToePlayerData([]), TicTacToePlayerData([])]
     
-    board : Board = BoardBuilder(playerEntities).setHeight(7).setWidth(7).buildOptimizedBoard()
-    winCondition = AlignVictory(4)
+    board : Board = BoardBuilder(playerEntities).setHeight(3).setWidth(3).buildOptimizedBoard()
+    winCondition = AlignVictory(3)
 
     game_director = GameDirector(board, winCondition, players, playersData, 1)
 
