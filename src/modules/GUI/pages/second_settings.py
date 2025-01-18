@@ -115,8 +115,9 @@ class SecondSettings(Page):
         self.heightSelector.grid(row=1, column=1, pady=(int(260 * heightRatio),0), sticky="n")
         
         # Combobox for shape
+        ctk.CTkLabel(self, text="Shape :", font=("Arial", int(32 * heightRatio), "bold"), text_color="#FFFFFF").grid(row=1, column=0, pady=(int(380 * heightRatio),0), sticky="en")
         self.shapeVar: ctk.StringVar = ctk.StringVar(value="No special shape")
-        ctk.CTkComboBox(self, values=["No special shape", "Pyramidal", "Circular", "Diamond", 'Random'], variable=self.shapeVar).grid(row=1, column=0, columnspan=2, pady=(int(380 * heightRatio),0), sticky="n")
+        ctk.CTkComboBox(self, values=["No special shape", "Pyramidal", "Circular", "Diamond", 'Random'], variable=self.shapeVar).grid(row=1, column=1, padx=(int(20 * widthRatio), 0), pady=(int(387 * heightRatio),0), sticky="wn")
         self.shapeVar.set("No special shape")
         
         # Symbols to align selector
@@ -131,14 +132,16 @@ class SecondSettings(Page):
         self.alignToWinSelector.grid(row=1, column=3, columnspan=2, pady=(int(10 * heightRatio),0), padx=(0, int(250 * widthRatio)), sticky="e")
         
         # Combobox for starting player, values will be initialized in setValues
+        ctk.CTkLabel(self, text="Starting player :", font=("Arial", int(32 * heightRatio), "bold"), text_color="#FFFFFF").grid(row=1, column=3, pady=(int(460 * heightRatio),0), sticky="en")
         self.startingPlayerVar: ctk.StringVar = ctk.StringVar(value="Nan")
         self.startingPlayerCombobox: ctk.CTkComboBox = ctk.CTkComboBox(self, values=["Nan"], variable=self.startingPlayerVar)
-        self.startingPlayerCombobox.grid(row=1, column=3, columnspan=2, pady=(int(460 * heightRatio),0), sticky="n")
+        self.startingPlayerCombobox.grid(row=1, column=4, padx=(int(20 * widthRatio), 0), pady=(int(467 * heightRatio),0), sticky="wn")
         self.startingPlayerVar.set("Nan")
         
         # Combobox for gamemode
+        ctk.CTkLabel(self, text="Gamemode :", font=("Arial", int(32 * heightRatio), "bold"), text_color="#FFFFFF").grid(row=1, column=3, pady=(int(520 * heightRatio),0), sticky="en")
         self.gamemodeVar: ctk.StringVar = ctk.StringVar(value="No mod")
-        ctk.CTkComboBox(self, values=["No mod", "Bomb mod"], variable=self.gamemodeVar).grid(row=1, column=3, columnspan=2, pady=(int(520 * heightRatio),0), sticky="n")
+        ctk.CTkComboBox(self, values=["No mod", "Bomb mod"], variable=self.gamemodeVar).grid(row=1, column=4, padx=(int(20 * widthRatio), 0), pady=(int(527 * heightRatio),0), sticky="wn")
         self.gamemodeVar.set("No mod")
         
         # Line

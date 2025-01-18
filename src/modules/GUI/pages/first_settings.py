@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from typing import Optional
 
 from modules.GUI.page import Page
 from modules.GUI.render import PageName
@@ -42,7 +43,7 @@ class FirstSettings(Page):
         self.__createWidgets__()
         return None
     
-    def redirect(self) -> bool:
+    def redirect(self, pageName: Optional[PageName] = None) -> bool:
         
         """
         Redirects to the second settings page after validating player names.
@@ -74,7 +75,7 @@ class FirstSettings(Page):
                 "type": self.typeSelectorP2.getType()
             }
         }
-        self.controller.showFrame(PageName.SECONDSETTINGS, settings=settings)
+        self.controller.showFrame(pageName=pageName, settings=settings)
         return True
     
     @privatemethod
@@ -141,8 +142,10 @@ class FirstSettings(Page):
         # Line
         ctk.CTkLabel(self, text="", bg_color="#FFFFFF").grid(row=1, column=3, sticky="ns")
         
+        # Back button
+        ctk.CTkButton(self, text="Back", font=("Arial", int(32 * heightRatio)), command=lambda: self.redirect(PageName.WELCOME)).grid(row=2, column=0, columnspan=3, pady=(0, int(50 * heightRatio)), sticky="es")
         # Next button
-        ctk.CTkButton(self, text="Next", font=("Arial", int(32 * heightRatio)), command=lambda: self.redirect()).grid(row=2, columnspan=7, pady=(int(100 * heightRatio),0))
+        ctk.CTkButton(self, text="Next", font=("Arial", int(32 * heightRatio)), command=lambda: self.redirect(PageName.SECONDSETTINGS)).grid(row=2, column=4, columnspan=3, pady=(0, int(50 * heightRatio)), sticky="ws")
         
         return None
 
