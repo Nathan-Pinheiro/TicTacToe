@@ -11,6 +11,8 @@ class HumanPlayer(Player):
     def __init__(self, name : str) -> None:
         super().__init__(name)
     
-    def get_choice(self, gameState: TicTacToeGameState, line: int, column: int) -> Move:
-        move = SimpleMove(Coordinate(line, column))
-        return move
+    def get_choice(self, gameState: TicTacToeGameState, line: int, column: int, bomb: bool) -> Move:
+        if bomb:
+            return BombMove(Coordinate(line, column))
+        else:
+           return SimpleMove(Coordinate(line, column))
