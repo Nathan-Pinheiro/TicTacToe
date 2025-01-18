@@ -85,7 +85,7 @@ class UnalignVictory(WinCondition) :
         playerAlignStrength : int = 0
         oponentsAlignStrength : int = 0
 
-        for alignLength in range(2, self.__alignLength__) :
+        for alignLength in range(2, self.__alignLength__):
             for playerIndex in range(0, len(board.getPlayerEntities())):
                 if(playerIndex == playerToEvaluateIndex): playerAlignStrength += 2**alignLength * board.checkAlignmentForPlayer(playerIndex, alignLength)
                 else : oponentsAlignStrength += 2**alignLength * board.checkAlignmentForPlayer(playerIndex, alignLength)

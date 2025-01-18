@@ -56,7 +56,7 @@ class OptimizedBoard(Board):
     @privatemethod
     def __get_bit_position(self, line: int, column: int) -> int:
         
-        """Convert (row, col) to a bit index."""
+        """Convert (line, column) to a bit index."""
         
         return line * self.__width__ + column
 
@@ -392,6 +392,69 @@ class OptimizedBoard(Board):
             if(self.checkAlignmentOnCaseForPlayer(playerIndex, alignLength)) : return playerIndex
         
         return -1
+
+    def countAvaillableLineOfAtLeastGivenPiece(self, playerIndex: int, alignLength: int, pieceCount: int) -> int:
+        """
+        Returns the number of lines that contain at least a given amount of the player's pieces and no opponent pieces.
+
+        Args:
+            playerIndex (int): The player's index.
+            alignLength (int): Required alignment length to win.
+            pieceCount (int): Minimum number of the player's pieces required.
+
+        Returns:
+            int: The number of valid lines.
+        """
+
+
+        playerPieces : int = self.__playerBoards__[playerIndex].getValue()
+        opponentPieces: int = 0
+        
+        for i, board in enumerate(self.__playerBoards__):
+            if i != playerIndex : opponentPieces |= board.getValue()
+
+        def countInDirection(mask, shift) -> int:
+            
+            result : int = 0
+            
+            oponentBlockedAlignments : int = opponentPieces
+            for _ in range(alignLength - 1): oponentBlockedAlignments |= (oponentBlockedAlignments >> shift)
+
+            for line in range(self.__height__):
+                for column in range(self.__width__):
+                    
+                    bitToCheck : int = 1 << self.__get_bit_position(line, column)
+
+                    if(bitToCheck & mask & ~oponentBlockedAlignments) != 0:
+                        
+                        count : int = 0
+                        shiftedBit : int = bitToCheck
+
+                        bitIndex : int = 0      
+                        while(bitIndex < alignLength and count < pieceCount):
+                            
+                            if(shiftedBit & playerPieces) : count += 1
+                            shiftedBit = shiftedBit << shift
+                            bitIndex += 1
+                        
+                        if(count >= pieceCount) : result += 1
+
+            return result
+
+        result : int = 0
+        # print("line : ")
+        result += countInDirection(self.__lineMasks__[alignLength], 1)
+        # print("col : ")
+        result += countInDirection(self.__columnMasks__[alignLength], self.__width__)
+        # print("asc diag : ")
+        result += countInDirection(self.__ascendantDiagonalMasks__[alignLength], self.__width__ - 1)
+        # print("desc diag : ")
+        result += countInDirection(self.__descendantDiagonalMasks__[alignLength], self.__width__ + 1)
+
+        # print("===========================================")
+
+        return result
+
 
     def isFull(self) -> bool:
         

@@ -79,12 +79,18 @@ class AlignVictory(WinCondition) :
         playerAlignStrength : int = 0
         oponentsAlignStrength : int = 0
 
-        for alignLength in range(2, self.__alignLength__) :
+        for pieceCount in range(2, self.__alignLength__) :
             for playerIndex in range(0, len(board.getPlayerEntities())):
-                if(playerIndex == playerToEvaluateIndex): playerAlignStrength += 2**alignLength * board.checkAlignmentForPlayer(playerIndex, alignLength)
-                else : oponentsAlignStrength += 2**alignLength * board.checkAlignmentForPlayer(playerIndex, alignLength)
+                
+                if(playerIndex == playerToEvaluateIndex): playerAlignStrength += 2 * pieceCount * board.countAvaillableLineOfAtLeastGivenPiece(playerIndex, self.__alignLength__, pieceCount)
+                else : oponentsAlignStrength += 2 * pieceCount * board.countAvaillableLineOfAtLeastGivenPiece(playerIndex, self.__alignLength__, pieceCount)
 
         totalStrength = playerAlignStrength + oponentsAlignStrength
         
         if totalStrength == 0: return 0.0
-        else : return (playerAlignStrength - oponentsAlignStrength) / totalStrength
+        
+        score : int = (playerAlignStrength - oponentsAlignStrength) / totalStrength
+
+        if(score == 1.0) : return 0.99
+        elif(score == -1.0) : return -0.99
+        else : return score

@@ -33,7 +33,7 @@ class MediumAIPlayer(AIPlayer):
         
         super().__init__(name)
         
-        self.__strength__ : int = 1
+        self.__strength__ : int = 2
     
     def get_choice(self, gameState: TicTacToeGameState) -> Move:
         

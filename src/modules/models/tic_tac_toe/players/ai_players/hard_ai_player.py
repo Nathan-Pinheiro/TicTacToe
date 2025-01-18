@@ -33,7 +33,7 @@ class HardAIPlayer(AIPlayer):
         
         super().__init__(name)
         
-        self.__strength__ : int = 3
+        self.__strength__ : int = 5
     
     def get_choice(self, gameState: TicTacToeGameState) -> Move:
         

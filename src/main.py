@@ -26,17 +26,18 @@ from modules.models.tic_tac_toe.players.human_console_player import HumanConsole
 from modules.models.tic_tac_toe.players.ai_players.easy_ai_player import EasyAIPlayer
 from modules.models.tic_tac_toe.players.ai_players.medium_ai_player import MediumAIPlayer
 from modules.models.tic_tac_toe.players.ai_players.hard_ai_player import HardAIPlayer
+from modules.models.tic_tac_toe.players.ai_players.impossible_ai_player import ImpossibleAIPlayer
 
 import os
 
 if(__name__ == "__main__"):
 
-    players : list[Player] = [HumanConsolePlayer("Lana"), HardAIPlayer()]
+    players : list[Player] = [HumanConsolePlayer("Lana"), ImpossibleAIPlayer()]
     playerEntities = [Circle(), Cross()]
-    playersData : list[PlayerData] = [TicTacToePlayerData([BombMove]), TicTacToePlayerData([])]
+    playersData : list[PlayerData] = [TicTacToePlayerData([]), TicTacToePlayerData([])]
     
-    board : Board = BoardBuilder(playerEntities).setHeight(3).setWidth(3).buildOptimizedBoard()
-    winCondition = AlignVictory(3)
+    board : Board = BoardBuilder(playerEntities).setHeight(7).setWidth(7).buildOptimizedBoard()
+    winCondition = AlignVictory(4)
 
     game_director = GameDirector(board, winCondition, players, playersData, 1)
 

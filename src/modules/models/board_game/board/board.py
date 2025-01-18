@@ -214,6 +214,21 @@ class Board(ABC):
         pass
 
     @abstractmethod
+    def countAvaillableLineOfAtLeastGivenPiece(self, playerIndex: int, alignLength: int, pieceCount: int) -> int:
+        """
+        Returns the number of lines that contain at least a given amount of the player's pieces and no opponent pieces.
+
+        Args:
+            playerIndex (int): The player's index.
+            alignLength (int): Required alignment length to win.
+            pieceCount (int): Minimum number of the player's pieces required.
+
+        Returns:
+            int: The number of valid lines.
+        """
+        pass
+
+    @abstractmethod
     def isFull(self) -> bool:
         """
         Checks if the board is full.
