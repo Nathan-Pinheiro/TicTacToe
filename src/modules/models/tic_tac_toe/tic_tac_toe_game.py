@@ -100,6 +100,7 @@ class TicTacToeGame:
         self.gameDirector = self.__initializeGame__()
         self.gameState = self.gameDirector.getGameState()
         self.gameHistory = []
+        self.gameNextMoves = []
         return None
     
     def __createBoard__(self) -> OptimizedBoard:
@@ -157,14 +158,14 @@ class TicTacToeGame:
         
         return GameDirector(self.board, winCondition, players, playersData, startingPlayer)
 
-    def playHumainMove(self, line: int, column: int) -> GameOutcome:
+    def playHumainMove(self, line: int, column: int, bomb: bool) -> GameOutcome:
         currentPlayer = self.gameDirector.getPlayerToPlay()
         
         if isinstance(currentPlayer, HumanPlayer):
-            move = currentPlayer.get_choice(self.gameState, line, column)
-            move.play(self.board, self.gameState.getPlayerToPlayIndex())
+            move = currentPlayer.get_choice(self.gameState, line, column, bomb)
+            self.gameState.play(move)
             self.gameHistory.append(move)
-            self.gameState.__nextTurn__()
+            self.gameNextMoves = []
             return self.gameState.checkWin()
         
         return None
@@ -173,12 +174,17 @@ class TicTacToeGame:
         currentPlayer = self.gameDirector.getPlayerToPlay()
         if isinstance(currentPlayer, AIPlayer):
             move = currentPlayer.get_choice(self.gameState)
-            move.play(self.board, self.gameState.getPlayerToPlayIndex())
-            print(self.gameState.getPlayerData(self.gameState.getPlayerToPlayIndex()).getPowerUpMoves())
+            self.gameState.play(move)
             self.gameHistory.append(move)
-            self.gameState.__nextTurn__()
+            self.gameNextMoves = []
             return self.gameState.checkWin()
         return None
+    
+    def undo(self):
+        self.gameState.goBack()
+    
+    def redo(self):
+        self.gameState.goNext()
     
     def getPlayerToPlay(self) -> Player:
         return self.gameDirector.getPlayerToPlay()

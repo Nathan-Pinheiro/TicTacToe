@@ -22,6 +22,7 @@ class Game(Page):
         self.cellSize = 100
         self.moveHistory = []
         self.turn = 1
+        self.bombMove = False
         self.gameOutCome = None
         self.grid_columnconfigure(0, weight=2)
         self.grid_columnconfigure(1, weight=1)
@@ -92,10 +93,14 @@ class Game(Page):
                             size=(int(12 * self.width_ratio), int(24 * self.height_ratio))
                                 )
         
-        ctk.CTkButton(self.right_frame, text="", image=bomb_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.bomb(), width=40, height=40).grid(row=2, column=0, pady=(0, int(20 * self.height_ratio)), sticky="es")
-        ctk.CTkButton(self.right_frame, text="", image=undo_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.undo(), width=40, height=40).grid(row=2, column=1, pady=(0, int(20 * self.height_ratio)), sticky="s")
-        ctk.CTkButton(self.right_frame, text="", image=redo_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.redo(), width=40, height=40).grid(row=2, column=2, pady=(0, int(20 * self.height_ratio)), sticky="s")
-        ctk.CTkButton(self.right_frame, text="", image=bulb_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.help(), width=40, height=40).grid(row=2, column=3, pady=(0, int(20 * self.height_ratio)), sticky="ws")
+        self.bombButton = ctk.CTkButton(self.right_frame, text="", image=bomb_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.bomb(), width=40, height=40)
+        self.bombButton.grid(row=2, column=0, pady=(0, int(20 * self.height_ratio)), sticky="es")
+        self.undoButton = ctk.CTkButton(self.right_frame, text="", image=undo_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.undo(), width=40, height=40)
+        self.undoButton.grid(row=2, column=1, pady=(0, int(20 * self.height_ratio)), sticky="s")
+        self.redoButton = ctk.CTkButton(self.right_frame, text="", image=redo_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.redo(), width=40, height=40)
+        self.redoButton.grid(row=2, column=2, pady=(0, int(20 * self.height_ratio)), sticky="s")
+        self.bulbButton = ctk.CTkButton(self.right_frame, text="", image=bulb_image, font=("Arial", int(18 * self.height_ratio)), command=lambda: self.help(), width=40, height=40)
+        self.bulbButton.grid(row=2, column=3, pady=(0, int(20 * self.height_ratio)), sticky="ws")
         
         # Play button
         ctk.CTkButton(self, text="Leave", font=("Arial", int(32 * self.height_ratio)), command=lambda: self.redirect()).grid(row=2, column=0)
@@ -142,9 +147,17 @@ class Game(Page):
             row = event.y // self.cellSize
 
             if 0 <= row < self.board.getHeight() and 0 <= col < self.board.getWidth():
+                currentPlayer = self.game.getPlayerToPlay()
+                move = None
                 if self.board.isCaseAvaillable(row, col):
-                    currentPlayer = self.game.getPlayerToPlay()
-                    self.gameOutCome = self.game.playHumainMove(row, col)
+                    move = self.game.playHumainMove(row, col, self.bombMove)
+                elif self.bombMove:
+                    move = self.game.playHumainMove(row, col, self.bombMove)
+                if move != None:
+                    self.gameOutCome = move
+                    self.bombMove = False
+                    if self.settings['game']['gamemode'] == 'Bomb mod':
+                        self.bombButton.configure(fg_color="#1f6aa5", hover_color="#144870")
                     if not self.__drawBoard__():
                         return False
                     if not self.__updateMoveHistory__(currentPlayer):
@@ -168,24 +181,32 @@ class Game(Page):
         move = self.game.getGameHistory()[-1]
         moveLine = move.getCoordinate().getLine()
         moveColumn = move.getCoordinate().getColumn()
-        self.moveHistory.append(f"{currentPlayer.getName()} played at ({chr(65 + moveColumn)}, {moveLine + 1})")
+        self.moveHistory.append((f"{currentPlayer.getName()} played at ({chr(65 + moveColumn)}, {moveLine + 1})", currentPlayer))
         for widget in self.scrollFrame.winfo_children():
             widget.destroy()
-        for move, player in zip(self.moveHistory, self.game.getPlayers()):
+        for move, player in self.moveHistory:
             color = self.settings['player1']['color'] if player.getName() == self.settings['player1']['name'] else self.settings['player2']['color']
             ctk.CTkLabel(self.scrollFrame, text=move, font=("Arial", 14), text_color=color).pack(anchor="w")
         return True
 
     def bomb(self) -> bool:
-        print("Bomb")
+        self.bombMove = not self.bombMove
+        if self.bombMove:
+            self.bombButton.configure(fg_color="#990000", hover_color="#660000")
+        else:
+            self.bombButton.configure(fg_color="#1f6aa5", hover_color="#144870")
         return True
     
     def undo(self) -> bool:
-        print("Undo")
+        self.game.undo()
+        if not self.__drawBoard__():
+            return False
         return True
     
     def redo(self) -> bool:
-        print("Redo")
+        self.game.redo()
+        if not self.__drawBoard__():
+            return False
         return True
     
     def help(self) -> bool:
@@ -201,6 +222,9 @@ class Game(Page):
         for widget in self.scrollFrame.winfo_children():
             widget.destroy()
         self.grid_canvas.delete("all")
+        self.bombMove = False
+        self.bombButton.configure(state="normal")
+        self.bombButton.configure(fg_color="#1f6aa5", hover_color="#144870")
         self.gameOutCome = None
         return True
     
@@ -209,6 +233,9 @@ class Game(Page):
         self.game = TicTacToeGame(self.settings)
         self.board = self.game.getBoard()
         self.grid_canvas.configure(width=self.cellSize * self.board.getWidth(), height=self.cellSize * self.board.getHeight())
+        if self.settings['game']['gamemode'] == 'No mod':
+            self.bombButton.configure(state="disabled")
+            self.bombButton.configure(fg_color="#666666", hover_color="#666666")
         if not self.__drawBoard__():
             print("Failed to draw board")
             return False
