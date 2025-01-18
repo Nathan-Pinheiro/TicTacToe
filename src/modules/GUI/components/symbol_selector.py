@@ -1,35 +1,81 @@
+import tkinter as tk
 import customtkinter as ctk
 from CTkColorPicker import *
-import tkinter as tk
-from modules.GUI.components.symbols import drawCross, drawCircle, drawTriangle, drawStar, drawSquare, drawHexagon, drawRhombus
+from typing import Optional, List
+
+from modules.utils.decorator import privatemethod
+
+from modules.GUI.components.symbols import (
+    drawCross, drawCircle, drawTriangle, drawStar, drawSquare, drawHexagon, drawRhombus
+)
 
 class SymbolSelector(ctk.CTkFrame):
+    
+    """
+    The symbol selector component.
+    """
 
-    def __init__(self, parent, symbol="cross", disabled_symbols=[], **kwargs):
+    def __init__(self, parent: ctk.CTkFrame, symbol: str = "cross", disabledSymbols: Optional[List[str]] = None, **kwargs) -> None:
+        
+        """
+        Initializes the symbol selector component.
+        
+        Parameters:
+            parent (ctk.CTkFrame): The parent frame.
+            symbol (str): The initial symbol.
+            disabledSymbols (Optional[List[str]]): The list of symbols to disable.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            None
+        """
+        
         super().__init__(parent, **kwargs)
-        self.symbols = ["cross", "circle", "triangle", "star", "square", "hexagon", "rhombus"]
+        self.symbols: List[str] = ["cross", "circle", "triangle", "star", "square", "hexagon", "rhombus"]
         if symbol not in self.symbols:
             symbol = self.symbols[0]
-        self.symbol = symbol
-        self.disabled_symbols = disabled_symbols
-        self.on_symbol_change = None
+        self.symbol: str = symbol
+        self.disabledSymbols: List[str] = disabledSymbols if disabledSymbols else []
+        self.onSymbolChange: Optional[callable] = None
         self.__createWidgets__()
+        
+        return None
 
-    def __createWidgets__(self):
-        self.canvas = tk.Canvas(self, width=132, height=132, bg="#333333", borderwidth=0, highlightthickness=0)
+    @privatemethod
+    def __createWidgets__(self) -> bool:
+        
+        """
+        Creates the widgets for the symbol selector.
+        
+        Returns:
+            bool: True if the widgets are created successfully.
+        """
+        
+        self.canvas: tk.Canvas = tk.Canvas(self, width=132, height=132, bg="#333333", borderwidth=0, highlightthickness=0)
         self.canvas.grid(row=0, column=0, padx=10, pady=10)
-        self.draw_symbol()
-        self.select_button = ctk.CTkButton(self, text="Select Symbol", command=self.select_symbol)
-        self.select_button.grid(row=1, column=0, padx=10, pady=10)
+        self.__drawSymbol__()
+        self.selectButton: ctk.CTkButton = ctk.CTkButton(self, text="Select Symbol", command=self.__selectSymbol__)
+        self.selectButton.grid(row=1, column=0, padx=10, pady=10)
+        
+        return True
 
-    def draw_symbol(self):
+    @privatemethod
+    def __drawSymbol__(self) -> bool:
+        
+        """
+        Draws the selected symbol on the canvas.
+        
+        Returns:
+            bool: True if the symbol is drawn successfully.
+        """
+        
         self.canvas.delete("all")
-        canvas_width = int(self.canvas['width'])
-        canvas_height = int(self.canvas['height'])
-        size = 100
-        weight = 2
-        x = (canvas_width - size) // 2
-        y = (canvas_height - size) // 2
+        canvas_width: int = int(self.canvas['width'])
+        canvas_height: int = int(self.canvas['height'])
+        size: int = 100
+        weight: int = 2
+        x: int = (canvas_width - size) // 2
+        y: int = (canvas_height - size) // 2
         if self.symbol == "cross":
             drawCross(self.canvas, x, y, size, weight=weight)
         elif self.symbol == "circle":
@@ -44,28 +90,83 @@ class SymbolSelector(ctk.CTkFrame):
             drawHexagon(self.canvas, x, y, size, weight=weight)
         elif self.symbol == "rhombus":
             drawRhombus(self.canvas, x, y, size, weight=weight)
+            
+        return True
 
-    def select_symbol(self):
-        current_index = self.symbols.index(self.symbol)
-        next_index = (current_index + 1) % len(self.symbols)
-        while self.symbols[next_index] in self.disabled_symbols:
+    @privatemethod
+    def __selectSymbol__(self) -> bool:
+        
+        """
+        Selects the next available symbol.
+        
+        Returns:
+            bool: True if the symbol is selected successfully.
+        """
+        
+        current_index: int = self.symbols.index(self.symbol)
+        next_index: int = (current_index + 1) % len(self.symbols)
+        while self.symbols[next_index] in self.disabledSymbols:
             next_index = (next_index + 1) % len(self.symbols)
         self.symbol = self.symbols[next_index]
-        self.draw_symbol()
-        if self.on_symbol_change:
-            self.on_symbol_change()
+        self.__drawSymbol__()
+        if self.onSymbolChange:
+            self.onSymbolChange()
+            
+        return True
 
-    def disable_symbols(self, symbols):
-        self.disabled_symbols = symbols
-        if self.symbol in self.disabled_symbols:
-            self.select_symbol()
+    def disableSymbols(self, symbols: List[str]) -> bool:
+        
+        """
+        Disables the specified symbols.
+        
+        Parameters:
+            symbols (List[str]): The list of symbols to disable.
 
-    def set_symbol(self, symbol):
+        Returns:
+            bool: True if the symbols are disabled successfully.
+        """
+        
+        self.disabledSymbols = symbols
+        if self.symbol in self.disabledSymbols:
+            self.selectSymbol()
+            
+        return True
+
+    def setSymbol(self, symbol: str) -> bool:
+        
+        """
+        Sets the symbol of the symbol selector.
+        
+        Parameters:
+            symbol (str): The symbol to set.
+
+        Returns:
+            bool: True if the symbol is set successfully.
+        """
+        
         self.symbol = symbol
-        self.draw_symbol()
+        self.__drawSymbol__()
+        
+        return True
 
-    def get_symbol(self):
+    def getSymbol(self) -> str:
+        
+        """
+        Gets the selected symbol.
+        
+        Returns:
+            str: The selected symbol.
+        """
+        
         return self.symbol
 
-    def get_available_symbols(self):
-        return [symbol for symbol in self.symbols if symbol not in self.disabled_symbols]
+    def getAvailableSymbols(self) -> List[str]:
+        
+        """
+        Gets the available symbols.
+        
+        Returns:
+            List[str]: The list of available symbols.
+        """
+        
+        return [symbol for symbol in self.symbols if symbol not in self.disabledSymbols]

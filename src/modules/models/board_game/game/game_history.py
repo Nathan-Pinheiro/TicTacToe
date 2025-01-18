@@ -72,7 +72,7 @@ class GameHistory:
     def getCurrentMove(self) -> Move:
         
         """
-        Add a move to the game history.
+        Get the current move.
         
         Returns :
             - move (Move) : the current move

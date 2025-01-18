@@ -79,13 +79,13 @@ class TicTacToeGameState(GameState):
 
         if move.__class__ != SimpleMove : self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().append(move.__class__)
 
-    def goBack(self) -> None:
+    def goBack(self) -> bool:
 
         """
         Goes back one move in the game history.
         """
 
-        if self.getGameHistory().getCurrentMoveIndex() < 0 : return
+        if self.getGameHistory().getCurrentMoveIndex() < 0 : return False
 
         move : Move = self.getGameHistory().getCurrentMove()
         move.undo(self.getBoard(), self.getPlayerToPlayIndex())
@@ -94,14 +94,16 @@ class TicTacToeGameState(GameState):
         self.getGameHistory().goBack()
 
         self.__previousTurn__()
+        
+        return True
 
-    def goNext(self) -> None :
+    def goNext(self) -> bool :
 
         """
         Moves forward in the game history.
         """
 
-        if self.getGameHistory().getCurrentMoveIndex() >= (self.getGameHistory().getMoveCount() - 1) : return
+        if self.getGameHistory().getCurrentMoveIndex() >= (self.getGameHistory().getMoveCount() - 1) : return False
         
         self.getGameHistory().goNext()
 
@@ -110,6 +112,8 @@ class TicTacToeGameState(GameState):
         if move.__class__ != SimpleMove : self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().remove(move.__class__)
 
         self.__nextTurn__()
+        
+        return True
 
     def getPossibleMoves(self) -> list[Move]:
         

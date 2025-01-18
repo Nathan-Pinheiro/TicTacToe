@@ -1,44 +1,13 @@
-## Interface
-
-"""
-GUI Render Module
-
-This module provides the main application class for the TicTacToe GUI.
-
-Classes:
-    App: Represents the main application window.
-    
-    Attributes:
-        frames (dict[str, Page]): A dictionary to hold the frames of the application.
-
-Functions:
-    __init__(self, title: str, firstPage: PageName, geometry: Optional[str] = None) -> bool:
-        Initialize the application with the given title, first page, and geometry.
-        
-    __closeWindow__(self, event: Optional[tk.Event] = None) -> bool:
-        Private method.
-        Close the application window.
-        
-    __createFrames__(self, container: ttk.Frame) -> bool:
-        Private method.
-        Create the frames for the application.
-        
-    showFrame(self, pageName: PageName) -> bool:
-        Show a specific frame.
-"""
-
-## Implementation
-
-# Import #
 from typing import Optional, Dict
+from enum import Enum
 import os
 import importlib
-from enum import Enum
 
 import customtkinter as ctk
 import tkinter as tk
 from tkinter import ttk
 
+from modules.utils.decorator import privatemethod
 from modules.GUI.page import Page
 
 class PageName(Enum):
@@ -47,16 +16,26 @@ class PageName(Enum):
     SECONDSETTINGS = "SecondSettings"
     GAME = "Game"
 
-# Class #
 class App(ctk.CTk):
     
-    ## Initialize the application with the given title, first page, and geometry.
-    #
-    # @param title The title of the application.
-    # @param firstPage The first page to display.
-    # @param geometry The geometry of the application.
-    # @return bool True if the function succeeds, False otherwise.
+    """
+    The main application.
+    """
+    
     def __init__(self, title: str, firstPage: PageName = PageName.WELCOME, geometry: Optional[str] = None) -> None:
+        
+        """
+        Initializes the application.
+        
+        Parameters:
+            title (str): The title of the application.
+            firstPage (PageName): The first page to display.
+            geometry (Optional[str]): The geometry of the application window.
+
+        Returns:
+            None
+        """
+        
         if not isinstance(title, str):
             raise TypeError("title must be a string")
         if not isinstance(firstPage, PageName):
@@ -88,12 +67,20 @@ class App(ctk.CTk):
             raise RuntimeError("Failed to show frame")
         
         return None
-        
-    ## Close the application window.
-    #
-    # @param event The event that triggered the close action.
-    # @return bool True if the function succeeds, False otherwise.
+
+    @privatemethod
     def __closeWindow__(self, event: Optional[tk.Event] = None) -> bool:
+        
+        """
+        Closes the application window.
+        
+        Parameters:
+            event (Optional[tk.Event]): The event that triggered the close action.
+
+        Returns:
+            bool: True if the function succeeds, False otherwise.
+        """
+        
         if event is not None and not isinstance(event, tk.Event):
             raise TypeError("event must be a tk.Event instance or None")
 
@@ -101,11 +88,19 @@ class App(ctk.CTk):
         
         return True
 
-    ## Create the frames for the application.
-    #
-    # @param container The container to hold the frames.
-    # @return bool True if the function succeeds, False otherwise.
+    @privatemethod
     def __createFrames__(self, container: ttk.Frame) -> bool:
+        
+        """
+        Creates the frames for the application.
+        
+        Parameters:
+            container (ttk.Frame): The container to hold the frames.
+
+        Returns:
+            bool: True if the function succeeds, False otherwise.
+        """
+        
         if not isinstance(container, ttk.Frame):
             raise TypeError("container must be a ttk.Frame instance")
 
@@ -129,11 +124,18 @@ class App(ctk.CTk):
             
         return True
 
-    ## Show a specific frame.
-    #
-    # @param pageName The name of the frame to show.
-    # @return bool True if the function succeeds, False otherwise.
     def showFrame(self, pageName: PageName, **kwargs) -> bool:
+        
+        """
+        Shows a specific frame.
+        
+        Parameters:
+            pageName (PageName): The name of the frame to show.
+
+        Returns:
+            bool: True if the function succeeds, False otherwise.
+        """
+        
         if not isinstance(pageName, PageName):
             raise TypeError("pageName must be a PageName")
 
@@ -145,7 +147,7 @@ class App(ctk.CTk):
         
         # Call startGame if the page is Game
         if pageName == PageName.GAME:
-            if not frame.start_game(**kwargs):
+            if not frame.startGame(**kwargs):
                 print("Error: Failed to start game")
                 return False
         elif pageName == PageName.SECONDSETTINGS:
@@ -153,14 +155,14 @@ class App(ctk.CTk):
                 print("Error: Failed to set values for SecondSettings")
                 return False
         elif pageName == PageName.WELCOME:
-            if not self.frames[PageName.FIRSTSETTINGS.value].reset_settings():
+            if not self.frames[PageName.FIRSTSETTINGS.value].resetSettings():
                 print("Error: Failed to reset settings for FirstSettings")
                 return False
-            if not self.frames[PageName.GAME.value].reset_game():
+            if not self.frames[PageName.GAME.value].resetGame():
                 print("Error: Failed to reset game for Game")
                 return False
         elif pageName == PageName.FIRSTSETTINGS:
-            if not self.frames[PageName.SECONDSETTINGS.value].reset_settings():
+            if not self.frames[PageName.SECONDSETTINGS.value].resetSettings():
                 print("Error: Failed to reset settings for FirstSettings")
                 return False
         
