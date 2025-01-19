@@ -69,16 +69,16 @@ class GameHistory:
 
         return self.__moves__
         
-    def getCurrentMove(self) -> Move:
+    def getCurrentMove(self) -> Move | None:
         
         """
         Get the current move.
         
         Returns :
-            - move (Move) : the current move
+            - move (Move) : the current move if there is one, None otherwise
         """
 
-        if(self.__currentMoveIndex__ == -1) : raise Exception("There is no move played")
+        if(self.__currentMoveIndex__ == -1) : return None
         
         return self.__moves__[self.__currentMoveIndex__]
     

@@ -3,6 +3,7 @@ import tkinter as tk
 from PIL import Image
 
 import customtkinter as ctk
+from modules.models.tic_tac_toe.moves.power_ups.bomb_move import BombMove
 from modules.utils.decorator import privatemethod
 from modules.GUI.page import Page
 from modules.GUI.render import PageName
@@ -60,6 +61,10 @@ class Game(Page):
         self.grid_rowconfigure(1, weight=1)
         self.grid_rowconfigure(2, weight=1)
         self.__createWidgets__()
+        self.explosionImages = [tk.PhotoImage(file=f"./assets/Explosion3.gif", format=f"gif -index {i}") for i in range(7)]
+        self.explosionLabel = ctk.CTkLabel(self.gridCanvas, text="", width=int(self.cellSize * 3)-2, height=int(self.cellSize * 3)-2)
+        self.clockImages = [tk.PhotoImage(file=f"./assets/Clock2.gif", format=f"gif -index {i}") for i in range(14)]
+        self.clockLabel = ctk.CTkLabel(self.gridCanvas, text="")
         return None
     
     def redirect(self) -> bool:
@@ -233,13 +238,15 @@ class Game(Page):
             if 0 <= row < self.board.getHeight() and 0 <= col < self.board.getWidth():
                 currentPlayer = self.game.getPlayerToPlay()
                 move: Optional[object] = None
-                if self.board.isCaseAvaillable(row, col):
-                    move = self.game.playHumainMove(row, col, self.bombMove)
-                elif self.bombMove:
+                if self.bombMove or self.board.isCaseAvaillable(row, col):
                     move = self.game.playHumainMove(row, col, self.bombMove)
                 if move is not None:
                     self.gameOutCome = move
                     self.bombMove = False
+                    moveType = self.game.getGameHistory().getCurrentMove()
+                    if isinstance(moveType, BombMove):
+                        if not self.__playExplosion__(moveType.getCoordinate().getLine(), moveType.getCoordinate().getColumn()):
+                            return False
                     if self.settings['game']['gamemode'] == 'Bomb mod':
                         self.bombButton.configure(fg_color="#1f6aa5", hover_color="#144870")
                     if not self.__drawBoard__():
@@ -280,7 +287,7 @@ class Game(Page):
         for i, move in enumerate(moves):
             playerIndex = 1 - playerIndex
             if isinstance(move, SimpleMove):
-                moveText: str = f"{self.settings[f'player{playerIndex+1}']['name']} played at {chr(65 + move.getCoordinate().getColumn())}{move.getCoordinate().getLine() + 1}"
+                moveText: str = f"{self.settings[f'player{playerIndex+1}']['name']} played at {chr(65 + move.getCoordinate().getColumn())}, {move.getCoordinate().getLine() + 1}"
             else:
                 moveText: str = f"{self.settings[f"player{playerIndex+1}"]["name"]} played a bomb at {chr(65 + move.getCoordinate().getColumn())}, {move.getCoordinate().getLine() + 1}"
             font: Tuple[str, int, str] = ("Arial", int(16 * self.heightRatio), "bold") if move == self.game.getGameHistory().getCurrentMove() else ("Arial", int(16 * self.heightRatio))
@@ -386,6 +393,7 @@ class Game(Page):
             bool: True if the function succeeds, False otherwise.
         """
         
+        #self.__playUndo__()
         self.game.undo()
         if not self.__drawBoard__():
             return False
@@ -411,6 +419,7 @@ class Game(Page):
             bool: True if the function succeeds, False otherwise.
         """
         
+        #self.__playRedo__()
         self.game.redo()
         if not self.__drawBoard__():
             return False
@@ -481,6 +490,7 @@ class Game(Page):
         self.game = TicTacToeGame(self.settings)
         self.board = self.game.getBoard()
         self.gridCanvas.configure(width=self.cellSize * self.board.getWidth(), height=self.cellSize * self.board.getHeight())
+        self.clockLabel.configure(width=int(self.cellSize * self.board.getWidth())-2, height=int(self.cellSize * self.board.getHeight())-2)
         if self.settings['game']['gamemode'] == 'No mod':
             self.bombButton.configure(state="disabled")
             self.bombButton.configure(fg_color="#666666", hover_color="#666666")
@@ -540,6 +550,10 @@ class Game(Page):
         """
         try:
             self.gameOutCome = self.game.playAiMove()
+            move = self.game.getGameHistory().getCurrentMove()
+            if isinstance(move, BombMove):
+                if not self.__playExplosion__(move.getCoordinate().getLine(), move.getCoordinate().getColumn()):
+                    return False
             if not self.__drawBoard__():
                 return False
             if not self.__updateMoveHistory__():
@@ -597,4 +611,72 @@ class Game(Page):
         
         self.turnLabel.configure(text=resultText)
         self.playerTurnLabel.configure(text="")
+        return True
+
+    @privatemethod
+    def __playExplosion__(self, row: int, col: int) -> bool:
+        
+        """
+        Plays an explosion animation at the center of the given cell.
+
+        Parameters:
+            row (int): The row index of the cell.
+            col (int): The column index of the cell.
+
+        Returns:
+            None
+        """
+        
+        x = col * self.cellSize + self.cellSize // 2
+        y = row * self.cellSize + self.cellSize // 2
+        self.explosionLabel.place(x=x, y=y, anchor="center")
+        for img in self.explosionImages:
+            self.explosionLabel.configure(image=img)
+            self.explosionLabel.update()
+            self.gridCanvas.after(100)
+        self.explosionLabel.place_forget()
+        self.__drawBoard__()
+        
+        return True
+    
+    @privatemethod
+    def __playRedo__(self) -> bool:
+        
+        """
+        Plays a redo animation.
+        
+        Returns:
+            bool: True if the function succeeds, False otherwise.
+        """
+        
+        x = self.board.getWidth() * self.cellSize // 2
+        y = self.board.getHeight() * self.cellSize // 2
+        self.clockLabel.place(x=x, y=y, anchor="center")
+        for img in self.clockImages:
+            self.clockLabel.configure(image=img)
+            self.clockLabel.update()
+            self.gridCanvas.after(100)
+        self.clockLabel.place_forget()
+        return True
+    
+    @privatemethod
+    def __playUndo__(self) -> bool:
+        
+        """
+        Plays an undo animation.
+        
+        Returns:
+            bool: True if the function succeeds, False otherwise.
+        """
+        
+        x = self.board.getWidth() * self.cellSize // 2
+        y = self.board.getHeight() * self.cellSize // 2
+        self.clockLabel.place(x=x, y=y, anchor="center")
+        for img in reversed(self.clockImages):
+            self.clockLabel.configure(image=img)
+            self.clockLabel.update()
+            self.gridCanvas.after(100)
+        self.clockLabel.place_forget()
+        self.__drawBoard__()
+        
         return True

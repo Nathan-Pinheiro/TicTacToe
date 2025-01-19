@@ -77,10 +77,12 @@ def drawGrid(canvas: tk.Canvas, width: int, height: int, cellSize: int, board: l
         if not drawCoordinates(canvas, width, height, cellSize):
             raise RuntimeError("Failed to draw coordinates")
 
-    for i in range(1, height // cellSize):
+    for i in range(height // cellSize + 1):
         canvas.create_line(0, i * cellSize, width, i * cellSize, fill=lineColor, width=lineWidth)
-    for i in range(1, width // cellSize):
+    for i in range(width // cellSize + 1):
         canvas.create_line(i * cellSize, 0, i * cellSize, height, fill=lineColor, width=lineWidth)
+    canvas.create_line(width-1, 0, width-1, height, fill=lineColor, width=lineWidth)
+    canvas.create_line(0, height-1, width, height-1, fill=lineColor, width=lineWidth)
 
     return True
 
