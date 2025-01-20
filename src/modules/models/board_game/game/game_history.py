@@ -57,17 +57,28 @@ class GameHistory:
         """        
 
         return self.__moves__[moveIndex]
-        
-    def getCurrentMove(self) -> Move:
+    
+    def getMoves(self) -> list[Move]:
         
         """
-        Add a move to the game history.
+        Get all the moves in the game history.
         
         Returns :
-            - move (Move) : the current move
+            - moves (list[Move]) : the list of all moves
         """
 
-        if(self.__currentMoveIndex__ != -1) : raise Exception("There is no move played")
+        return self.__moves__
+        
+    def getCurrentMove(self) -> Move | None:
+        
+        """
+        Get the current move.
+        
+        Returns :
+            - move (Move) : the current move if there is one, None otherwise
+        """
+
+        if(self.__currentMoveIndex__ == -1) : return None
         
         return self.__moves__[self.__currentMoveIndex__]
     
@@ -132,8 +143,8 @@ class GameHistory:
     def goBack(self) -> None :
         
         """Allow moving back to the last move"""
-
-        if(self.__currentMoveIndex__ > 0) : self.__currentMoveIndex__ -= 1
+        
+        if(self.__currentMoveIndex__ > -1) : self.__currentMoveIndex__ -= 1
         else : raise Exception("Can't go back if you are on the first move !")
         
         return None

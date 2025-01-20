@@ -1,52 +1,20 @@
-## Interface
-
-"""
-Shape Drawing Module
-
-This module provides functions to draw various shapes on a graphical canvas, including 'X', 'O', triangles, stars, squares, hexagons, and rhombuses.
-
-Functions:
-    drawCross(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 4) -> bool:
-        Draw an 'X' centered in a cell.
-        
-    drawCircle(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 4) -> bool:
-        Draw an 'O' centered in a cell.
-        
-    drawTriangle(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 4) -> bool:
-        Draw a triangle centered in a cell.
-        
-    drawStar(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 4) -> bool:
-        Draw a perfect 5-pointed star centered in a cell.
-        
-    drawSquare(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 4) -> bool:
-        Draw a square centered in a cell.
-        
-    drawHexagon(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 4) -> bool:
-        Draw a hexagon centered in a cell.
-        
-    drawRhombus(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 4) -> bool:
-        Draw a rhombus (diamond shape) centered in a cell.
-        
-    drawGrayCase(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#5c5c5c") -> bool:
-        Draw a gray square centered in a cell.
-"""
-
-# ---------------------------------------------------------------------------------------------------- #
-
-## Implementation
-
-# Import
 import tkinter as tk
 import math
 
-## Draw a shape centered in a cell.
-#
-# @param canvas The canvas object to draw on.
-# @param points The list of points defining the shape.
-# @param color The color of the shape.
-# @param weight The thickness of the lines.
-# @return bool True if the function succeeds, False otherwise.
 def drawShape(canvas: tk.Canvas, points: list[float], color: str, weight: int) -> bool:
+    
+    """
+    Draws a shape on the canvas.
+
+    Parameters:
+        canvas (tk.Canvas): The canvas to draw on.
+        points (list[float]): The points of the shape.
+        color (str): The color of the shape.
+        weight (int): The weight of the shape.
+        
+    Returns:
+        bool: True if the function succeeds, False otherwise.
+    """
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     if not isinstance(points, list) or not all(isinstance(point, (int, float)) for point in points):
@@ -59,16 +27,22 @@ def drawShape(canvas: tk.Canvas, points: list[float], color: str, weight: int) -
     canvas.create_polygon(points, outline=color, width=weight, fill="")
     return True
 
-## Draw an 'X' centered in a cell.
-#
-# @param canvas The canvas object to draw on.
-# @param x The x-coordinate of the top-left corner of the cell.
-# @param y The y-coordinate of the top-left corner of the cell.
-# @param size The size of the cell.
-# @param color The color of the 'X' (default is white).
-# @param weight The thickness of the lines (default is 1).
-# @return bool True if the function succeeds, False otherwise.
 def drawCross(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 1) -> bool:
+    
+    """
+    Draws a cross on the canvas.
+    
+    Parameters:
+        canvas (tk.Canvas): The canvas to draw on.
+        x (int): The x-coordinate of the cross.
+        y (int): The y-coordinate of the cross.
+        size (int): The size of the cross.
+        color (str): The color of the cross.
+        weight (int): The weight of the cross.
+
+    Returns:
+        bool: True if the cross is drawn successfully.
+    """
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
@@ -83,16 +57,23 @@ def drawCross(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#fffff
     canvas.create_line(x + margin, y + size - margin, x + size - margin, y + margin, fill=color, width=weight)
     return True
 
-## Draw an 'O' centered in a cell.
-#
-# @param canvas The canvas object to draw on.
-# @param x The x-coordinate of the top-left corner of the cell.
-# @param y The y-coordinate of the top-left corner of the cell.
-# @param size The size of the cell.
-# @param color The color of the 'O' (default is white).
-# @param weight The thickness of the lines (default is 1).
-# @return bool True if the function succeeds, False otherwise.
 def drawCircle(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 1) -> bool:
+    
+    """
+    Draws a circle on the canvas.
+    
+    Parameters:
+        canvas (tk.Canvas): The canvas to draw on.
+        x (int): The x-coordinate of the circle.
+        y (int): The y-coordinate of the circle.
+        size (int): The size of the circle.
+        color (str): The color of the circle.
+        weight (int): The weight of the circle.
+        
+    Returns:
+        bool: True if the circle is drawn successfully.
+    """
+    
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
@@ -106,16 +87,23 @@ def drawCircle(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffff
     canvas.create_oval(x + margin, y + margin, x + size - margin, y + size - margin, outline=color, width=weight)
     return True
 
-## Draw a triangle centered in a cell.
-#
-# @param canvas The canvas object to draw on.
-# @param x The x-coordinate of the top-left corner of the cell.
-# @param y The y-coordinate of the top-left corner of the cell.
-# @param size The size of the cell.
-# @param color The color of the triangle (default is white).
-# @param weight The thickness of the lines (default is 1).
-# @return bool True if the function succeeds, False otherwise.
 def drawTriangle(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 1) -> bool:
+    
+    """
+    Draws a triangle on the canvas.
+    
+    Parameters:
+        canvas (tk.Canvas): The canvas to draw on.
+        x (int): The x-coordinate of the triangle.
+        y (int): The y-coordinate of the triangle.
+        size (int): The size of the triangle.
+        color (str): The color of the triangle.
+        weight (int): The weight of the triangle.
+    
+    Returns:
+        bool: True if the triangle is drawn successfully.
+    """
+    
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
@@ -136,16 +124,23 @@ def drawTriangle(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ff
         raise RuntimeError("Failed to draw shape")
     return True
 
-## Draw a perfect 5-pointed star centered in a cell.
-#
-# @param canvas The canvas object to draw on.
-# @param x The x-coordinate of the top-left corner of the cell.
-# @param y The y-coordinate of the top-left corner of the cell.
-# @param size The size of the cell.
-# @param color The color of the star (default is white).
-# @param weight The thickness of the lines (default is 1).
-# @return bool True if the function succeeds, False otherwise.
 def drawStar(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 1) -> bool:
+    
+    """
+    Draws a star on the canvas.
+    
+    Parameters:
+        canvas (tk.Canvas): The canvas to draw on.
+        x (int): The x-coordinate of the star.
+        y (int): The y-coordinate of the star.
+        size (int): The size of the star.
+        color (str): The color of the star.
+        weight (int): The weight of the star.
+        
+    Returns:
+        bool: True if the star is drawn successfully.
+    """
+    
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
@@ -171,16 +166,23 @@ def drawStar(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff
         raise RuntimeError("Failed to draw shape")
     return True
 
-## Draw a square centered in a cell.
-#
-# @param canvas The canvas object to draw on.
-# @param x The x-coordinate of the top-left corner of the cell.
-# @param y The y-coordinate of the top-left corner of the cell.
-# @param size The size of the cell.
-# @param color The color of the square (default is white).
-# @param weight The thickness of the lines (default is 1).
-# @return bool True if the function succeeds, False otherwise.
 def drawSquare(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 1) -> bool:
+    
+    """
+    Draws a square on the canvas.
+    
+    Parameters:
+        canvas (tk.Canvas): The canvas to draw on.
+        x (int): The x-coordinate of the square.
+        y (int): The y-coordinate of the square.
+        size (int): The size of the square.
+        color (str): The color of the square.
+        weight (int): The weight of the square.
+        
+    Returns:
+        bool: True if the square is drawn successfully.
+    """
+    
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
@@ -194,16 +196,23 @@ def drawSquare(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffff
     canvas.create_rectangle(x + margin, y + margin, x + size - margin, y + size - margin, outline=color, width=weight)
     return True
 
-## Draw a hexagon centered in a cell.
-#
-# @param canvas The canvas object to draw on.
-# @param x The x-coordinate of the top-left corner of the cell.
-# @param y The y-coordinate of the top-left corner of the cell.
-# @param size The size of the cell.
-# @param color The color of the hexagon (default is white).
-# @param weight The thickness of the lines (default is 1).
-# @return bool True if the function succeeds, False otherwise.
 def drawHexagon(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 1) -> bool:
+    
+    """
+    Draws a hexagon on the canvas.
+    
+    Parameters:
+        canvas (tk.Canvas): The canvas to draw on.
+        x (int): The x-coordinate of the hexagon.
+        y (int): The y-coordinate of the hexagon.
+        size (int): The size of the hexagon.
+        color (str): The color of the hexagon.
+        weight (int): The weight of the hexagon.
+        
+    Returns:
+        bool: True if the hexagon is drawn successfully.
+    """
+    
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
@@ -227,16 +236,23 @@ def drawHexagon(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#fff
         raise RuntimeError("Failed to draw shape")
     return True
 
-## Draw a rhombus (diamond shape) centered in a cell.
-#
-# @param canvas The canvas object to draw on.
-# @param x The x-coordinate of the top-left corner of the cell.
-# @param y The y-coordinate of the top-left corner of the cell.
-# @param size The size of the cell.
-# @param color The color of the rhombus (default is white).
-# @param weight The thickness of the lines (default is 1).
-# @return bool True if the function succeeds, False otherwise.
 def drawRhombus(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 1) -> bool:
+    
+    """
+    Draws a rhombus on the canvas.
+    
+    Parameters:
+        canvas (tk.Canvas): The canvas to draw on.
+        x (int): The x-coordinate of the rhombus.
+        y (int): The y-coordinate of the rhombus.
+        size (int): The size of the rhombus.
+        color (str): The color of the rhombus.
+        weight (int): The weight of the rhombus.
+        
+    Returns:
+        bool: True if the rhombus is drawn successfully.
+    """
+    
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
@@ -258,15 +274,22 @@ def drawRhombus(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#fff
         raise RuntimeError("Failed to draw shape")
     return True
 
-## Draw a gray square centered in a cell.
-#
-# @param canvas The canvas object to draw on.
-# @param x The x-coordinate of the top-left corner of the cell.
-# @param y The y-coordinate of the top-left corner of the cell.
-# @param size The size of the cell.
-# @param color The color of the square (default is gray).
-# @return bool True if the function succeeds, False otherwise.
 def drawGrayCase(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#5c5c5c") -> bool:
+    
+    """
+    Draws a gray case on the canvas.
+    
+    Parameters:
+        canvas (tk.Canvas): The canvas to draw on.
+        x (int): The x-coordinate of the gray case.
+        y (int): The y-coordinate of the gray case.
+        size (int): The size of the gray case.
+        color (str): The color of the gray case.
+        
+    Returns:
+        bool: True if the gray case is drawn successfully.
+    """
+    
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
@@ -275,4 +298,30 @@ def drawGrayCase(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#5c
         raise TypeError("color must be a string")
     
     canvas.create_rectangle(x + 1, y + 1, x + size, y + size, fill=color, outline="")
+    return True
+
+def drawGreenCase(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#005500") -> bool:
+    
+    """
+    Draws a green case on the canvas.
+    
+    Parameters:
+        canvas (tk.Canvas): The canvas to draw on.
+        x (int): The x-coordinate of the green case.
+        y (int): The y-coordinate of the green case.
+        size (int): The size of the green case.
+        color (str): The color of the green case.
+        
+    Returns:
+        bool: True if the green case is drawn successfully.
+    """
+    
+    if not isinstance(canvas, tk.Canvas):
+        raise TypeError("canvas must be a tk.Canvas instance")
+    if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
+        raise TypeError("x, y, and size must be integers")
+    if not isinstance(color, str):
+        raise TypeError("color must be a string")
+    
+    canvas.create_rectangle(x + 1, y + 1, x + size, y + size, fill=color, outline = "")
     return True

@@ -65,7 +65,7 @@ class GameState(ABC):
         pass
 
     @abstractmethod
-    def goBack(self, move: Move) -> None:
+    def goBack(self) -> None:
         """
         Navigate back to a previous move in the game history.
         
@@ -75,7 +75,7 @@ class GameState(ABC):
         pass
 
     @abstractmethod
-    def goNext(self, move: Move) -> None:
+    def goNext(self) -> None:
         """
         Navigate forward to a subsequent move in the game history.
         

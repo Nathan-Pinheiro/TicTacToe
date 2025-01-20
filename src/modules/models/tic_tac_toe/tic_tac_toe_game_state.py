@@ -51,7 +51,7 @@ class TicTacToeGameState(GameState):
             GameOutcome: The result of the game after the move.
         """
         self.getGameHistory().addMove(move)
-
+        
         move.play(self.getBoard(), self.getPlayerToPlayIndex())
         if move.__class__ != SimpleMove : self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().remove(move.__class__) 
 
@@ -79,37 +79,41 @@ class TicTacToeGameState(GameState):
 
         if move.__class__ != SimpleMove : self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().append(move.__class__)
 
-    def goBack(self) -> None:
-        
+    def goBack(self) -> bool:
+
         """
         Goes back one move in the game history.
         """
-        
-        if self.getGameHistory().getCurrentMoveIndex() <= 0 : return
 
-        self.getGameHistory().goBack()
-        
+        if self.getGameHistory().getCurrentMoveIndex() < 0 : return False
+
         move : Move = self.getGameHistory().getCurrentMove()
         move.undo(self.getBoard(), self.getPlayerToPlayIndex())
         if move.__class__ != SimpleMove : self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().append(move.__class__)
         
-        self.__previousTurn__()
+        self.getGameHistory().goBack()
 
-    def goNext(self) -> None :
+        self.__previousTurn__()
         
+        return True
+
+    def goNext(self) -> bool :
+
         """
         Moves forward in the game history.
         """
-        
-        if self.getGameHistory().getCurrentMoveIndex() >= self.getGameHistory().getMoveCount() : return
 
+        if self.getGameHistory().getCurrentMoveIndex() >= (self.getGameHistory().getMoveCount() - 1) : return False
+        
         self.getGameHistory().goNext()
         
         move : Move = self.getGameHistory().getCurrentMove()
         move.play(self.getBoard(), self.getPlayerToPlayIndex())
         if move.__class__ != SimpleMove : self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().remove(move.__class__)
-        
+
         self.__nextTurn__()
+        
+        return True
 
     def getPossibleMoves(self) -> list[Move]:
         
@@ -117,7 +121,7 @@ class TicTacToeGameState(GameState):
         Retrieves all valid moves for the current player based on the current game state.
 
         Returns:
-            list[Move]: A list of possible moves.
+            list[Move]: A list of possible moves.s
         """
 
         possibleMoveTypes = [SimpleMove] + self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves()

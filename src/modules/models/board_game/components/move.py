@@ -40,6 +40,12 @@ class Move(ABC) :
     
     def getCoordinate(self) -> Coordinate :
         return self.__coordinate__
+    
+    def getMoveCode(self) -> str :
+        return self.__moveCode__
+    
+    def isMoveDone(self) -> bool :
+        return self.__isMoveDone__
 
     def __str__(self):
         return self.__moveCode__ + encode(self.__coordinate__)
