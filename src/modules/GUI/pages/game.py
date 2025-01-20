@@ -289,7 +289,7 @@ class Game(Page):
             if isinstance(move, SimpleMove):
                 moveText: str = f"{self.settings[f'player{playerIndex+1}']['name']} played at {chr(65 + move.getCoordinate().getColumn())}, {move.getCoordinate().getLine() + 1}"
             else:
-                moveText: str = f"{self.settings[f"player{playerIndex+1}"]["name"]} played a bomb at {chr(65 + move.getCoordinate().getColumn())}, {move.getCoordinate().getLine() + 1}"
+                moveText: str = f"{self.settings[f'player{playerIndex+1}']['name']} played a bomb at {chr(65 + move.getCoordinate().getColumn())}, {move.getCoordinate().getLine() + 1}"
             font: Tuple[str, int, str] = ("Arial", int(16 * self.heightRatio), "bold") if move == self.game.getGameHistory().getCurrentMove() else ("Arial", int(16 * self.heightRatio))
             ctk.CTkLabel(self.scrollFrame, text=moveText, font=font, text_color=self.settings[f"player{playerIndex+1}"]["color"]).pack(anchor="w")
         return True
