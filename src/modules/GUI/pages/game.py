@@ -394,12 +394,16 @@ class Game(Page):
         """
         
         #self.__playUndo__()
-        self.game.undo()
+        if not self.game.undo():
+            return False
         if not self.__drawBoard__():
             return False
         if not self.__updateButtons__():
             return False
-        self.turn -= 2
+        if self.turn >= 2:
+            self.turn -= 2
+        else: 
+            self.turn = 1
         if not self.__setTurnLabel__():
             return False
         if not self.__setPlayerTurn__():
@@ -420,7 +424,8 @@ class Game(Page):
         """
         
         #self.__playRedo__()
-        self.game.redo()
+        if not self.game.redo():
+            return False
         if not self.__drawBoard__():
             return False
         if not self.__updateButtons__():

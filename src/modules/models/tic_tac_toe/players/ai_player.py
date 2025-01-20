@@ -20,7 +20,7 @@ class AIPlayer(Player):
         
         super().__init__(name)
         
-        self.__game_analyser__ : GameAnalyser = AlphaBetaPruningAnalyser(6)
+        self.__game_analyser__ : GameAnalyser = AlphaBetaPruningAnalyser(3)
 
     def get_choice(self, gameState : TicTacToeGameState) -> Move:
         
