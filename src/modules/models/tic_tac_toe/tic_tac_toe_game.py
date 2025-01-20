@@ -94,6 +94,7 @@ from modules.models.tic_tac_toe.moves.power_ups.bomb_move import BombMove
 import random
 
 class TicTacToeGame:
+    
     def __init__(self, settings) -> None:
         self.settings = settings
         self.board = self.__createBoard__()
@@ -170,11 +171,12 @@ class TicTacToeGame:
         return None
 
     def playAiMove(self) -> GameOutcome:
+        
         currentPlayer = self.gameDirector.getPlayerToPlay()
+
         if isinstance(currentPlayer, AIPlayer):
             move = currentPlayer.get_choice(self.gameState)
             move.play(self.board, self.gameState.getPlayerToPlayIndex())
-            print(self.gameState.getPlayerData(self.gameState.getPlayerToPlayIndex()).getPowerUpMoves())
             self.gameHistory.append(move)
             self.gameState.__nextTurn__()
             return self.gameState.checkWin()

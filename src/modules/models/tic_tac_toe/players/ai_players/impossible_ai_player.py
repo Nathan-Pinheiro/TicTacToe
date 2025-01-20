@@ -46,7 +46,5 @@ class ImpossibleAIPlayer(AIPlayer):
         Returns:
             Move: The move that the AI will make.
         """
-        
-        print(self.__game_analyser__.getMovesScores(gameState))
 
         return self.__game_analyser__.getBestMove(gameState)

@@ -49,14 +49,25 @@ class MediumAIPlayer(AIPlayer):
             Move: The move that the AI will make.
         """
         
+        print("========================")
+
         moveScores : dict[Move, int] = self.__game_analyser__.getMovesScores(gameState)
 
         if not moveScores : raise ValueError("Can't play as there is no moves to play")
+        
+        print("analyse :", moveScores)
 
-        for _ , score in moveScores.items() : score = score ** self.__strength__
+        for move, score in moveScores.items(): moveScores[move] = score ** self.__strength__
+
+        print("after powered up :", moveScores)
 
         moveProbabilities = self.__softmax(list(moveScores.values()))
+        
+        print("proba :", moveProbabilities)
+
         selectedMove = self.__select_move_based_on_probability(dict(zip(moveScores.keys(), moveProbabilities)))
+
+        print("========================")
 
         return selectedMove
 
