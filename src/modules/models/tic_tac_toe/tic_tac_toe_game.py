@@ -136,7 +136,7 @@ class TicTacToeGame:
         if self.settings['game']['alignToWin']:
             return AlignVictory(self.settings['game']['nbSymbols'])
         else:
-            return UnalignVictory(self.settings['game']['nbSymbols'], 2)
+            return UnalignVictory(self.settings['game']['nbSymbols'])
         
     @privatemethod
     def __createPlayersData__(self, nbPlayers: int) -> List[TicTacToePlayerData]:
