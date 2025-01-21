@@ -19,7 +19,7 @@ class CircularShape(BoardShape):
         super()
         return None
     
-    def apply_shape(self, board : Board) -> None:
+    def applyShape(self, board : Board) -> None:
 
         center_x = (board.getWidth() - 1) / 2
         center_y = (board.getHeight() - 1) / 2

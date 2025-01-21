@@ -1,4 +1,4 @@
-from modules.models.tic_tac_toe.tic_tac_toe_game_state import TicTacToeGameState
+from modules.models.board_game.game.game_state import GameState
 from modules.models.board_game.components.move import Move
 from abc import ABC, abstractmethod
 
@@ -44,5 +44,5 @@ class Player(ABC):
         return None
 
     @abstractmethod
-    def get_choice(self, gameState : TicTacToeGameState) -> Move:
+    def getChoice(self, gameState : GameState) -> Move:
         pass

@@ -29,7 +29,7 @@ from modules.models.tic_tac_toe.tic_tac_toe_player import Player
 from modules.models.tic_tac_toe.tic_tac_toe_player_data import TicTacToePlayerData
 from modules.models.tic_tac_toe.win_conditions.align_victory import AlignVictory
 from modules.models.tic_tac_toe.win_conditions.unalign_victory import UnalignVictory
-from modules.models.tic_tac_toe.players.human_player import HumanPlayer
+from modules.models.tic_tac_toe.players.human_player import HumanGUIPlayer
 from modules.models.tic_tac_toe.players.ai_player import AIPlayer
 from modules.models.tic_tac_toe.players.ai_players.easy_ai_player import EasyAIPlayer
 from modules.models.tic_tac_toe.players.ai_players.medium_ai_player import MediumAIPlayer
@@ -112,7 +112,7 @@ class TicTacToeGame:
         """
         
         playerType = {
-            'human': HumanPlayer,
+            'human': HumanGUIPlayer,
             'easy': EasyAIPlayer,
             'medium': MediumAIPlayer,
             'hard': HardAIPlayer
@@ -221,7 +221,7 @@ class TicTacToeGame:
         
         currentPlayer = self.gameDirector.getPlayerToPlay()
         
-        if isinstance(currentPlayer, HumanPlayer):
+        if isinstance(currentPlayer, HumanGUIPlayer):
             move = currentPlayer.get_choice(self.gameState, line, column, bomb)
             self.gameState.play(move)
             return self.gameState.checkWin()

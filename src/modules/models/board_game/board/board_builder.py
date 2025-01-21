@@ -54,7 +54,7 @@ class BoardBuilder:
         self.__shape__ = shape
         return self
     
-    def setRandomlyBlockedCaseAmount(self, randomlyBlockedCases : bool) -> BoardBuilder:
+    def setRandomlyBlockedCaseAmount(self, randomlyBlockedCases : int) -> BoardBuilder:
         
         self.__randomlyBlockedCases__ = randomlyBlockedCases
         return self
@@ -66,7 +66,7 @@ class BoardBuilder:
         
         board = SimpleBoard(self.__width__, self.__height__, self.__playerEntities__)
 
-        if(self.__shape__) : self.__shape__.apply_shape(board)
+        if(self.__shape__) : self.__shape__.applyShape(board)
         
         for _ in range(0, self.__randomlyBlockedCases__): board.blockRandomCase()
                 
@@ -79,7 +79,7 @@ class BoardBuilder:
         
         board = OptimizedBoard(self.__width__, self.__height__, self.__playerEntities__)
 
-        if(self.__shape__) : self.__shape__.apply_shape(board)
+        if(self.__shape__) : self.__shape__.applyShape(board)
         
         # if(self.__randomlyBlockedCases__ > len(board.getAvaillableCases())) : raise ValueError(f"Cannot block {self.__randomlyBlockedCases__} cases because only {len(board.getAvaillableCases())} can be blocked.")
 

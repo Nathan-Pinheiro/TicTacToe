@@ -6,7 +6,6 @@ from modules.models.board_game.board.board import Board
 from modules.models.board_game.components.win_condition import WinCondition
 from modules.models.board_game.components.move import Move
 from modules.models.board_game.components.player_data import PlayerData
-from modules.models.board_game.components.coordinate import Coordinate
 from modules.models.board_game.game.game_outcome import GameOutcome
 from modules.models.board_game.game.game_history import GameHistory
 
@@ -142,7 +141,7 @@ class GameState(ABC):
         """Checks if the current player has met the win condition."""
         return self.__winCondition__.checkWinForPlayer(self.__playerToPlayIndex__, self.__board__)
 
-    def evaluateForPlayer(self, playerIndex: int) -> GameOutcome:
+    def evaluateForPlayer(self, playerIndex: int) -> int:
         """Evaluates the board state for a specific player."""
         return self.__winCondition__.evaluateForPlayer(playerIndex, self.__board__)
 

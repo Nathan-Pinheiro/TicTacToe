@@ -17,7 +17,7 @@ class DiamondShape(BoardShape):
         super()
         return None
     
-    def apply_shape(self, board: Board) -> None:
+    def applyShape(self, board: Board) -> None:
         """
         Applies a diamond shape to the board, blocking cells outside the diamond.
         

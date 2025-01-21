@@ -11,7 +11,7 @@ from modules.GUI.components.grid import drawGrid
 
 from modules.models.tic_tac_toe.tic_tac_toe_game import TicTacToeGame
 from modules.models.board_game.game.game_outcome import GameOutcomeStatus
-from modules.models.tic_tac_toe.players.human_player import HumanPlayer
+from modules.models.tic_tac_toe.players.human_player import HumanGUIPlayer
 from modules.models.tic_tac_toe.moves.simple_move import SimpleMove
 
 from modules.models.tic_tac_toe.players.ai_players.easy_ai_player import EasyAIPlayer
@@ -225,8 +225,8 @@ class Game(Page):
             return False
 
         try:
-            currentPlayer: Optional[HumanPlayer] = self.game.getPlayerToPlay()
-            if not isinstance(currentPlayer, HumanPlayer):
+            currentPlayer: Optional[HumanGUIPlayer] = self.game.getPlayerToPlay()
+            if not isinstance(currentPlayer, HumanGUIPlayer):
                 return False
             
             if self.gameOutCome is not None and self.gameOutCome.getGameStatus() != GameOutcomeStatus.UNFINISHED:
@@ -319,8 +319,8 @@ class Game(Page):
             bool: True if the function succeeds, False otherwise.
         """
         
-        currentPlayer: Optional[HumanPlayer] = self.game.getPlayerToPlay()
-        isHuman: bool = isinstance(currentPlayer, HumanPlayer)
+        currentPlayer: Optional[HumanGUIPlayer] = self.game.getPlayerToPlay()
+        isHuman: bool = isinstance(currentPlayer, HumanGUIPlayer)
         hasPowerUp: bool = isHuman and self.game.getPlayerPowerUpMoves(self.game.getGameState().getPlayerToPlayIndex())
         
         state: str = "normal" if hasPowerUp else "disabled"
@@ -340,8 +340,8 @@ class Game(Page):
             bool: True if the function succeeds, False otherwise.
         """
         
-        currentPlayer: Optional[HumanPlayer] = self.game.getPlayerToPlay()
-        if isinstance(currentPlayer, HumanPlayer):
+        currentPlayer: Optional[HumanGUIPlayer] = self.game.getPlayerToPlay()
+        if isinstance(currentPlayer, HumanGUIPlayer):
             self.undoButton.configure(state="normal", fg_color="#1f6aa5", hover_color="#144870")
             self.redoButton.configure(state="normal", fg_color="#1f6aa5", hover_color="#144870")
         else:
@@ -359,8 +359,8 @@ class Game(Page):
             bool: True if the function succeeds, False otherwise.
         """
         
-        currentPlayer: Optional[HumanPlayer] = self.game.getPlayerToPlay()
-        if isinstance(currentPlayer, HumanPlayer):
+        currentPlayer: Optional[HumanGUIPlayer] = self.game.getPlayerToPlay()
+        if isinstance(currentPlayer, HumanGUIPlayer):
             self.bulbButton.configure(state="normal", fg_color="#1f6aa5", hover_color="#144870")
         else:
             self.bulbButton.configure(state="disabled", fg_color="#666666", hover_color="#666666")
@@ -517,7 +517,7 @@ class Game(Page):
             bool: True if the function succeeds, False otherwise.
         """
         
-        currentPlayer: Optional[HumanPlayer] = self.game.getPlayerToPlay()
+        currentPlayer: Optional[HumanGUIPlayer] = self.game.getPlayerToPlay()
         self.playerTurnLabel.configure(text=f"It's up to {currentPlayer.getName()} to play")
         return True 
     

@@ -6,7 +6,7 @@ from modules.models.board_game.components.move import Move
 from modules.models.tic_tac_toe.moves.simple_move import SimpleMove
 from modules.models.tic_tac_toe.moves.power_ups.bomb_move import BombMove
 
-class HumanPlayer(Player):
+class HumanGUIPlayer(Player):
     
     def __init__(self, name : str) -> None:
         super().__init__(name)

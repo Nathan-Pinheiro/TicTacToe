@@ -31,10 +31,6 @@ class GameDirector :
 
         self.__players__ : list[Player] = players
         self.__game_state__ : TicTacToeGameState = TicTacToeGameState(board, winCondition, playersData, startingPlayer)
-        
-    def getPlayerToPlay(self) -> Player:
-        
-        return self.__players__[self.__game_state__.getPlayerToPlayIndex()]
 
     def launchGame(self) -> TicTacToeGameState:
 
@@ -64,8 +60,4 @@ class GameDirector :
 
             gameOutcome = self.__game_state__.play(move)
 
-        return self.__game_state__
-    
-    def getGameState(self) -> TicTacToeGameState:
-        
         return self.__game_state__

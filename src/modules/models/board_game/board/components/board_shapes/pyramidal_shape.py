@@ -17,7 +17,7 @@ class PyramidalShape(BoardShape):
         super()
         return None
     
-    def apply_shape(self, board: Board) -> None:
+    def applyShape(self, board: Board) -> None:
 
         width : int = board.getWidth()
         height : int = board.getHeight()

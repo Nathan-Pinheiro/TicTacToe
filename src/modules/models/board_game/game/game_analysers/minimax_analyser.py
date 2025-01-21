@@ -124,9 +124,9 @@ class MinimaxAnalyser(GameAnalyser):
 
         if depth == 0 : return gameState.evaluateForPlayer(playerIndex), None
 
-        bestScore = None
-        bestMove = None
-        e = 0
+        bestScore : int = None
+        bestMove : int = None
+        e : int = 0
 
         for move in gameState.getPossibleMoves() :         
 
