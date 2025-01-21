@@ -394,12 +394,16 @@ class Game(Page):
         """
         
         #self.__playUndo__()
-        self.game.undo()
+        if not self.game.undo():
+            return False
         if not self.__drawBoard__():
             return False
         if not self.__updateButtons__():
             return False
-        self.turn -= 2
+        if self.turn >= 2:
+            self.turn -= 2
+        else: 
+            self.turn = 1
         if not self.__setTurnLabel__():
             return False
         if not self.__setPlayerTurn__():
@@ -420,7 +424,8 @@ class Game(Page):
         """
         
         #self.__playRedo__()
-        self.game.redo()
+        if not self.game.redo():
+            return False
         if not self.__drawBoard__():
             return False
         if not self.__updateButtons__():
@@ -471,6 +476,12 @@ class Game(Page):
         self.bombMove = False
         self.bombButton.configure(state="normal")
         self.bombButton.configure(fg_color="#1f6aa5", hover_color="#144870")
+        self.redoButton.configure(state="normal")
+        self.redoButton.configure(fg_color="#1f6aa5", hover_color="#144870")
+        self.undoButton.configure(state="normal")
+        self.undoButton.configure(fg_color="#1f6aa5", hover_color="#144870")
+        self.bulbButton.configure(state="normal")
+        self.bulbButton.configure(fg_color="#1f6aa5", hover_color="#144870")
         self.gameOutCome = None
         return True
 
@@ -604,6 +615,12 @@ class Game(Page):
         """
         
         if self.gameOutCome.getGameStatus() == GameOutcomeStatus.VICTORY:
+            self.redoButton.configure(state="disabled")
+            self.redoButton.configure(fg_color="#666666", hover_color="#666666")
+            self.undoButton.configure(state="disabled")
+            self.undoButton.configure(fg_color="#666666", hover_color="#666666")
+            self.bulbButton.configure(state="disabled")
+            self.bulbButton.configure(fg_color="#666666", hover_color="#666666")
             winner = self.gameOutCome.getWinner()
             resultText = f"{self.settings['player1']['name']} won!" if winner == 0 else f"{self.settings['player2']['name']} won!"
         else:
