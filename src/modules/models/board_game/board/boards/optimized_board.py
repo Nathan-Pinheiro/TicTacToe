@@ -20,11 +20,6 @@ class OptimizedBoard(Board):
 
     """
     Represents a game board.
-
-    Attributes:
-        __width__ (int): The width of the board.
-        __height__ (int): The height of the board.
-        __player_entities__ (list[Entity]): A list of player entities present on the board.
     """
 
     def __init__(self, width : int, height : int, playerEntities : list[Entity]) -> None :
@@ -32,7 +27,7 @@ class OptimizedBoard(Board):
         """
         Initializes a new instance of the Board class.
 
-        Args:
+        Parameters:
             width (int): The width of the board.
             height (int): The height of the board.
             player_entities (list[Entity]): A list of player entities to initialize the board with.
@@ -52,20 +47,34 @@ class OptimizedBoard(Board):
         self.__pieceCount__ : int = 0
 
         self.__generateCheckWinMasks__()
+        
+        return None
 
     @privatemethod
     def __get_bit_position(self, line: int, column: int) -> int:
         
-        """Convert (line, column) to a bit index."""
+        """
+        Convert (line, column) to a bit index.
+        
+        Parameters:
+            line (int): The line number.
+            column (int): The column number.
+            
+        Returns:
+            int: The bit index.
+        """
         
         return line * self.__width__ + column
 
     @privatemethod
-    def __generateCheckWinMasks__(self) -> int :
+    def __generateCheckWinMasks__(self) -> None :
         
         """
         This method allow initializing masks foreach possible line lenght, that allow then finding correctly 
         if there is alignments in any positions, for any given line length
+        
+        Returns:
+            None
         """
 
         self.__lineMasks__ : list[int] = []
@@ -94,13 +103,15 @@ class OptimizedBoard(Board):
                         
                     if(lineIndex <= self.__height__ - alinmentLength and columnIndex >= alinmentLength - 1) : 
                         self.__ascendantDiagonalMasks__[alinmentLength] += (1 << (lineIndex * self.__width__ + columnIndex))
+                        
+        return None
 
     def isCaseAvaillable(self, line : int, column : int) -> bool :
         
         """
         Checks if a case at the specified line and column is available.
 
-        Args:
+        Parameters:
             line (int): The line number of the case.
             column (int): The column number of the case.
 
@@ -124,7 +135,7 @@ class OptimizedBoard(Board):
         """
         Checks if a case at the specified line and column is blocked.
 
-        Args:
+        Parameters:
             line (int): The line number of the case.
             column (int): The column number of the case.
 
@@ -144,7 +155,7 @@ class OptimizedBoard(Board):
         """
         Sets whether a case at the specified line and column is blocked.
 
-        Args:
+        Parameters:
             line (int): The line number of the case.
             column (int): The column number of the case.
             isBlocked (bool): True to block the case, False to unblock it.
@@ -167,13 +178,15 @@ class OptimizedBoard(Board):
             
             self.__blockedCaseCount__ -= 1
             self.__blockedCases__.applyXor(1 << bit_position)
+            
+        return None
 
     def getEntityAt(self, line : int, column : int) -> Entity :
         
         """
         Retrieves the entity at the specified line and column.
 
-        Args:
+        Parameters:
             line (int): The line number of the case.
             column (int): The column number of the case.
 
@@ -196,7 +209,7 @@ class OptimizedBoard(Board):
         """
         Checks if there is an entity at the specified line and column.
 
-        Args:
+        Parameters:
             line (int): The line number of the case.
             column (int): The column number of the case.
 
@@ -219,7 +232,7 @@ class OptimizedBoard(Board):
         """
         Adds a player's entity at the specified line and column.
 
-        Args:
+        Parameters:
             line (int): The line number of the case.
             column (int): The column number of the case.
             playerIndex (int): The index of the player whose entity is being added.
@@ -239,10 +252,11 @@ class OptimizedBoard(Board):
         return None
     
     def addEntityAt(self, line: int, column: int, entity : Entity) -> None:
+        
         """
         Adds an entity at the specified line and column.
 
-        Args:
+        Parameters:
             line (int): The line number of the case.
             column (int): The column number of the case.
             playerIndex (int): The index of the player whose entity is being added.
@@ -277,7 +291,7 @@ class OptimizedBoard(Board):
         """
         Removes an entity from the specified line and column.
 
-        Args:
+        Parameters:
             line (int): The line number of the case.
             column (int): The column number of the case.
 
@@ -308,7 +322,10 @@ class OptimizedBoard(Board):
         """
         Checks if any player has an alignment of the specified length, on the given case.
 
-        Args:
+        Parameters:
+            line (int): The line number of the case.
+            column (int): The column number of the case.
+            playerIndex (int): The index of the player.
             alignLength (int): The length of the alignment to check for.
 
         Returns:
@@ -322,7 +339,7 @@ class OptimizedBoard(Board):
         """
         Checks if a player's entities are aligned anywhere on the board.
 
-        Args:
+        Parameters:
             playerIndex (int): The index of the player.
             alignLength (int): The length of the alignment to check for.
 
@@ -364,7 +381,7 @@ class OptimizedBoard(Board):
         """
         Checks if any player has an alignment of the specified length.
 
-        Args:
+        Parameters:
             alignLength (int): The length of the alignment to check for.
 
         Returns:
@@ -381,7 +398,7 @@ class OptimizedBoard(Board):
         """
         Checks if any player has a sequence of aligned entities of the specified length on a case.
 
-        Args:
+        Parameters:
             alignLength (int): Required alignment length.
 
         Returns:
@@ -394,10 +411,11 @@ class OptimizedBoard(Board):
         return -1
 
     def countAvaillableLineOfAtLeastGivenPiece(self, playerIndex: int, alignLength: int, pieceCount: int) -> int:
+        
         """
         Returns the number of lines that contain at least a given amount of the player's pieces and no opponent pieces.
 
-        Args:
+        Parameters:
             playerIndex (int): The player's index.
             alignLength (int): Required alignment length to win.
             pieceCount (int): Minimum number of the player's pieces required.
@@ -405,7 +423,6 @@ class OptimizedBoard(Board):
         Returns:
             int: The number of valid lines.
         """
-
 
         playerPieces : int = self.__playerBoards__[playerIndex].getValue()
         opponentPieces: int = 0
@@ -442,16 +459,10 @@ class OptimizedBoard(Board):
             return result
 
         result : int = 0
-        # print("line : ")
         result += countInDirection(self.__lineMasks__[alignLength], 1)
-        # print("col : ")
         result += countInDirection(self.__columnMasks__[alignLength], self.__width__)
-        # print("asc diag : ")
         result += countInDirection(self.__ascendantDiagonalMasks__[alignLength], self.__width__ - 1)
-        # print("desc diag : ")
         result += countInDirection(self.__descendantDiagonalMasks__[alignLength], self.__width__ + 1)
-
-        # print("===========================================")
 
         return result
 
@@ -495,12 +506,14 @@ class OptimizedBoard(Board):
         return None
         
     def getPieceCount(self) -> int:
+        
         """
         Return the amount of pieces on the board.
 
         Returns:
             pieceCount (int) : the amount of pieces on the board.
         """
+        
         return self.__pieceCount__
 
     def copy(self) -> Board:

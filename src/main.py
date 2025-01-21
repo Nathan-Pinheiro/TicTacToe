@@ -14,7 +14,7 @@ from modules.models.tic_tac_toe.win_conditions.align_victory import AlignVictory
 from modules.models.tic_tac_toe.win_conditions.unalign_victory import UnalignVictory
 
 from modules.models.tic_tac_toe.tic_tac_toe_game_state import TicTacToeGameState
-from modules.models.utils.console_displayer import *
+from modules.models.displayer.console_displayer import *
 
 from modules.models.entities.circle import Circle
 from modules.models.entities.cross import Cross

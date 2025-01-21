@@ -19,13 +19,15 @@ class AlignVictory(WinCondition) :
         Parameters:
             alignLength (int): The number of consecutive entities needed to win.
 
-        Raises:
-            ValueError: If alignLength is less than the minimum required (3).
+        Returns:
+            None
         """
 
         if(alignLength < MIN_ENTITY_TO_ALIGN): raise ValueError(f"Can't create an AlignVictory with {alignLength} entity to align. It must be higher or equals than {MIN_ENTITY_TO_ALIGN}")
         
         self.__alignLength__ = alignLength
+        
+        return None
 
     def checkWin(self, board : Board) -> GameOutcome:
 

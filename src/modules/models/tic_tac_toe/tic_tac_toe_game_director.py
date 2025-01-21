@@ -7,7 +7,7 @@ from modules.models.tic_tac_toe.tic_tac_toe_game_state import TicTacToeGameState
 from modules.models.tic_tac_toe.tic_tac_toe_player import Player
 from modules.models.tic_tac_toe.tic_tac_toe_player_data import PlayerData
 
-from modules.models.utils.console_displayer import *
+from modules.models.displayer.console_displayer import *
 
 import random
 import os
@@ -24,15 +24,53 @@ import time
 # ************************************************
 
 class GameDirector :
+    
+    """
+    This class is used to launch a game
+    """
 
-    def __init__(self, board : Board, winCondition : WinCondition, players : list[Player], playersData : list[PlayerData], startingPlayer : int = -1):
+    def __init__(self, board : Board, winCondition : WinCondition, players : list[Player], playersData : list[PlayerData], startingPlayer : int = -1) -> None:
+        
+        """
+        Initializes the GameDirector with a board, a win condition, a list of players, a list of players data and a starting player.
+        
+        Parameters:
+            board (Board): The board of the game.
+            winCondition (WinCondition): The win condition of the game.
+            players (list[Player]): The list of players.
+            playersData (list[PlayerData]): The list of players data.
+            startingPlayer (int): The index of the starting player.
+            
+        Returns:
+            None
+        """
 
         if(startingPlayer == -1) : startingPlayer = random.randint(0, len(players) - 1)
 
         self.__players__ : list[Player] = players
         self.__game_state__ : TicTacToeGameState = TicTacToeGameState(board, winCondition, playersData, startingPlayer)
+        
+        return None
+        
+    def getPlayerToPlay(self) -> Player:
+        
+        """
+        Returns the player to play.
+        
+        Returns:
+            Player: The player to play.
+        """
+        
+        return self.__players__[self.__game_state__.getPlayerToPlayIndex()]
 
     def launchGame(self) -> TicTacToeGameState:
+        
+        """
+        Launches the game.
+        
+        Returns:
+            TicTacToeGameState: The final state of the game.
+        """
 
         gameOutcome : GameOutcome = self.__game_state__.checkWin()
 
@@ -60,4 +98,15 @@ class GameDirector :
 
             gameOutcome = self.__game_state__.play(move)
 
+        return self.__game_state__
+    
+    def getGameState(self) -> TicTacToeGameState:
+        
+        """
+        Returns the game state.
+        
+        Returns:
+            TicTacToeGameState: The game state.
+        """
+        
         return self.__game_state__

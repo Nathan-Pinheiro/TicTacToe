@@ -27,11 +27,16 @@ class ImpossibleAIPlayer(AIPlayer):
         """
         Initializes the EasyAI player with a name and links to a game analyser.
         
-        Args:
+        Parameters:
             name (str): The name of the player.
+            
+        Returns:
+            None
         """
         
         super().__init__(name)
+        
+        return None
     
     def get_choice(self, gameState: TicTacToeGameState) -> Move:
         
@@ -40,7 +45,7 @@ class ImpossibleAIPlayer(AIPlayer):
         calculated by the game analyzer, using the softmax function to convert 
         the scores to probabilities.
 
-        Args:
+        Parameters:
             gameState (TicTacToeGameState): The current state of the Tic-Tac-Toe game.
 
         Returns:

@@ -2,6 +2,7 @@ import customtkinter as ctk
 from CTkColorPicker import AskColor
 
 from modules.utils.decorator import privatemethod
+from modules.utils.validators import isHexColor
 
 # ************************************************
 # CLASS ColorSelector
@@ -28,13 +29,21 @@ class ColorSelector(ctk.CTkFrame):
             parent (ctk.CTkFrame): The parent frame.
             color (str): The initial color in hexadecimal format.
             **kwargs: Additional keyword arguments for the frame.
+            
+        Raises:
+            ValueError: If the color is not a valid hexadecimal color.
 
         Returns:
             None
         """
         
         super().__init__(parent, **kwargs)
+        
+        if not isHexColor(color):
+            raise ValueError(f"Color {color} is not a valid hexadecimal color")
+        
         self.color : str = color
+        
         self.__createWidgets__()
         
         return None
@@ -69,10 +78,12 @@ class ColorSelector(ctk.CTkFrame):
         
         pickColor : AskColor = AskColor(title="Choose color")
         colorCode : str = pickColor.get()
+        
         if colorCode:
             self.color : str = colorCode
             self.colorDisplay.configure(bg_color=self.color)
             return True
+        
         return False
     
     def getColor(self) -> str:
@@ -93,11 +104,19 @@ class ColorSelector(ctk.CTkFrame):
         
         Parameters:
             color (str): The color to set in hexadecimal format.
+            
+        Raises:
+            ValueError: If the color is not a valid hexadecimal color.
 
         Returns:
             bool: True if the color is set successfully.
         """
         
+        if not isHexColor(color):
+            raise ValueError(f"Color {color} is not a valid hexadecimal color")
+        
         self.color = color
+        
         self.colorDisplay.configure(bg_color=self.color)
+        
         return True

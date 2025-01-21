@@ -13,11 +13,33 @@ from modules.models.board_game.board.board import Board
 
 class PyramidalShape(BoardShape):
     
+    """
+    Represents a pyramidal shape
+    """
+    
     def __init__(self) -> None:
+        
+        """
+        Constructor of the class PyramidalShape
+
+        Returns:
+            None
+        """
+        
         super()
         return None
     
-    def applyShape(self, board: Board) -> None:
+    def apply_shape(self, board: Board) -> None:
+        
+        """
+        Applies a pyramidal shape to the board, blocking cells outside the pyramid.
+        
+        Parameters:
+            board (Board): The board to which the shape will be applied.
+            
+        Returns:
+            None
+        """
 
         width : int = board.getWidth()
         height : int = board.getHeight()
@@ -31,3 +53,5 @@ class PyramidalShape(BoardShape):
                 
                 if column < center_x - pyramid_width or column > center_x + pyramid_width + (1 if width % 2 == 0 else 0):
                     board.setIsCaseBlocked(line, column, True)
+                    
+        return None

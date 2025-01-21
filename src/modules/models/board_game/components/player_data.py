@@ -17,7 +17,15 @@ class PlayerData(ABC) :
     A class that represent a generic PlayerData
     """
 
-    def __init__(self) :
+    def __init__(self) -> None:
+        
+        """
+        Constructor for the PlayerData class.
+        
+        Returns:
+            None
+        """ 
+        
         pass
     
     

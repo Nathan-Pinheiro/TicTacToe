@@ -13,9 +13,10 @@ from modules.utils.decorator import privatemethod
 
 def encode(coordinate : Coordinate) -> str :
     
-    """Encode a coordinate into a string.
+    """
+    Encode a coordinate into a string.
 
-    Args:
+    Parameters:
         coordinate (Coordinate): The coordinate to be encoded.
 
     Returns:
@@ -28,7 +29,7 @@ def decode(coordinateCode : str) -> Coordinate :
     
     """Decode a string into a coordinate.
 
-    Args:
+    Parameters:
         coordinateCode (str): The string to be decoded, must be a letter mapped enter 'a' and 'z' and followed by a number.
 
     Returns:
@@ -48,14 +49,11 @@ def __numberToLetter__(n: int) -> str:
     
     """Convert a number to a letter.
 
-    Args:
+    Parameters:
         n (int): A number between 1 and 26, where 1 maps to 'a' and 26 maps to 'z'.
 
     Returns:
         str: The corresponding letter for the number.
-
-    Raises:
-        ValueError: If the number is not in the range 1-26.
     """
 
     if n < 1 or n > 26 : raise ValueError("Number out of range (must be 1-26)")
@@ -64,16 +62,14 @@ def __numberToLetter__(n: int) -> str:
 @privatemethod
 def __letterToNumber__(letter: str) -> int:
     
-    """Convert a letter to a number.
+    """
+    Convert a letter to a number.
 
-    Args:
+    Parameters:
         letter (str): A letter between 'a' and 'z', where 'a' maps to 1 and 'z' maps to 26.
 
     Returns:
         int: The corresponding number for the letter.
-
-    Raises:
-        ValueError: If the letter is not in the range 'a'-'z'.
     """
 
     if letter < 'a' or letter > 'z' : raise ValueError("Letter out of range (must be 'a'-'z')")

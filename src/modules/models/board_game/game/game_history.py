@@ -20,18 +20,23 @@ class GameHistory:
         
         """
         The constructor of a GameHistory object
+        
+        Returns:
+            None
         """
 
         self.__moves__ : list[Move] = []
         self.__currentMoveIndex__ : int = -1
+        
+        return None
 
     def getMoveCount(self) -> int:
 
         """
         Returns the number of move in the game history
         
-        Returns :
-            - moveCount (int) : the number of moves in the game history
+        Returns:
+            moveCount (int) : the number of moves in the game history
         """
 
         return len(self.__moves__)
@@ -40,6 +45,9 @@ class GameHistory:
 
         """
         Get the index of the current move.
+        
+        Returns:
+            currentMoveIndex (int) : the index of the current move
         """
 
         return self.__currentMoveIndex__
@@ -49,11 +57,11 @@ class GameHistory:
         """
         Get the move at a given index of the game history.
         
-        Parameters :
-            - moveIndex (int) : the current move
+        Parameters:
+            moveIndex (int) : the current move
         
-        Returns :
-            - move (Move) : the current move
+        Returns:
+            move (Move) : the current move
         """        
 
         return self.__moves__[moveIndex]
@@ -63,8 +71,8 @@ class GameHistory:
         """
         Get all the moves in the game history.
         
-        Returns :
-            - moves (list[Move]) : the list of all moves
+        Returns:
+            moves (list[Move]) : the list of all moves
         """
 
         return self.__moves__
@@ -74,8 +82,8 @@ class GameHistory:
         """
         Get the current move.
         
-        Returns :
-            - move (Move) : the current move if there is one, None otherwise
+        Returns:
+            move (Move) : the current move if there is one, None otherwise
         """
 
         if(self.__currentMoveIndex__ == -1) : return None
@@ -88,18 +96,26 @@ class GameHistory:
         Add a move to the game history.
         
         Parameters :
-            - move (Move) : the move to add
+            move (Move) : the move to add
+            
+        Returns:
+            None
         """
 
         while(len(self.__moves__) > self.__currentMoveIndex__ + 1) : self.removeLastMove()
 
         self.__currentMoveIndex__ += 1
         self.__moves__.append(move)
+        
+        return None
     
     def removeLastMove(self) -> None:
         
         """
         Remove the last move of the game history.
+        
+        Returns:
+            None
         """
 
         self.removeMove(len(self.__moves__) - 1)
@@ -110,6 +126,9 @@ class GameHistory:
         
         """
         Remove the current move of the game history.
+        
+        Returns:
+            None
         """
 
         self.removeMove(self.__currentMoveIndex__)
@@ -122,7 +141,10 @@ class GameHistory:
         Remove a move from the game history, given it's id
         
         Parameters :
-            - int (index) : the index of the move
+            int (index) : the index of the move
+            
+        Returns:
+            None
         """
 
         del self.__moves__[moveIndex]
@@ -131,7 +153,12 @@ class GameHistory:
     
     def undo(self) -> None :
         
-        """Allow undoing the last move"""
+        """
+        Allow undoing the last move
+        
+        Returns:
+            None
+        """
 
         if(len(self.__moves__) <= 0) :  raise Exception("Can't go back if you are on the first move !")
         
@@ -142,7 +169,12 @@ class GameHistory:
 
     def goBack(self) -> None :
         
-        """Allow moving back to the last move"""
+        """
+        Allow moving back to the last move
+        
+        Returns:
+            None
+        """
         
         if(self.__currentMoveIndex__ > -1) : self.__currentMoveIndex__ -= 1
         else : raise Exception("Can't go back if you are on the first move !")
@@ -151,7 +183,12 @@ class GameHistory:
 
     def goNext(self) -> None :
         
-        """Allow moving forward to the next move"""
+        """
+        Allow moving forward to the next move
+        
+        Returns:
+            None
+        """
 
         if(self.__currentMoveIndex__ + 1 < len(self.__moves__)) : self.__currentMoveIndex__ += 1
         else : raise Exception("Can't go next if you are on the last move !")

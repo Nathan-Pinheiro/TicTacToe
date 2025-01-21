@@ -15,6 +15,11 @@ class GameOutcomeStatus(Enum):
     
     """
     An enumeration that describe the outcome status
+    
+    Values:
+        UNFINISHED (int): The game is still ongoing. (0)
+        DRAW (int): The game ended in a draw. (1)
+        VICTORY (int): A player has won the game. (2)
     """
 
     UNFINISHED = 0
@@ -24,21 +29,26 @@ class GameOutcomeStatus(Enum):
 class GameOutcome:
     
     """
-    An enumeration that describe the game outcome
+    Represents the result of a game.
     """
 
     def __init__(self, state: GameOutcomeStatus, winner: Optional[int] = None):
         
         """
-        Represents the result of a game.
+        Constructor for the GameOutcome class.
         
         Parameters :        
-            - state (GameState) : The current state of the game (UNFINISHED, DRAW, or VICTORY).
-            - winner (int) : The ID of the winning player if applicable. None for UNFINISHED or DRAW.
+            state (GameState) : The current state of the game (UNFINISHED, DRAW, or VICTORY).
+            winner (int) : The ID of the winning player if applicable. None for UNFINISHED or DRAW.
+            
+        Returns :
+            None
         """
         
         self.__state__ = state
         self.__winner__ = winner
+        
+        return None
 
     def getGameStatus(self) -> GameOutcomeStatus:
         
@@ -46,7 +56,7 @@ class GameOutcome:
         Get the current state of the game.
         
         Returns :
-            - GameOutcomeStatus : the outcome status of a game
+            GameOutcomeStatus : the outcome status of a game
         """
         
         return self.__state__
@@ -57,14 +67,19 @@ class GameOutcome:
         Get the winner of the game, if applicable.
         
         Returns :
-            - int (Optional) : the winner player index
+            int (Optional) : the winner player index
         """
         
         return self.__winner__
 
-    def __str__(self):
+    def __str__(self) -> str:
 
-        """Returns the game outcome as a sentence"""
+        """
+        Returns the game outcome as a sentence
+        
+        Returns :
+            str : The game outcome as a sentence
+        """
 
         match self.__state__ :
             case GameOutcomeStatus.UNFINISHED : return "Game is still ongoing."

@@ -29,19 +29,24 @@ class MinimaxAnalyser(GameAnalyser):
         """
         Initializes the MinimaxAnalyser instance with the given depth and debugging flag.
         
-        Args:
+        Parameters:
             depth (int): The depth of the search tree for the minimax algorithm.
             debugOn (bool): Optional flag to enable debugging output (default is False).
+            
+        Returns:
+            None
         """        
 
         super().__init__(depth, debugOn)
+        
+        return None
     
     def getMovesScores(self, gameState: TicTacToeGameState) -> dict[Move, int]:
         
         """
         Evaluates all possible moves and returns their corresponding minimax scores.
 
-        Args:
+        Parameters:
             gameState (TicTacToeGameState): The current state of the game.
 
         Returns:
@@ -81,7 +86,7 @@ class MinimaxAnalyser(GameAnalyser):
         return moveScores
 
     
-    def getBestMove(self, gameState : TicTacToeGameState):
+    def getBestMove(self, gameState : TicTacToeGameState) -> Move:
         
         """
         Determines the best move for the current game state based on the minimax algorithm.
@@ -89,7 +94,7 @@ class MinimaxAnalyser(GameAnalyser):
         The method finds the move with the highest score for the maximizing player 
         (i.e., the optimal move) and returns it.
 
-        Args:
+        Parameters:
             gameState (TicTacToeGameState): The current state of the Tic-Tac-Toe game.
         
         Returns:
@@ -117,7 +122,8 @@ class MinimaxAnalyser(GameAnalyser):
             - depth : Remaining search depth.
             - playerIndex : The index of the maximizing player.
             
-        Return : A tuple (score, move), where `score` is the evaluation of the board, and `move` is the best move to play.
+        Return : 
+            A tuple (score, move), where `score` is the evaluation of the board, and `move` is the best move to play.
         """
 
         self.__nodeExplored__ += 1
@@ -174,10 +180,13 @@ class MinimaxAnalyser(GameAnalyser):
 
         return bestScore + e, bestMove
 
-    def getMoveStrengthToAdd(self, score : int) -> int : 
+    def getMoveStrengthToAdd(self, score : int) -> int: 
 
         """
         Give a small value that represent the move potential
+        
+        Parameters :
+            score (int) : the score of the move
         
         Returns :
             strength (int) : a small value that represent the move potential
@@ -185,13 +194,13 @@ class MinimaxAnalyser(GameAnalyser):
 
         return score / 1000
 
-    def getWinReward(self, gameState : TicTacToeGameState) :
+    def getWinReward(self, gameState : TicTacToeGameState) -> int:
         
         """
         Calculates the reward score for a winning state.
         Prioritizes faster wins by providing higher scores.
 
-        Args:
+        Parameters:
             gameState (GameState): The current game state.
             
         Returns:

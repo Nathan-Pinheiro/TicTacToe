@@ -25,19 +25,27 @@ class GameAnalyser(ABC):
         """
         Initializes a new GameAnalyser instance.
         
-        Args:
+        Parameters:
             depth (int): The depth of analysis (e.g., search depth).
             isDebugOn (bool): Optional flag to enable debugging output (default is False).
+            
+        Returns:
+            None
         """
 
         self.__depth__ : bool = depth
         self.__isDebugOn__ : bool = isDebugOn
         
+        return None
+        
     @abstractmethod
-    def getMovesScores(gameState : GameState) -> dict[Move, int] :
+    def getMovesScores(self, gameState : GameState) -> dict[Move, int] :
         
         """
         Abstract method to get a dictionary of moves and their respective scores.
+        
+        Parameters:
+            gameState (GameState): The current state of the game.
 
         Returns:
             dict[Move, int]: A dictionary where keys are Move objects and values are their corresponding evaluation scores.
@@ -46,10 +54,13 @@ class GameAnalyser(ABC):
         pass
     
     @abstractmethod
-    def getBestMove(gameState : GameState) -> Move :
+    def getBestMove(self, gameState : GameState) -> Move :
         
         """
         Abstract method to get the best move based on the analysis.
+        
+        Parameters:
+            gameState (GameState): The current state of the game.
 
         Returns:
             Move: The best move according to the evaluation.

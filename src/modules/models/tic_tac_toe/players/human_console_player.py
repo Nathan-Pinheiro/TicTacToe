@@ -1,16 +1,43 @@
 from modules.models.tic_tac_toe.tic_tac_toe_player import Player
 from modules.models.tic_tac_toe.tic_tac_toe_game_state import TicTacToeGameState
 from modules.models.board_game.components.coordinate import Coordinate
-from modules.models.utils.console_displayer import *
+from modules.models.displayer.console_displayer import *
 from modules.models.board_game.components.move import Move
 from modules.models.tic_tac_toe.moves.simple_move import SimpleMove
 
 class HumanConsolePlayer(Player):
     
+    """
+    A class that represents a human console player.
+    """
+    
     def __init__(self, name : str) -> None:
+        
+        """
+        Constructor for the HumanConsolePlayer class.
+        
+        Parameters:
+            name (str): The name.
+            
+        Returns:
+            None
+        """
+        
         super().__init__(name)
+        
+        return None
     
     def get_choice(self, gameState : TicTacToeGameState) -> Move:
+        
+        """
+        Gets the choice of the player.
+        
+        Parameters:
+            gameState (TicTacToeGameState): The current state of the Tic-Tac-Toe game.
+            
+        Returns:
+            Move: The move that the player will make.
+        """
 
         clear_screen()
         
@@ -20,26 +47,6 @@ class HumanConsolePlayer(Player):
         display_sep()
 
         move : Move = SimpleMove
-
-        isMovePossible : bool = False
-
-        # while(not isMovePossible):
-            
-        #     display("Types de coups :")
-        #     display(" 1 - Normal Moove")
-        #     display(" 2 - BOMB !!!")
-
-        #     rep : int = ask_for_int("Quel type de coup voulez-vous jouer ? ")
-            
-        #     if(rep == 1) :
-        #         isMovePossible = True
-        #         move = SimpleMove
-                
-        #     elif(rep == 2) :
-        #         isMovePossible = BombMove in gameState.getPlayerData(gameState.getPlayerToPlayIndex()).getPowerUpMoves()
-        #         if(isMovePossible): move = BombMove
-                
-        #     if(not isMovePossible) : display("Ce coup est impossible !")
 
         isMovePossible : bool = False
 

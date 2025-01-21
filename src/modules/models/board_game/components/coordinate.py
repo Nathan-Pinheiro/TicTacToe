@@ -15,9 +15,11 @@ class Coordinate:
     """
 
     def __init__(self, line : int, column : int) -> None:
-        """Constructor for the Coordinate class.
+        
+        """
+        Constructor for the Coordinate class.
 
-        Args:
+        Parameters:
             line (int): The line of the coordinate.
             column (int): The column of the coordinate.
 
@@ -31,7 +33,9 @@ class Coordinate:
         return None
         
     def getLine(self) -> int :
-        """Get the line of the coordinate.
+        
+        """
+        Get the line of the coordinate.
 
         Returns:
             int: The line of the coordinate.
@@ -40,7 +44,9 @@ class Coordinate:
         return self.__line__
     
     def getColumn(self) -> int :
-        """Get the column of the coordinate.
+        
+        """
+        Get the column of the coordinate.
 
         Returns:
             int: The column of the coordinate.
@@ -49,9 +55,11 @@ class Coordinate:
         return self.__column__
     
     def setLine(self, line : int) -> None :
-        """Set the line of the coordinate.
+        
+        """
+        Set the line of the coordinate.
 
-        Args:
+        Parameters:
             line (int): The line of the coordinate.
 
         Returns:
@@ -59,11 +67,15 @@ class Coordinate:
         """
         
         self.__line__ = line
+        
+        return None
     
     def setColumn(self, column : int) -> None :
-        """Set the column of the coordinate.
         
-        Args:
+        """
+        Set the column of the coordinate.
+        
+        Parameters:
             column (int): The column of the coordinate.
 
         Returns:
@@ -72,6 +84,15 @@ class Coordinate:
         
         self.__line__ = column
         
-    def __str__(self):
-        """Return the string value of the coordinate."""
+        return None
+        
+    def __str__(self) -> str:
+        
+        """
+        Return the string value of the coordinate.
+        
+        Returns:
+            str: The string value of the coordinate.
+        """
+        
         return f"( {self.__line__} : {self.__column__} )"

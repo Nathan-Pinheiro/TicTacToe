@@ -20,8 +20,8 @@ class UnalignVictory(WinCondition) :
             alignLength (int): Number of consecutive entities that trigger a loss.
             playerAmount (int): Total number of players in the game.
         
-        Raises:
-            ValueError: If alignLength is less than the minimum required (3).
+        Returns:
+            None
         """
 
         if(alignLength < MIN_ENTITY_TO_ALIGN): raise ValueError(f"Can't create an UnalignVictory with {alignLength} entity to align. It must be higher or equals than {MIN_ENTITY_TO_ALIGN}")

@@ -15,13 +15,37 @@ from modules.models.board_game.game.game_analysers.minimax_alpha_beta_pruning_an
 # ************************************************
 
 class AIPlayer(Player):
+    
+    """
+    A simple AI player for Tic-Tac-Toe that selects its move based on the scores
+    """
 
     def __init__(self, name : str) -> None:
+        
+        """
+        Initializes the AI player with a name and links to a game analyser.
+        
+        Parameters:
+            name (str): The name of the player.
+            
+        Returns:
+            None
+        """
         
         super().__init__(name)
         
         self.__game_analyser__ : GameAnalyser = AlphaBetaPruningAnalyser(3)
 
     def get_choice(self, gameState : TicTacToeGameState) -> Move:
+        
+        """
+        Selects the best move for the current game state based on the scores
+        
+        Parameters:
+            gameState (TicTacToeGameState): The current state of the Tic-Tac-Toe game.
+            
+        Returns:
+            Move: The move that the AI will make.
+        """
         
         pass

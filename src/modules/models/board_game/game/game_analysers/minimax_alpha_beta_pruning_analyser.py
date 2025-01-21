@@ -4,6 +4,7 @@ from modules.models.board_game.game.game_outcome import GameOutcomeStatus, GameO
 from modules.models.board_game.game.game_analyser import GameAnalyser
 
 class AlphaBetaPruningAnalyser(GameAnalyser):
+    
     """
     A class that implements the alpha-beta pruning version of the minimax algorithm to analyze
     and evaluate possible moves in a Tic-Tac-Toe game. This class extends the abstract GameAnalyser
@@ -16,19 +17,24 @@ class AlphaBetaPruningAnalyser(GameAnalyser):
         """
         Initializes the AlphaBetaPruningAnalyser instance with the given depth and debugging flag.
 
-        Args:
+        Parameters:
             maxDepth (int): The maximum depth of the search tree for the alpha-beta algorithm.
             debugOn (bool): Optional flag to enable debugging output (default is False).
+            
+        Returns:
+            None
         """
         
         super().__init__(maxDepth, debugOn)
+        
+        return None
 
     def getMovesScores(self, gameState: GameState) -> dict[Move, int]:
         
         """
         Evaluates all possible moves and returns their corresponding alpha-beta pruning scores.
 
-        Args:
+        Parameters:
             gameState (TicTacToeGameState): The current state of the game.
 
         Returns:
@@ -77,7 +83,7 @@ class AlphaBetaPruningAnalyser(GameAnalyser):
 
         The method finds the move with the highest score for the maximizing player and returns it.
 
-        Args:
+        Parameters:
             gameState (TicTacToeGameState): The current state of the Tic-Tac-Toe game.
 
         Returns:
@@ -104,7 +110,8 @@ class AlphaBetaPruningAnalyser(GameAnalyser):
             - depth : Remaining search depth.
             - playerIndex : The index of the maximizing player.
             
-        Return : A tuple (score, move), where `score` is the evaluation of the board, and `move` is the best move to play.
+        Return : 
+            A tuple (score, move), where `score` is the evaluation of the board, and `move` is the best move to play.
         """
 
         self.__nodeExplored__ += 1
@@ -171,7 +178,7 @@ class AlphaBetaPruningAnalyser(GameAnalyser):
         """
         Order moves from the nearest from the center to the farther
 
-        Args:
+        Parameters:
             moves (list[Moves]) : the list of moves
             boardWidth int : the board width
             boardHeight int : the board width
@@ -194,7 +201,7 @@ class AlphaBetaPruningAnalyser(GameAnalyser):
         Calculates the reward score for a winning state.
         Prioritizes faster wins by providing higher scores.
 
-        Args:
+        Parameters:
             gameState (TicTacToeGameState): The current game state.
 
         Returns:

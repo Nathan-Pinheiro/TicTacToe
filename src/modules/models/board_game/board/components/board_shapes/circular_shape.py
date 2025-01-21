@@ -15,11 +15,33 @@ import math
 
 class CircularShape(BoardShape):
     
+    """
+    Represents a circular shape
+    """
+    
     def __init__(self) -> None:
+        
+        """
+        Constructor of the class CircularShape
+
+        Returns:
+            None
+        """
+        
         super()
         return None
     
-    def applyShape(self, board : Board) -> None:
+    def apply_shape(self, board : Board) -> None:
+        
+        """
+        Apply the circular shape to the board
+        
+        Parameters:
+            board (Board): The board to apply the shape to
+        
+        Returns:
+            None
+        """
 
         center_x = (board.getWidth() - 1) / 2
         center_y = (board.getHeight() - 1) / 2
@@ -33,3 +55,5 @@ class CircularShape(BoardShape):
                 normalized_y = (line - center_y) / radius_y
                 distance = math.sqrt(normalized_x ** 2 + normalized_y ** 2)
                 if distance > 1: board.setIsCaseBlocked(line, column, True)
+                
+        return None

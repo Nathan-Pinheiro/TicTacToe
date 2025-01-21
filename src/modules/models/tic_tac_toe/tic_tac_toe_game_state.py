@@ -19,6 +19,7 @@ from modules.utils.decorator import override
 # DATE : 10/01/2025
 # ************************************************
 
+
 class TicTacToeGameState(GameState):
     """
     Represents the state of a Tic Tac Toe game, handling the game logic, move execution,
@@ -35,9 +36,14 @@ class TicTacToeGameState(GameState):
             winCondition (WinCondition): The win condition logic.
             playersData (list[PlayerData]): Data for all players.
             startingPlayer (int): Index of the player who starts the game (default is 0).
+            
+        Returns:
+            None
         """
         
         super().__init__(board, winCondition, playersData, startingPlayer)
+        
+        return None
 
     def play(self, move: Move) -> GameOutcome:
         
@@ -68,6 +74,9 @@ class TicTacToeGameState(GameState):
 
         Parameters:
             move (Move): The move to undo.
+            
+        Returns:
+            None
         """
         
         if self.getGameHistory().getMoveCount() <= 0: return
@@ -78,11 +87,16 @@ class TicTacToeGameState(GameState):
         move.undo(self.getBoard(), self.getPlayerToPlayIndex())
 
         if move.__class__ != SimpleMove : self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().append(move.__class__)
+        
+        return None
 
     def goBack(self) -> bool:
 
         """
         Goes back one move in the game history.
+        
+        Returns:
+            bool: True if the operation was successful, False otherwise
         """
 
         if self.getGameHistory().getCurrentMoveIndex() < 0 : return False
@@ -101,6 +115,9 @@ class TicTacToeGameState(GameState):
 
         """
         Moves forward in the game history.
+        
+        Returns:
+            bool: True if the operation was successful, False otherwise
         """
 
         if self.getGameHistory().getCurrentMoveIndex() >= (self.getGameHistory().getMoveCount() - 1) : return False
@@ -137,9 +154,17 @@ class TicTacToeGameState(GameState):
 
     @override
     def getPlayerData(self, playerIndex: int) -> TicTacToePlayerData:
+        
         """
         Returns the data for a specific player.
+        
+        Parameters:
+            playerIndex (int): The index of the player.
+            
+        Returns:
+            PlayerData: The data for the player.
         """
+        
         return self.__playersData__[playerIndex]
 
     def copy(self) -> TicTacToeGameState :

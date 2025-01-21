@@ -28,15 +28,27 @@ class IntSelector(ctk.CTkFrame):
             minValue (int): The minimum value.
             maxValue (int): The maximum value.
             initialValue (int): The initial value.
+            
+        Raises:
+            TypeError: If parent is not a ctk.CTkFrame instance.
+            TypeError: If minValue, maxValue, or initialValue is not an integer.
 
         Returns:
             None
         """
         
+        if not isinstance(parent, ctk.CTkFrame):
+            raise TypeError("parent must be a ctk.CTkFrame instance")
+        
         super().__init__(parent, **kwargs)
+        
+        if not isinstance(minValue, int) or not isinstance(maxValue, int) or not isinstance(initialValue, int):
+            raise TypeError("minValue, maxValue, and initialValue must be integers")
+        
         self.minValue: int = minValue
         self.maxValue: int = maxValue
         self.value: int = initialValue
+        
         self.__createWidgets__()
         
         return None
@@ -76,6 +88,7 @@ class IntSelector(ctk.CTkFrame):
             self.value += 1
             self.valueDisplay.configure(text=str(self.value))
             return True
+        
         return False
 
     @privatemethod
@@ -92,6 +105,7 @@ class IntSelector(ctk.CTkFrame):
             self.value -= 1
             self.valueDisplay.configure(text=str(self.value))
             return True
+        
         return False
 
     def getValue(self) -> int:
@@ -112,11 +126,23 @@ class IntSelector(ctk.CTkFrame):
         
         Parameters:
             value (int): The value to set.
+            
+        Raises:
+            TypeError: If value is not an integer.
+            ValueError: If value is not between minValue and maxValue.
 
         Returns:
             bool: True if the value is set successfully
         """
         
+        if not isinstance(value, int):
+            raise TypeError("value must be an integer")
+        
+        if value < self.minValue or value > self.maxValue:
+            raise ValueError("value must be between minValue and maxValue")
+        
         self.value = value
+        
         self.valueDisplay.configure(text=str(self.value))
+        
         return True

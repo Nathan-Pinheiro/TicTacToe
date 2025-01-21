@@ -18,23 +18,27 @@ class BoardShape(ABC):
     """
 
     def __init__(self) -> None:
+        
         """
         Initializes a new instance of the BoardShape class.
         
         Returns:
             None
         """
+        
         return None
 
     @abstractmethod
-    def applyShape(self, board: Board) -> None:
+    def apply_shape(self, board: Board) -> None:
+        
         """
         Apply a specific shape to the given board.
 
-        Args:
+        Parameters:
             board (Board): The board to which the shape will be applied.
 
         Returns:
             None
         """
+        
         pass

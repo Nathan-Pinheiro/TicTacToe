@@ -13,20 +13,34 @@ from modules.models.board_game.board.board import Board
 
 class DiamondShape(BoardShape):
     
+    """
+    Represents a diamond shape
+    """
+    
     def __init__(self) -> None:
+        
+        """
+        Constructor of the class DiamondShape
+        
+        Returns:
+            None
+        """
+        
         super()
         return None
     
-    def applyShape(self, board: Board) -> None:
+    def apply_shape(self, board: Board) -> None:
+        
         """
         Applies a diamond shape to the board, blocking cells outside the diamond.
         
-        Args:
+        Parameters:
             board (Board): The board to which the shape will be applied.
 
         Returns:
             None
         """
+        
         center_x = (board.getWidth() - 1) / 2
         center_y = (board.getHeight() - 1) / 2
         max_distance_x = center_x + 1
@@ -39,4 +53,6 @@ class DiamondShape(BoardShape):
                 scaled_y = abs(line - center_y) / max_distance_y
                 if scaled_x + scaled_y >= 1:
                     board.setIsCaseBlocked(line, column, True)
+                    
+        return None
 

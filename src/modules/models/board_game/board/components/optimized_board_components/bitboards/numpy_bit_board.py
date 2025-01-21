@@ -15,14 +15,16 @@ import numpy as np
 
 class NumpyBitBoard(BitBoard) :
     
-
+    """
+    Represents a bitboard using numpy
+    """
 
     def __init__(self, width : int, height : int) -> None:
         
         """
         Constructor for the NumpyBitBoard class.
 
-        Args:
+        Parameters:
             width (int): The width of the board.
             height (int): The height of the board.
             
@@ -35,6 +37,8 @@ class NumpyBitBoard(BitBoard) :
         self.__bits__ : np.ndarray = np.zeros((height, width), dtype=int)
         
         self.__generateBoardQuadrantMasks__()
+        
+        return None
     
     @privatemethod
     def __getBitPosition__(self, line: int, column: int) -> int:
@@ -42,7 +46,7 @@ class NumpyBitBoard(BitBoard) :
         """
         Convert (row, col) to a bit index.
         
-        Args:
+        Parameters:
             line (int): The line of the bit.
             column (int): The column of the bit.
             
@@ -53,32 +57,17 @@ class NumpyBitBoard(BitBoard) :
         return line * self.__width__ + column
 
     @privatemethod
-    def __generateBoardQuadrantMasks__(self) -> None :
-        
-        """
-        This method allow initializing masks foreach part of board. (upper left, upper right, lower left, lower right).
-        This will then be usefull to hash the BitBoard, having a hash code that have the same hash for symetrical boards.
-        """
-        
-        self.__upperLeftMask__ : np.ndarray = np.zeros((self.__height__, self.__width__), dtype=int)
-        self.__upperRighMask__ : np.ndarray = np.zeros((self.__height__, self.__width__), dtype=int)
-        self.__lowerLeftMask__ : np.ndarray = np.zeros((self.__height__, self.__width__), dtype=int)
-        self.__lowerRightMask__ : np.ndarray = np.zeros((self.__height__, self.__width__), dtype=int)
-        
-        centerLine : float = (self.__height__ - 1) / 2
-        centerColumn : float = (self.__width__ - 1) / 2
-
-        for line in range(0, self.__height__) :
-            for column in range(0, self.__width__) :
-                
-                bitIndex = self.__getBitPosition__(line, column)
-                if(line <= centerLine and column <= centerColumn) : self.__upperLeftMask__[line][column] = 1
-                if(line <= centerLine and column >= centerColumn) : self.__upperRighMask__[line][column] = 1
-                if(line >= centerLine and column <= centerColumn) : self.__lowerLeftMask__[line][column] = 1
-                if(line >= centerLine and column >= centerColumn) : self.__lowerRightMask__[line][column] = 1
-
-    @privatemethod
     def __convertBitArrayToInt__(self, bitBoard : np.ndarray) -> int :
+        
+        """
+        Convert a bit array to an integer.
+        
+        Parameters:
+            bitBoard (np.ndarray): The bit array to convert.
+
+        Returns:
+            bitboard_int (int): The integer representation of the bit array.
+        """
         
         flat_bitboard = bitBoard.ravel() 
         bitboard_int = np.dot(flat_bitboard, 1 << np.arange(flat_bitboard.size))
@@ -87,6 +76,16 @@ class NumpyBitBoard(BitBoard) :
     
     @privatemethod
     def __convertIntToBitArray__(self, bitboard_int: int) -> np.ndarray:
+        
+        """
+        Convert an integer to a bit array.
+        
+        Parameters:
+            bitboard_int (int): The integer to convert.
+
+        Returns:
+            bitboard (np.ndarray): The bit array representation of the integer.
+        """
         
         bitboard = np.zeros((self.__height__, self.__width__), dtype=int)
         
@@ -102,7 +101,7 @@ class NumpyBitBoard(BitBoard) :
         """
         Return the rotated the given bitboard value & the given mask by 90 degrees. Do this n times.
         
-        Parameters :
+        Parameters:
             - mask (np.ndarray) : The mask
             - n (int) : the amount of time it has to rotate by 90 degrees
             
@@ -118,23 +117,77 @@ class NumpyBitBoard(BitBoard) :
 
     @override
     def getValue(self) -> int :
+        
+        """
+        Get the value of the bitboard.
+
+        Returns:
+            value (int): The value of the bitboard.
+        """
+        
         return self.__convertBitArrayToInt__(self.__bits__)
     
     @override
     def applyOr(self, value : int) -> None :
+        
+        """
+        Apply a bitwise OR operation to the bitboard.
+        
+        Parameters:
+            value (int): The value to apply the OR operation with.
+            
+        Returns:
+            None
+        """
+        
         self.__bits__ |= self.__convertIntToBitArray__(value)
+        
+        return None
         
     @override
     def applyXor(self, value : int) -> None :
+        
+        """
+        Apply a bitwise XOR operation to the bitboard.
+        
+        Parameters:
+            value (int): The value to apply the XOR operation with.
+            
+        Returns:
+            None
+        """
+        
         self.__bits__ ^= self.__convertIntToBitArray__(value)
+        
+        return None
     
     @override
     def applyAnd(self, value : int) -> None :
+        
+        """
+        Apply a bitwise AND operation to the bitboard.
+        
+        Parameters:
+            value (int): The value to apply the AND operation with.
+            
+        Returns:
+            None
+        """
+        
         self.__bits__ &= self.__convertIntToBitArray__(value)
+        
+        return None
 
     @override
     @privatemethod
     def __hash__(self) -> int:
+        
+        """
+        Hash the bitboard.
+        
+        Returns:
+            hash (int): The hash of the bitboard.
+        """
 
         normalHash : int = hash(self.__bits__.tobytes())
         rotated90Hash : int = hash(self.__getRotatedBitBoardBy90Degree__(1).tobytes())

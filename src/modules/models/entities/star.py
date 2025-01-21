@@ -2,6 +2,19 @@ from modules.models.board_game.components.entity import Entity
 
 class Star(Entity):
     
-    def __init__(self):
-        """Constructor for the Star class."""
+    """
+    A class that represents a star entity.
+    """
+    
+    def __init__(self) -> None:
+        
+        """
+        Constructor for the Star class.
+        
+        Returns:
+            None
+        """
+        
         super().__init__("★", None)
+        
+        return None

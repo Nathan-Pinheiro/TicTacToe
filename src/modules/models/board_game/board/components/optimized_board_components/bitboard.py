@@ -13,12 +13,16 @@ from abc import ABC, abstractmethod
 
 class BitBoard(ABC) :
     
+    """
+    Represents a bitboard
+    """
+    
     def __init__(self, width : int, height : int) -> None:
         
         """
         Constructor for the Board class.
 
-        Args:
+        Parameters:
             width (int): The width of the board.
             height (int): The height of the board.
             
@@ -30,12 +34,17 @@ class BitBoard(ABC) :
         
         self.__width__ = width
         self.__height__ = height
+        
+        return None
     
     @abstractmethod
     def getValue(self) -> int :
-
+        
         """
-        R
+        Get the value of the bitboard
+        
+        Returns:
+            int : The value of the bitboard
         """
 
         pass
@@ -45,6 +54,12 @@ class BitBoard(ABC) :
 
         """
         Apply OR bitwise operation to the bitboard with a int mask
+        
+        Parameters:
+            value (int): The value to apply the OR operation with.
+            
+        Returns:
+            None
         """
 
         pass
@@ -54,6 +69,12 @@ class BitBoard(ABC) :
 
         """
         Apply OR bitwise operation to the bitboard with a int mask
+        
+        Parameters:
+            value (int): The value to apply the OR operation with.
+            
+        Returns:
+            None
         """
 
         pass
@@ -63,6 +84,12 @@ class BitBoard(ABC) :
 
         """
         Apply AND bitwise operation to the bitboard with a int mask
+        
+        Parameters:
+            value (int): The value to apply the AND operation with.
+            
+        Returns:
+            None
         """
 
         pass
