@@ -1,10 +1,12 @@
 import tkinter as tk
 import customtkinter as ctk
 from CTkColorPicker import *
-from typing import Optional, List
+
+from typing import Optional, List, Any
+
+from enum import Enum
 
 from modules.utils.decorator import privatemethod
-from modules.utils.validators import isValidSymbol
 
 from modules.GUI.components.symbols import (
     drawCross, drawCircle, drawTriangle, drawStar, drawSquare, drawHexagon, drawRhombus
@@ -20,22 +22,36 @@ from modules.GUI.components.symbols import (
 # DATE : 18/01/2025
 # ************************************************
 
+class Symbols(Enum):
+    
+    """
+    The available symbols.
+    """
+    
+    CROSS = "cross"
+    CIRCLE = "circle"
+    TRIANGLE = "triangle"
+    STAR = "star"
+    SQUARE = "square"
+    HEXAGON = "hexagon"
+    RHOMBUS = "rhombus"
+
 class SymbolSelector(ctk.CTkFrame):
     
     """
     The symbol selector component.
     """
 
-    def __init__(self, parent: ctk.CTkFrame, symbol: str = "cross", disabledSymbols: Optional[List[str]] = None, **kwargs) -> None:
+    def __init__(self, parent: ctk.CTkFrame, symbol: Symbols = Symbols.CROSS, disabledSymbols: Optional[List[Symbols]] = None, **kwargs: dict[str, Any]) -> None:
         
         """
         Initializes the symbol selector component.
         
         Parameters:
             parent (ctk.CTkFrame): The parent frame.
-            symbol (str): The initial symbol.
-            disabledSymbols (Optional[List[str]]): The list of symbols to disable.
-            **kwargs: Additional keyword arguments.
+            symbol (Symbols): The initial symbol.
+            disabledSymbols (Optional[List[Symbols]]): The list of symbols to disable.
+            **kwargs (dict): Additional keyword arguments for the frame.
             
         Raises:
             TypeError: If parent is not a ctk.CTkFrame instance.
@@ -45,26 +61,36 @@ class SymbolSelector(ctk.CTkFrame):
             None
         """
         
+        # Check if the parent is a ctk.CTkFrame instance
         if not isinstance(parent, ctk.CTkFrame):
             raise TypeError("parent must be a ctk.CTkFrame instance")
         
+        # Call the parent constructor
         super().__init__(parent, **kwargs)
         
-        self.symbols: List[str] = ["cross", "circle", "triangle", "star", "square", "hexagon", "rhombus"]
+        # Check if the symbol is a valid symbol
+        self.symbols: List[Symbols] = list(Symbols)
         
+        # Check if the symbol is a valid symbol
         if symbol not in self.symbols:
             symbol = self.symbols[0]
             
-        self.symbol: str = symbol
+        # Define the symbol
+        self.symbol: Symbols = symbol
         
-        for disabled_symbol in disabledSymbols:
-            if disabled_symbol not in self.symbols:
-                raise ValueError(f"Symbol {disabled_symbol} is not a valid symbol")
+        # Check if the disabledSymbols are valid symbols
+        if disabledSymbols:
+            for disabled_symbol in disabledSymbols:
+                if disabled_symbol not in self.symbols:
+                    raise ValueError(f"Symbol {disabled_symbol} is not a valid symbol")
         
-        self.disabledSymbols: List[str] = disabledSymbols if disabledSymbols else []
+        # Define the disabled symbols
+        self.disabledSymbols: List[Symbols] = disabledSymbols if disabledSymbols else []
         
+        # Define the onSymbolChange callback
         self.onSymbolChange: Optional[callable] = None
         
+        # Create the widgets
         self.__createWidgets__()
         
         return None
@@ -79,12 +105,14 @@ class SymbolSelector(ctk.CTkFrame):
             bool: True if the widgets are created successfully.
         """
         
+        # Create the canvas
         self.canvas: tk.Canvas = tk.Canvas(self, width=132, height=132, bg="#333333", borderwidth=0, highlightthickness=0)
         self.canvas.grid(row=0, column=0, padx=10, pady=10)
         
-        if not self.__drawSymbol__():
-            return False
+        # Draw the symbol
+        self.__drawSymbol__()
         
+        # Create the select button
         self.selectButton: ctk.CTkButton = ctk.CTkButton(self, text="Select Symbol", command=self.__selectSymbol__)
         self.selectButton.grid(row=1, column=0, padx=10, pady=10)
         
@@ -100,40 +128,37 @@ class SymbolSelector(ctk.CTkFrame):
             bool: True if the symbol is drawn successfully.
         """
         
+        # Clear the canvas
         self.canvas.delete("all")
         
-        canvas_width: int = int(self.canvas['width'])
-        canvas_height: int = int(self.canvas['height'])
+        # Define the size and weight
+        canvasWidth: int = int(self.canvas['width'])
+        canvasHeight: int = int(self.canvas['height'])
         
         size: int = 100
         
         weight: int = 2
         
-        x: int = (canvas_width - size) // 2
-        y: int = (canvas_height - size) // 2
+        # Define the position
+        x: int = (canvasWidth - size) // 2
+        y: int = (canvasHeight - size) // 2
         
+        # Draw the symbol on the canvas based on the selected symbol
         match self.symbol:
-            case "cross":
-                if not drawCross(self.canvas, x, y, size, weight=weight):
-                    return False
-            case "circle":
-                if not drawCircle(self.canvas, x, y, size, weight=weight):
-                    return False
-            case "triangle":
-                if not drawTriangle(self.canvas, x, y, size, weight=weight):
-                    return False
-            case "star":
-                if not drawStar(self.canvas, x, y, size, weight=weight):
-                    return False
-            case "square":
-                if not drawSquare(self.canvas, x, y, size, weight=weight):
-                    return False
-            case "hexagon":
-                if not drawHexagon(self.canvas, x, y, size, weight=weight):
-                    return False
-            case "rhombus":
-                if not drawRhombus(self.canvas, x, y, size, weight=weight):
-                    return False  
+            case Symbols.CROSS:
+                drawCross(self.canvas, x, y, size, weight=weight)
+            case Symbols.CIRCLE:
+                drawCircle(self.canvas, x, y, size, weight=weight)
+            case Symbols.TRIANGLE:
+                drawTriangle(self.canvas, x, y, size, weight=weight)
+            case Symbols.STAR:
+                drawStar(self.canvas, x, y, size, weight=weight)
+            case Symbols.SQUARE:
+                drawSquare(self.canvas, x, y, size, weight=weight)
+            case Symbols.HEXAGON:
+                drawHexagon(self.canvas, x, y, size, weight=weight)
+            case Symbols.RHOMBUS:
+                drawRhombus(self.canvas, x, y, size, weight=weight)
             
         return True
 
@@ -147,29 +172,33 @@ class SymbolSelector(ctk.CTkFrame):
             bool: True if the symbol is selected successfully.
         """
         
-        current_index: int = self.symbols.index(self.symbol)
-        next_index: int = (current_index + 1) % len(self.symbols)
+        # Get the current index
+        currentIndex: int = self.symbols.index(self.symbol)
+        nextIndex: int = (currentIndex + 1) % len(self.symbols)
         
-        while self.symbols[next_index] in self.disabledSymbols:
-            next_index = (next_index + 1) % len(self.symbols)
+        # Get the next available symbol
+        while self.symbols[nextIndex] in self.disabledSymbols:
+            nextIndex = (nextIndex + 1) % len(self.symbols)
             
-        self.symbol = self.symbols[next_index]
+        # Set the symbol
+        self.symbol = self.symbols[nextIndex]
         
-        if not self.__drawSymbol__():
-            return False
+        # Draw the symbol
+        self.__drawSymbol__()
         
+        # Call the onSymbolChange callback
         if self.onSymbolChange:
             self.onSymbolChange()
             
         return True
 
-    def disableSymbols(self, symbols: List[str]) -> bool:
+    def disableSymbols(self, symbols: List[Symbols]) -> bool:
         
         """
         Disables the specified symbols.
         
         Parameters:
-            symbols (List[str]): The list of symbols to disable.
+            symbols (List[Symbols]): The list of symbols to disable.
             
         Raises:
             ValueError: If a symbol is not a valid symbol.
@@ -177,65 +206,71 @@ class SymbolSelector(ctk.CTkFrame):
         Returns:
             bool: True if the symbols are disabled successfully.
         """
+        
+        # Check if the symbols are valid symbols
         for symbol in symbols:
             if symbol not in self.symbols:
                 raise ValueError(f"Symbol {symbol} is not a valid symbol")
             
+        # Disable the symbols
         self.disabledSymbols = symbols
         
+        # Select a new symbol if the current symbol is disabled
         if self.symbol in self.disabledSymbols:
-            if not self.__selectSymbol__():
-                return False
+            self.__selectSymbol__()
             
         return True
 
-    def setSymbol(self, symbol: str) -> bool:
+    def setSymbol(self, symbol: Symbols) -> bool:
         
         """
         Sets the symbol of the symbol selector.
         
         Parameters:
-            symbol (str): The symbol to set.
+            symbol (Symbols): The symbol to set.
             
         Raises:
-            ValueError: If the symbol is not a valid symbol.
+            ValueError: If symbol is not a valid symbol.
             ValueError: If the symbol is disabled.
 
         Returns:
             bool: True if the symbol is set successfully.
         """
         
-        if not isValidSymbol(symbol):
-            raise ValueError(f"Symbol {symbol} is not a valid symbol")
+        # Check if the symbol is a valid symbol
+        if not isinstance(symbol, Symbols):
+            raise ValueError("symbol must be an instance of Symbols")
         
+        # Check if the symbol is disabled
         if symbol in self.disabledSymbols:
             raise ValueError(f"Symbol {symbol} is disabled")
         
+        # Set the symbol
         self.symbol = symbol
         
-        if not self.__drawSymbol__():
-            return False
+        # Draw the symbol
+        self.__drawSymbol__()
         
         return True
 
-    def getSymbol(self) -> str:
+    def getSymbol(self) -> Symbols:
         
         """
         Gets the selected symbol.
         
         Returns:
-            str: The selected symbol.
+            Symbols: The selected symbol.
         """
         
         return self.symbol
 
-    def getAvailableSymbols(self) -> List[str]:
+    def getAvailableSymbols(self) -> List[Symbols]:
         
         """
         Gets the available symbols.
         
         Returns:
-            List[str]: The list of available symbols.
+            List[Symbols]: The list of available symbols.
         """
         
         return [symbol for symbol in self.symbols if symbol not in self.disabledSymbols]

@@ -28,16 +28,30 @@ class Move(ABC) :
             moveCode (str): The code of the move.
             coordinate (Coordinate): The coordinate of the move.
             
+        Raises:
+            TypeError: If moveCode is not a string or if coordinate is not a Coordinate object.
+            
         Returns:
             None
         """
         
+        # Check if moveCode is a string
+        if not isinstance(moveCode, str):
+            raise TypeError("moveCode must be a string")
+        
+        # Check if coordinate is a Coordinate object
+        if not isinstance(coordinate, Coordinate):
+            raise TypeError("coordinate must be a Coordinate object")
+        
+        # Initialize the attributes        
         self.__moveCode__ : str = moveCode
         self.__coordinate__ : Coordinate = coordinate
         self.__isMoveDone__ : bool = False
+        
+        return None
     
     @abstractmethod
-    def play(self, board : Board, playerIndex : int) -> None :
+    def play(self, board : Board, playerIndex : int) -> bool:
         
         """
         Play the move on the board.
@@ -46,14 +60,19 @@ class Move(ABC) :
             board (Board): The board on which the move will be played.
             playerIndex (int): The index of the player who plays the move.
             
+        Raises:
+            TypeError: If board is not a Board object.
+            TypeError: If playerIndex is not an integer.
+            ValueError: If playerIndex is less than 0 or greater than the number of players.
+            
         Returns:
-            None
+            bool: True if the move has been played.
         """
         
         pass
     
     @abstractmethod
-    def undo(self, board : Board, playerIndex : int) -> None :
+    def undo(self, board : Board, playerIndex : int) -> bool:
         
         """
         Undo the move on the board.
@@ -62,8 +81,13 @@ class Move(ABC) :
             board (Board): The board on which the move will be played.
             playerIndex (int): The index of the player who plays the move.
             
+        Raises:
+            TypeError: If board is not a Board object.
+            TypeError: If playerIndex is not an integer.
+            ValueError: If playerIndex is less than 0 or greater than the number of players.
+            
         Returns:
-            None
+            bool: True if the move has been undone.
         """
         
         pass
@@ -80,13 +104,20 @@ class Move(ABC) :
             line (int): The line of the move.
             column (int): The column of the move.
             
+        Raises:
+            TypeError: If board is not a Board object.
+            TypeError: If line is not an integer.
+            TypeError: If column is not an integer.
+            ValueError: If line is less than 0 or greater than the height of the board.
+            ValueError: If column is less than 0 or greater than the width of the board.
+            
         Returns:
             bool : True if the move can be played, False otherwise.
         """
         
         pass
     
-    def getCoordinate(self) -> Coordinate :
+    def getCoordinate(self) -> Coordinate:
         
         """
         Get the coordinate of the move.
@@ -97,7 +128,7 @@ class Move(ABC) :
         
         return self.__coordinate__
     
-    def getMoveCode(self) -> str :
+    def getMoveCode(self) -> str:
         
         """
         Get the code of the move.
@@ -108,7 +139,7 @@ class Move(ABC) :
         
         return self.__moveCode__
     
-    def isMoveDone(self) -> bool :
+    def isMoveDone(self) -> bool:
         
         """
         Get the state of the move.

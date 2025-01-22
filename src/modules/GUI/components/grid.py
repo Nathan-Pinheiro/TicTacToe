@@ -8,7 +8,7 @@ from modules.utils.validators import (
     isValidSymbol, isHexColor
 )
 
-def drawGrid(canvas: tk.Canvas, width: int, height: int, cellSize: int, board: list[list[str]] = None, lineColor: str = "#FFFFFF", lineWidth: int = 1, playerSymbols: list[str] = ["X", "O"], playerColors: list[str] = ["#FFFFFF", "#FF00FF"], coord: bool = True, advice: tuple = ()) -> bool:
+def drawGrid(canvas: tk.Canvas, width: int, height: int, cellSize: int, board: list[list[str]] = None, lineColor: str = "#FFFFFF", lineWidth: int = 1, playerSymbols: list[str] = ["X", "O"], playerColors: list[str] = ["#FFFFFF", "#FFFFFF"], coord: bool = True, advice: tuple[int | None, int | None] = (None, None)) -> bool:
     
     """
     Draws the game grid on the canvas.
@@ -43,46 +43,58 @@ def drawGrid(canvas: tk.Canvas, width: int, height: int, cellSize: int, board: l
         bool: True if the function succeeds, False otherwise.
     """
     
+    # Check if the canvas is a tk.Canvas instance
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     
+    # Check if width, height, and cellSize are integers
     if not isinstance(width, int) or not isinstance(height, int) or not isinstance(cellSize, int):
         raise TypeError("width, height, and cellSize must be integers")
     
+    # Check if board is a 2D list of strings
     if board is not None:
         if not isinstance(board, list) or not all(isinstance(row, list) for row in board):
             raise TypeError("board must be a 2D list")
         if not all(isinstance(cell, str) for row in board for cell in row):
             raise TypeError("board must be a 2D list of strings")
         
+    # Check if lineColor is a string
     if not isinstance(lineColor, str):
         raise TypeError("lineColor must be a string")
     
+    # Check if lineWidth is an integer
     if not isinstance(lineWidth, int):
         raise TypeError("lineWidth must be an integer")
     
+    # Check if playerSymbols is a list of strings
     if playerSymbols is not None:
         if not isinstance(playerSymbols, list) or not all(isinstance(symbol, str) for symbol in playerSymbols):
             raise TypeError("playerSymbols must be a list of strings")
         if not all(isValidSymbol(symbol) for symbol in playerSymbols):
             raise ValueError("All playerSymbols must be valid symbols")
         
+    # Check if playerColors is a list of strings
     if playerColors is not None:
         if not isinstance(playerColors, list) or not all(isinstance(color, str) for color in playerColors):
             raise TypeError("playerColors must be a list of strings")
         if not all(isHexColor(color) for color in playerColors):
             raise ValueError("All playerColors must be in hexadecimal format")
         
+    # Check if coord is a boolean
     if not isinstance(coord, bool):
         raise TypeError("coord must be a boolean")
     
-    if not isinstance(advice, tuple) or not all(isinstance(coord, int) for coord in advice):
-        raise TypeError("advice must be a tuple of integers")
+    # Check if advice is a tuple of two integers or None
+    if not isinstance(advice, tuple) or len(advice) != 2 or not all(isinstance(coord, int) or coord is None for coord in advice):
+            raise TypeError("advice must be a tuple of two integers or None")
 
+    # Clear the canvas
     canvas.delete("all")
 
+    # Draw the background
     canvas.create_rectangle(0, 0, width, height, fill="#4b4b4b", outline="")
 
+    # Draw symbols, gray cases,and green cases on the board
     if board and playerSymbols and playerColors:
         for row in range(len(board)):
             for col in range(len(board[row])):
@@ -90,24 +102,22 @@ def drawGrid(canvas: tk.Canvas, width: int, height: int, cellSize: int, board: l
                 y0: int = row * cellSize
                 symbol: str = board[row][col]
                 if symbol == '#':
-                    if not drawGrayCase(canvas, x0, y0, cellSize):
-                        raise RuntimeError("Failed to draw gray case")
+                    drawGrayCase(canvas, x0, y0, cellSize)
                 if len(advice) == 2 and [row, col] == [advice[0], advice[1]]:
-                    if not drawGreenCase(canvas, x0, y0, cellSize):
-                        raise RuntimeError("Failed to draw green case")
+                    drawGreenCase(canvas, x0, y0, cellSize)
                 else:
-                    if not drawSymbol(canvas, x0, y0, cellSize, symbol, playerSymbols, playerColors):
-                        raise RuntimeError("Failed to draw symbol")
+                    drawSymbol(canvas, x0, y0, cellSize, symbol, playerSymbols, playerColors)
 
+    # Draw the coordinates on the board
     if coord:
-        if not drawCoordinates(canvas, width, height, cellSize):
-            raise RuntimeError("Failed to draw coordinates")
+        drawCoordinates(canvas, width, height, cellSize)
 
-    for i in range(height // cellSize + 1):
-        canvas.create_line(0, i * cellSize, width, i * cellSize, fill=lineColor, width=lineWidth)
+    # Draw the grid lines
+    for indexLine in range(height // cellSize + 1):
+        canvas.create_line(0, indexLine * cellSize, width, indexLine * cellSize, fill=lineColor, width=lineWidth)
         
-    for i in range(width // cellSize + 1):
-        canvas.create_line(i * cellSize, 0, i * cellSize, height, fill=lineColor, width=lineWidth)
+    for indexLine in range(width // cellSize + 1):
+        canvas.create_line(indexLine * cellSize, 0, indexLine * cellSize, height, fill=lineColor, width=lineWidth)
         
     canvas.create_line(width-1, 0, width-1, height, fill=lineColor, width=lineWidth)
     canvas.create_line(0, height-1, width, height-1, fill=lineColor, width=lineWidth)
@@ -142,49 +152,49 @@ def drawSymbol(canvas: tk.Canvas, x0: int, y0: int, cellSize: int, symbol: str, 
         bool: True if the function succeeds, False otherwise.
     """
     
+    # Check if the canvas is a tk.Canvas instance
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     
+    # Check if x0, y0, and cellSize are integers
     if not isinstance(x0, int) or not isinstance(y0, int) or not isinstance(cellSize, int):
         raise TypeError("x0, y0, and cellSize must be integers")
     
+    # Check if symbol is a string
     if not isinstance(symbol, str) or not isValidSymbol(symbol):
         raise TypeError("symbol must be a valid string")
     
+    # Check if playerSymbols is a list of strings
     if not isinstance(playerSymbols, list) or not all(isinstance(sym, str) and isValidSymbol(sym) for sym in playerSymbols):
         raise TypeError("playerSymbols must be a list of valid strings")
     
+    # Check if playerColors is a list of strings
     if not isinstance(playerColors, list) or not all(isinstance(color, str) for color in playerColors):
         raise TypeError("playerColors must be a list of strings")
     
+    # Check if playerColors contains valid hexadecimal colors
     if not all(isHexColor(color) for color in playerColors):
         raise ValueError("All playerColors must be in hexadecimal format")
 
-    for i, playerSymbol in enumerate(playerSymbols):
+    # Draw symbols on the canvas
+    for indexSymbol, playerSymbol in enumerate(playerSymbols):
         if symbol == playerSymbol:
-            color: str = playerColors[i]
+            color: str = playerColors[indexSymbol]
             match symbol:
                 case 'X':
-                    if not drawCross(canvas, x0, y0, cellSize, color):
-                        raise RuntimeError("Failed to draw cross")
+                    drawCross(canvas, x0, y0, cellSize, color)
                 case 'O':
-                    if not drawCircle(canvas, x0, y0, cellSize, color):
-                        raise RuntimeError("Failed to draw circle")
+                    drawCircle(canvas, x0, y0, cellSize, color)
                 case '△':
-                    if not drawTriangle(canvas, x0, y0, cellSize, color):
-                        raise RuntimeError("Failed to draw triangle")
+                    drawTriangle(canvas, x0, y0, cellSize, color)
                 case '⬡':
-                    if not drawHexagon(canvas, x0, y0, cellSize, color):
-                        raise RuntimeError("Failed to draw hexagon")
+                    drawHexagon(canvas, x0, y0, cellSize, color)
                 case '★':
-                    if not drawStar(canvas, x0, y0, cellSize, color):
-                        raise RuntimeError("Failed to draw star")
+                    drawStar(canvas, x0, y0, cellSize, color)
                 case '▢':
-                    if not drawSquare(canvas, x0, y0, cellSize, color):
-                        raise RuntimeError("Failed to draw square")
+                    drawSquare(canvas, x0, y0, cellSize, color)
                 case '◊':
-                    if not drawRhombus(canvas, x0, y0, cellSize, color):
-                        raise RuntimeError("Failed to draw rhombus")
+                    drawRhombus(canvas, x0, y0, cellSize, color)
                 
     return True
 
@@ -207,17 +217,20 @@ def drawCoordinates(canvas: tk.Canvas, width: int, height: int, cellSize: int) -
         bool: True if the function succeeds, False otherwise.
     """
     
+    # Check if the canvas is a tk.Canvas instance
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     
+    # Check if width, height, and cellSize are integers
     if not isinstance(width, int) or not isinstance(height, int) or not isinstance(cellSize, int):
         raise TypeError("width, height, and cellSize must be integers")
 
-    for i in range(height // cellSize):
-        canvas.create_text(10, i * cellSize + cellSize - 14, text=str(i + 1), fill="#ffffff")
+    # Draw the coordinates on the canvas
+    for coordinateCol in range(height // cellSize):
+        canvas.create_text(10, coordinateCol * cellSize + cellSize - 14, text=str(coordinateCol + 1), fill="#ffffff")
         
-    for i in range(width // cellSize):
-        letter: str = chr(i + 65)
-        canvas.create_text(i * cellSize + cellSize - 10, 14, text=letter, fill="white")
+    for coordinateRow in range(width // cellSize):
+        letter: str = chr(coordinateRow + 65)
+        canvas.create_text(coordinateRow * cellSize + cellSize - 10, 14, text=letter, fill="white")
         
     return True

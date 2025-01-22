@@ -20,6 +20,7 @@ class TicTacToePlayerData(PlayerData) :
             None
         """
         
+        # Initialize the power up moves
         self.__powerUpsMoves__ : list[Type[PowerUpMove]] = powerUpsMoves
         
         return None

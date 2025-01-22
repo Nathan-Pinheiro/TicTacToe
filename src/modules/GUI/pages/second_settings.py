@@ -5,6 +5,8 @@ from modules.GUI.page import Page
 from modules.GUI.render import PageName
 from modules.GUI.components.int_selector import IntSelector
 
+from modules.utils.decorator import override, privatemethod
+
 # ************************************************
 # CLASS SecondSettings
 # ************************************************
@@ -29,50 +31,84 @@ class SecondSettings(Page):
         Parameters:
             parent (ctk.CTkFrame): The parent frame.
             controller (ctk.CTk): The main controller.
+            
+        Raises:
+            TypeError: If the parent is not an instance of ctk.CTkFrame.
+            TypeError: If the controller is not an instance of ctk.CTk.
 
         Returns:
             None
         """
         
+        # Check if the parent is a ctk.CTkFrame instance
+        if not isinstance(parent, ctk.CTkFrame):
+            raise TypeError("Parent must be an instance of ctk.CTkFrame")
+        
+        # Check if the controller is a ctk.CTk instance
+        if not isinstance(controller, ctk.CTk):
+            raise TypeError("Controller must be an instance of ctk.CTk")
+        
+        # Call the parent constructor
         super().__init__(parent, controller)
+        
+        # Initialize the settings
         self.settings: Optional[dict] = None
+        
+        # Initialize the grid
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
         self.grid_columnconfigure(3, weight=1)
         self.grid_columnconfigure(4, weight=1)
+        
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
         self.grid_rowconfigure(2, weight=1)
+        
+        # Create the widgets
         self.__createWidgets__()
+        
         return None
     
-    def redirect(self, pageName: Optional[PageName] = None) -> bool:
+    @override
+    def redirect(self, pageName: PageName) -> bool:
         
         """
         Redirects to the specified page with the selected settings.
         
         Parameters:
-            pageName (Optional[PageName]): The name of the page to redirect to.
+            pageName (PageName): The name of the page to redirect to.
+            
+        Raises:
+            TypeError: If pageName is not an instance of PageName.
 
         Returns:
             bool: True if the function succeeds, False otherwise.
         """
         
+        # Check if pageName is an instance of PageName
+        if not isinstance(pageName, PageName):
+            raise TypeError("pageName must be an instance of PageName")
+        
         # On ajoute aux settings les valeurs des champs
         settings: dict = self.settings
+        
         settings["board"] = {
             "width": self.widthSelector.getValue(),
             "height": self.heightSelector.getValue(),
             "shape": self.shapeVar.get()
         }
+        
         settings["game"] = {
             "nbSymbols": self.nbSymbolsSelector.getValue(),
             "alignToWin": self.alignToWinVar.get(),
             "startingPlayer": self.startingPlayerVar.get(),
             "gamemode": self.gamemodeVar.get()
         }
+        
+        # On affiche la page suivante
         self.controller.showFrame(pageName=pageName, settings=settings)
+        
         return True
 
     def setValues(self, settings: dict) -> bool:
@@ -82,23 +118,39 @@ class SecondSettings(Page):
         
         Parameters:
             settings (dict): The game settings.
+            
+        Raises:
+            TypeError: If settings is not a dictionary.
 
         Returns:
             bool: True if the function succeeds, False otherwise.
         """
         
+        # Check if settings is a dictionary
+        if not isinstance(settings, dict):
+            raise TypeError("settings must be a dictionary")
+        
+        # Set the settings
         self.settings = settings
+        
+        # Set the values of the settings in the widgets
         self.startingPlayerCombobox.configure(values=[settings["player1"]["name"], settings["player2"]["name"], "Random"])
+        
         self.startingPlayerVar.set(settings["player1"]["name"])
+        
         return True
     
+    @override
     def __createWidgets__(self) -> bool:
+        
         """
         Creates the widgets for the second settings page.
         
         Returns:
             bool: True if the function succeeds, False otherwise
         """
+        
+        # Get the screen ratio
         widthRatio: float
         heightRatio: float
         widthRatio, heightRatio = self.getScreenRatio()
@@ -174,12 +226,18 @@ class SecondSettings(Page):
             bool: True if the function succeeds, False otherwise.
         """
         
+        # Reset the settings
         self.widthSelector.setValue(3)
         self.heightSelector.setValue(3)
         self.shapeVar.set("No special shape")
+        
         self.nbSymbolsSelector.setValue(3)
+        
         self.alignToWinVar.set(True)
+        
         self.startingPlayerCombobox.configure(values=["Nan"])
         self.startingPlayerVar.set("Nan")
+        
         self.gamemodeVar.set("No mod")
+        
         return True

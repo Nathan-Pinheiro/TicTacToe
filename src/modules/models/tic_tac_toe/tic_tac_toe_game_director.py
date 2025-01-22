@@ -41,14 +41,43 @@ class GameDirector :
             playersData (list[PlayerData]): The list of players data.
             startingPlayer (int): The index of the starting player.
             
+        Raises:
+            TypeError: If the board is not a Board object.
+            TypeError: If the win condition is not a WinCondition object.
+            TypeError: If the players are not a list of Player objects.
+            TypeError: If the players data are not a list of PlayerData objects.
+            TypeError: If the starting player is not an integer.
+            
         Returns:
             None
         """
+        
+        # Check if the board is a Board object
+        if not isinstance(board, Board): 
+            raise TypeError("The board must be a Board object.")
+        
+        # Check if the win condition is a WinCondition object
+        if not isinstance(winCondition, WinCondition): 
+            raise TypeError("The win condition must be a WinCondition object.")
+        
+        # Check if the players are a list of Player objects
+        if not isinstance(players, list) and all(isinstance(player, Player) for player in players): 
+            raise TypeError("The players must be a list of Player objects.")
+        
+        # Check if the players data are a list of PlayerData objects
+        if not isinstance(playersData, list) and all(isinstance(playerData, PlayerData) for playerData in playersData): 
+            raise TypeError("The players data must be a list of PlayerData objects.")
+        
+        # Check if the starting player is an integer
+        if not isinstance(startingPlayer, int): 
+            raise TypeError("The starting player must be an integer.")
 
-        if(startingPlayer == -1) : startingPlayer = random.randint(0, len(players) - 1)
+        # Check if the starting player is a valid index or set it randomly
+        if(startingPlayer not in [index for index in range(len(players))]) : startingPlayer = random.randint(0, len(players) - 1)
 
+        # Initialize the attributes
         self.__players__ : list[Player] = players
-        self.__game_state__ : TicTacToeGameState = TicTacToeGameState(board, winCondition, playersData, startingPlayer)
+        self.__gameState__ : TicTacToeGameState = TicTacToeGameState(board, winCondition, playersData, startingPlayer)
         
         return None
         
@@ -61,7 +90,7 @@ class GameDirector :
             Player: The player to play.
         """
         
-        return self.__players__[self.__game_state__.getPlayerToPlayIndex()]
+        return self.__players__[self.__gameState__.getPlayerToPlayIndex()]
 
     def launchGame(self) -> TicTacToeGameState:
         
@@ -72,17 +101,17 @@ class GameDirector :
             TicTacToeGameState: The final state of the game.
         """
 
-        gameOutcome : GameOutcome = self.__game_state__.checkWin()
+        # Check if the game is finished
+        gameOutcome : GameOutcome = self.__gameState__.checkWin()
 
+        # While the game is not finished play
         while(gameOutcome.getGameStatus() == GameOutcomeStatus.UNFINISHED) :
 
-            playerToPlayIndex : int = self.__game_state__.getPlayerToPlayIndex()
-            playerToPlayData : PlayerData = self.__game_state__.getPlayerData(playerToPlayIndex)
             playerToPlay : Player = self.getPlayerToPlay()
 
             start_time = time.time()
 
-            move : Move = playerToPlay.get_choice(self.__game_state__)
+            move : Move = playerToPlay.get_choice(self.__gameState__)
 
             end_time = time.time()
             elapsed_time = end_time - start_time
@@ -96,9 +125,9 @@ class GameDirector :
             display_sep()
             os.system("pause")
 
-            gameOutcome = self.__game_state__.play(move)
+            gameOutcome = self.__gameState__.play(move)
 
-        return self.__game_state__
+        return self.__gameState__
     
     def getGameState(self) -> TicTacToeGameState:
         
@@ -109,4 +138,4 @@ class GameDirector :
             TicTacToeGameState: The game state.
         """
         
-        return self.__game_state__
+        return self.__gameState__

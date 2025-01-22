@@ -1,5 +1,8 @@
+from abc import abstractmethod
 from modules.models.tic_tac_toe.tic_tac_toe_game_state import TicTacToeGameState
 from modules.models.board_game.components.move import Move
+
+from modules.utils.validators import isHexColor
 
 class Player:
     
@@ -7,7 +10,7 @@ class Player:
     A class that represents a player.
     """
 
-    def __init__(self, name : str) -> None:
+    def __init__(self, name : str, color: str = "#FFFFFF") -> None:
         
         """
         Constructor for the Player class.
@@ -15,12 +18,26 @@ class Player:
         Parameters:
             name (str): The name.
             
+        Raises:
+            ValueError: If the name is not a string.
+            ValueError: If the color is not a hexadecimal string in the format #RRGGBB.
+            
         Returns:
             None
         """
         
+        # Check if the name is a string
+        if not isinstance(name, str):
+            raise ValueError("The name must be a string.")
+        
+        # Check if the color is a hexadecimal string in the format #RRGGBB
+        if not isinstance(color, str) or not color.startswith('#') or len(color) != 7 or not isHexColor(color):
+            raise ValueError("The color must be a hexadecimal string in the format #RRGGBB.")
+        
+        # Initialize the name and color
         self.__name__ = name
-        self.__color__ = "#ffffff"
+        self.__color__ = color
+        
         return None
 
     def getName(self) -> str :
@@ -34,7 +51,7 @@ class Player:
         
         return self.__name__
     
-    def setName(self, name : str) -> None :
+    def setName(self, name : str) -> bool :
         
         """
         Sets the name.
@@ -42,12 +59,21 @@ class Player:
         Parameters:
             name (str): The name.
             
+        Raises:
+            ValueError: If the name is not a string.
+            
         Returns:
-            None
+            bool: True if the name was set, False otherwise.
         """
         
+        # Check if the name is a string
+        if not isinstance(name, str):
+            raise ValueError("The name must be a string.")
+        
+        # Set the name
         self.__name__ = name
-        return None
+        
+        return True
     
     def getColor(self) -> str :
         
@@ -60,7 +86,7 @@ class Player:
         
         return self.__color__
     
-    def setColor(self, color : str) -> None:
+    def setColor(self, color : str) -> bool:
         
         """
         Sets the color.
@@ -68,20 +94,24 @@ class Player:
         Parameters:
             color (str): The color.
             
+        Raises:
+            ValueError: If the color is not a hexadecimal string in the format #RRGGBB.
+            
         Returns:
-            None
+            bool: True if the color was set.
         """
         
-        if not isinstance(color, str) or not color.startswith('#') or len(color) != 7:
-            raise ValueError("Color must be a hexadecimal string in the format #RRGGBB")
-        try:
-            int(color[1:], 16)
-        except ValueError:
-            raise ValueError("Color must be a hexadecimal string in the format #RRGGBB")
+        # Check if the color is a hexadecimal string in the format #RRGGBB
+        if not isinstance(color, str) or not color.startswith('#') or len(color) != 7 or not isHexColor(color):
+            raise ValueError("The color must be a hexadecimal string in the format #RRGGBB.")
+        
+        # Set the color
         self.__color__ = color
-        return None
+        
+        return True
 
-    def get_choice(self, gameState : TicTacToeGameState) -> Move:
+    @abstractmethod
+    def getChoice(self, gameState : TicTacToeGameState) -> Move:
         
         """
         Gets the choice of the player.

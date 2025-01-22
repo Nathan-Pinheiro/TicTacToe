@@ -28,26 +28,37 @@ class CircularShape(BoardShape):
             None
         """
         
+        # Call the parent constructor
         super()
+        
         return None
     
-    def apply_shape(self, board : Board) -> None:
+    def applyShape(self, board : Board) -> bool:
         
         """
         Apply the circular shape to the board
         
         Parameters:
             board (Board): The board to apply the shape to
+            
+        Raises:
+            TypeError: If board is not an instance of Board
         
         Returns:
-            None
+            bool: True if the circular shape is applied.
         """
+        
+        # Check if the board is an instance of Board
+        if not isinstance(board, Board):
+            raise TypeError("board must be an instance of Board")
 
+        # Define the center and the radius of the circle
         center_x = (board.getWidth() - 1) / 2
         center_y = (board.getHeight() - 1) / 2
         radius_x = (board.getWidth() - 0.9) / 2
         radius_y = (board.getWidth() - 0.9) / 2
 
+        # Block cells outside the circle
         for line in range(board.getHeight()):
             for column in range(board.getWidth()):
                 
@@ -56,4 +67,4 @@ class CircularShape(BoardShape):
                 distance = math.sqrt(normalized_x ** 2 + normalized_y ** 2)
                 if distance > 1: board.setIsCaseBlocked(line, column, True)
                 
-        return None
+        return True

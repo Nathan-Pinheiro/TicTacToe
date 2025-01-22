@@ -4,17 +4,18 @@ from modules.models.board_game.components.coordinate import Coordinate
 from modules.models.displayer.console_displayer import *
 from modules.models.board_game.components.move import Move
 from modules.models.tic_tac_toe.moves.simple_move import SimpleMove
+from modules.models.tic_tac_toe.moves.power_ups.bomb_move import BombMove
 
-class HumanConsolePlayer(Player):
+class HumanGUIPlayer(Player):
     
     """
-    A class that represents a human console player.
+    A class that represents a human player.
     """
     
     def __init__(self, name : str) -> None:
         
         """
-        Constructor for the HumanConsolePlayer class.
+        Constructor for the HumanPlayer class.
         
         Parameters:
             name (str): The name of the player.
@@ -35,16 +36,22 @@ class HumanConsolePlayer(Player):
         
         return None
     
-    def getChoice(self, gameState : TicTacToeGameState) -> Move:
+    def getChoice(self, gameState: TicTacToeGameState, line: int, column: int, bomb: bool) -> Move:
         
         """
         Gets the choice of the player.
         
         Parameters:
             gameState (TicTacToeGameState): The current state of the Tic-Tac-Toe game.
+            line (int): The line.
+            column (int): The column.
+            bomb (bool): True if bomb, False otherwise.
             
         Raises:
             ValueError: If the game state is not a TicTacToeGameState object.
+            ValueError: If the line or the column is not an integer.
+            ValueError: If the line or the column is not a valid index.
+            TypeError: If the bomb is not a boolean.
             
         Returns:
             Move: The move that the player will make.
@@ -53,34 +60,20 @@ class HumanConsolePlayer(Player):
         # Check if the game state is a TicTacToeGameState object
         if not isinstance(gameState, TicTacToeGameState):
             raise ValueError("The game state must be a TicTacToeGameState object.")
-
-        # Clear the terminal
-        clear_screen()
         
-        # Display the game state
-        display_centered(f"Tour de : {self.__name__}")
-        display_sep()
-        display_board(gameState.getBoard())
-        display_sep()
-
-        # Ask the player for a move
-        move : Move = SimpleMove
-
-        isMovePossible : bool = False
-
-        while(not isMovePossible):
-
-            lineChosed : int = ask_for_int("Quelle ligne souhaitez vous jouer ? ")
-            columnChosed : int = ask_for_int("Quelle colonne souhaitez vous jouer ? ")
-
-            isLineValid = lineChosed and 0 <= lineChosed - 1 < gameState.getBoard().getHeight()
-            isColumnValid = columnChosed and 0 <= columnChosed - 1 < gameState.getBoard().getWidth()
-
-            if(isLineValid and isColumnValid) : 
-
-                isMovePossible = move.canPlay(gameState.getBoard(), lineChosed - 1, columnChosed - 1)
-                if(not isMovePossible) : display("La case n'est pas disponible ...")
-
-            else : display("Ce coup est impossible !")
-
-        return move(Coordinate(lineChosed - 1, columnChosed - 1))
+        # Check if the line and the column are integers and valid indexes
+        if not isinstance(line, int) or not isinstance(column, int):
+            raise ValueError("The line and the column must be integers.")
+        
+        if line < 0 or line >= gameState.getBoard().getHeight() or column < 0 or column >= gameState.getBoard().getWidth():
+            raise ValueError("The line and the column must be valid indexes.")
+        
+        # Check if the bomb is a boolean
+        if not isinstance(bomb, bool):
+            raise TypeError("The bomb must be a boolean.")
+        
+        # Check if the move is a bomb or a simple move and return it
+        if bomb:
+            return BombMove(Coordinate(line, column))
+        else:
+           return SimpleMove(Coordinate(line, column))

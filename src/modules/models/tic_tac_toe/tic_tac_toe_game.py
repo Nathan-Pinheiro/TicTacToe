@@ -10,8 +10,8 @@ from modules.models.board_game.board.components.board_shapes.diamond_shape impor
 from modules.models.board_game.components.entity import Entity
 from modules.models.board_game.game.game_history import GameHistory
 from modules.models.board_game.game.game_outcome import GameOutcome
-from modules.models.board_game.game.game_analysers.minimax_alpha_beta_pruning_analyser import AlphaBetaPruningAnalyser
-from modules.models.board_game.game.game_analysers.minimax_alpha_beta_pruning_analyser import GameAnalyser
+from modules.models.board_game.game.game_analysers.minmax_alpha_beta_pruning_analyser import AlphaBetaPruningAnalyser
+from modules.models.board_game.game.game_analysers.minmax_alpha_beta_pruning_analyser import GameAnalyser
 from modules.models.board_game.components.move import Move
 
 from modules.models.entities.circle import Circle
@@ -29,7 +29,7 @@ from modules.models.tic_tac_toe.tic_tac_toe_player import Player
 from modules.models.tic_tac_toe.tic_tac_toe_player_data import TicTacToePlayerData
 from modules.models.tic_tac_toe.win_conditions.align_victory import AlignVictory
 from modules.models.tic_tac_toe.win_conditions.unalign_victory import UnalignVictory
-from modules.models.tic_tac_toe.players.human_player import HumanGUIPlayer
+from modules.models.tic_tac_toe.players.human_GUI_player import HumanGUIPlayer
 from modules.models.tic_tac_toe.players.ai_player import AIPlayer
 from modules.models.tic_tac_toe.players.ai_players.easy_ai_player import EasyAIPlayer
 from modules.models.tic_tac_toe.players.ai_players.medium_ai_player import MediumAIPlayer
@@ -51,20 +51,31 @@ from modules.utils.decorator import privatemethod
 class TicTacToeGame:
     
     """
-    Represents a Tic Tac Toe game instance
+    Represents a Tic Tac Toe game instance.
     """
     
     def __init__(self, settings: Dict[str, Any]) -> None:
         
         """
         Initializes the Tic Tac Toe game instance.
+        
+        Parameters:
+            settings (dict): The settings of the game.
+            
+        Raises:
+            ValueError: If the settings is not a dictionary.
 
         Returns:
             None
         """
         
+        # Check if settings is a dictionary
+        if not isinstance(settings, dict):
+            raise ValueError("Settings must be a dictionary.")
+        
+        # Initialize the game attributes
         self.settings: Dict[str, Any] = settings
-        self.board: Board = self.__createBoard__()
+        self.board: OptimizedBoard = self.__createBoard__()
         self.gameDirector: GameDirector = self.__initializeGame__()
         self.gameState: TicTacToeGameState = self.gameDirector.getGameState()
         self.analyser: GameAnalyser = AlphaBetaPruningAnalyser(self.__getDepth__())
@@ -81,13 +92,16 @@ class TicTacToeGame:
             OptimizedBoard: The optimized game board.
         """
         
+        # Create entities based on player symbols
         self.entities: List[Entity] = [
             self.__getEntityBySymbol__(self.settings['player1']['symbol']),
             self.__getEntityBySymbol__(self.settings['player2']['symbol'])
         ]
 
+        # Build the board with specified width and height
         board = BoardBuilder(self.entities).setWidth(self.settings['board']['width']).setHeight(self.settings['board']['height'])
         
+        # Set the shape of the board
         shape = {
             'Pyramidal': PyramidalShape(),
             'Circular': CircularShape(),
@@ -111,6 +125,7 @@ class TicTacToeGame:
             list[Player]: The list of players.
         """
         
+        # Create players based on settings
         playerType = {
             'human': HumanGUIPlayer,
             'easy': EasyAIPlayer,
@@ -133,6 +148,7 @@ class TicTacToeGame:
             AlignVictory | UnalignVictory: The win condition.
         """
         
+        # Create win condition based on settings
         if self.settings['game']['alignToWin']:
             return AlignVictory(self.settings['game']['nbSymbols'])
         else:
@@ -147,10 +163,18 @@ class TicTacToeGame:
         Parameters:
             nbPlayers (int): The number of players.
             
+        Raises:
+            ValueError: If the number of players is not an integer.
+            
         Returns:
             list[TicTacToePlayerData]: The list of players data.
         """
         
+        # Check if the number of players is an integer
+        if not isinstance(nbPlayers, int):
+            raise ValueError("The number of players must be an integer.")
+        
+        # Create players data based on settings
         if self.settings['game']['gamemode'] == 'Bomb mod':
             return [TicTacToePlayerData([BombMove]) for _ in range(nbPlayers)]
         return [TicTacToePlayerData([]) for _ in range(nbPlayers)]
@@ -165,6 +189,7 @@ class TicTacToeGame:
             int: The index of the starting player.
         """
         
+        # Determine the starting player based on settings
         if self.settings['game']['startingPlayer'] == 'Random':
             return -1
         return 0 if self.settings['game']['startingPlayer'] == self.settings['player1']['name'] else 1
@@ -179,6 +204,7 @@ class TicTacToeGame:
             int: The depth of the AI.
         """
         
+        # Determine the depth of the AI based on board size
         boardSize = self.settings['board']['width'] * self.settings['board']['height']
         if boardSize <= 9:
             depth = 8
@@ -198,6 +224,7 @@ class TicTacToeGame:
             GameDirector: The game director.
         """
         
+        # Initialize the game director
         players = self.__createPlayers__()
         winCondition = self.__createWinCondition__()
         playersData = self.__createPlayersData__(len(players))
@@ -215,14 +242,24 @@ class TicTacToeGame:
             column (int): The column of the move.
             bomb (bool): The bomb attribute.
             
+        Raises:
+            ValueError: If line or column is not an integer.
+            
         Returns:
             GameOutcome: The result of the game after the move.
         """
         
+        # Check if line and column are integers
+        if not isinstance(line, int) or not isinstance(column, int):
+            raise ValueError("Line and column must be integers.")
+        
+        # Get the current player
         currentPlayer = self.gameDirector.getPlayerToPlay()
         
+        # If the current player is a human, play the move
         if isinstance(currentPlayer, HumanGUIPlayer):
-            move = currentPlayer.get_choice(self.gameState, line, column, bomb)
+            
+            move = currentPlayer.getChoice(self.gameState, line, column, bomb)
             self.gameState.play(move)
             return self.gameState.checkWin()
         
@@ -237,11 +274,13 @@ class TicTacToeGame:
             GameOutcome: The result of the game after the move.
         """
         
+        # Get the current player
         currentPlayer = self.gameDirector.getPlayerToPlay()
 
+        # If the current player is an AI, play the move
         if isinstance(currentPlayer, AIPlayer):
             
-            move = currentPlayer.get_choice(self.gameState)
+            move = currentPlayer.getChoice(self.gameState)
             self.gameState.play(move)
             return self.gameState.checkWin()
         
@@ -253,7 +292,7 @@ class TicTacToeGame:
         Undo the last move.
         
         Returns:
-            bool: True if the undo was successful, False otherwise
+            bool: True if the undo was successful, False otherwise.
         """
         
         return self.gameState.goBack()
@@ -264,7 +303,7 @@ class TicTacToeGame:
         Redo the last move.
         
         Returns:
-            bool: True if the redo was successful, False otherwise
+            bool: True if the redo was successful, False otherwise.
         """
         
         return self.gameState.goNext()
@@ -341,7 +380,7 @@ class TicTacToeGame:
         Get the game history.
         
         Returns:
-            list: The game history.
+            list[Move]: The game history.
         """
         
         return self.gameState.getGameHistory().getMoves()
@@ -352,7 +391,7 @@ class TicTacToeGame:
         Get the game history.
         
         Returns:
-            TicTacToeGameState: The game history.
+            GameHistory: The game history.
         """
         
         return self.gameState.getGameHistory()
@@ -365,11 +404,19 @@ class TicTacToeGame:
         Parameters:
             playerIndex (int): The index of the player.
             
+        Raises:
+            ValueError: If the player index is not an integer or is out of bounds.
+            
         Returns:
             list[type[PowerUpMove]]: The power up moves of the player.
         """
         
-        if playerIndex < 0 or playerIndex >= 3: return []
+        # Check if the player index is an integer and in bounds
+        if not isinstance(playerIndex, int):
+            raise ValueError("The player index must be an integer.")
+        
+        if playerIndex < 0 or playerIndex >= 3:
+            raise ValueError("The player index must be a valid index.")
         
         return self.gameState.getPlayerData(playerIndex).getPowerUpMoves()
 
@@ -381,6 +428,9 @@ class TicTacToeGame:
         
         Parameters:
             symbol (str): The symbol.
+            
+        Raises:
+            ValueError: If the symbol is unknown.
             
         Returns:
             Entity: The entity.

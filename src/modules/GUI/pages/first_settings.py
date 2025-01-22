@@ -1,14 +1,13 @@
 import customtkinter as ctk
-from typing import Optional
 
 from modules.GUI.page import Page
 from modules.GUI.render import PageName
 
 from modules.GUI.components.color_selector import ColorSelector
-from modules.GUI.components.symbol_selector import SymbolSelector
-from modules.GUI.components.type_selector import TypeSelector
+from modules.GUI.components.symbol_selector import SymbolSelector, Symbols
+from modules.GUI.components.type_selector import TypeSelector, Types
 
-from modules.utils.decorator import privatemethod
+from modules.utils.decorator import privatemethod, override
 
 # ************************************************
 # CLASS FirstSettings
@@ -34,12 +33,27 @@ class FirstSettings(Page):
         Parameters:
             parent (ctk.CTkFrame): The parent frame.
             controller (ctk.CTk): The main controller.
+            
+        Raises:
+            TypeError: If parent is not a ctk.CTkFrame instance.
+            TypeError: If controller is not a ctk.CTk instance.
 
         Returns:
             None
         """
         
+        # Check if the parent is a ctk.CTkFrame instance
+        if not isinstance(parent, ctk.CTkFrame):
+            raise TypeError("parent must be a ctk.CTkFrame instance")
+        
+        # Check if the controller is a ctk.CTk instance
+        if not isinstance(controller, ctk.CTk):
+            raise TypeError("controller must be a ctk.CTk instance")
+        
+        # Call the parent constructor
         super().__init__(parent, controller)
+        
+        # Configure the grid
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
@@ -47,57 +61,82 @@ class FirstSettings(Page):
         self.grid_columnconfigure(4, weight=1)
         self.grid_columnconfigure(5, weight=1)
         self.grid_columnconfigure(6, weight=1)
+        
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
         self.grid_rowconfigure(2, weight=1)
+        
+        # Create the widgets
         self.__createWidgets__()
+        
         return None
     
-    def redirect(self, pageName: Optional[PageName] = None) -> bool:
+    @override
+    def redirect(self, pageName: PageName) -> bool:
         
         """
         Redirects to the second settings page after validating player names.
+        
+        Parameters:
+            pageName (PageName): The name of the page to redirect to.
+            
+        Raises:
+            TypeError: If pageName is not a PageName instance.
         
         Returns:
             bool: True if the function succeeds, False otherwise.
         """
         
+        # Check if the pageName is a PageName instance
+        if not isinstance(pageName, PageName):
+            raise TypeError("pageName must be a PageName instance")
+        
+        # Get the player names
         names: list[str] = [self.nameP1.get(), self.nameP2.get()]
+        
+        # Check if the names are valid
         if names[0] == "" or names[0] == "Random":
             self.nameP1.focus_set()
             self.nameP1.configure(border_color="red")
             return False
+        
         if names[1] == "" or names[0] == names[1] or names[1] == "Random":
             self.nameP2.focus_set()
             self.nameP2.configure(border_color="red")
             return False
+        
+        # Get the settings
         settings: dict = {
             "player1": {
                 "name": self.nameP1.get(),
                 "color": self.colorSelectorP1.getColor(),
-                "symbol": self.symbolSelectorP1.getSymbol(),
-                "type": self.typeSelectorP1.getType()
+                "symbol": self.symbolSelectorP1.getSymbol().value,
+                "type": self.typeSelectorP1.getType().value
             },
             "player2": {
                 "name": self.nameP2.get(),
                 "color": self.colorSelectorP2.getColor(),
-                "symbol": self.symbolSelectorP2.getSymbol(),
-                "type": self.typeSelectorP2.getType()
+                "symbol": self.symbolSelectorP2.getSymbol().value,
+                "type": self.typeSelectorP2.getType().value
             }
         }
+        
+        # Save the settings
         self.controller.showFrame(pageName=pageName, settings=settings)
+        
         return True
     
-    @privatemethod
-    def __createWidgets__(self) -> None:
+    @override
+    def __createWidgets__(self) -> bool:
         
         """
         Creates the widgets for the first settings page.
         
         Returns:
-            None
+            bool: True if the widgets are created successfully.
         """
         
+        # Screen ratio
         widthRatio: float
         heightRatio: float
         widthRatio, heightRatio = self.getScreenRatio()
@@ -119,7 +158,7 @@ class FirstSettings(Page):
         self.colorSelectorP1.grid(row=1, column=0, pady=(int(250 * heightRatio), 0), sticky="n")
         
         # Left symbol selector
-        self.symbolSelectorP1: SymbolSelector = SymbolSelector(self, disabledSymbols=["circle"])
+        self.symbolSelectorP1: SymbolSelector = SymbolSelector(self, disabledSymbols=[Symbols.CIRCLE])
         self.symbolSelectorP1.grid(row=1, column=1, pady=(int(250 * heightRatio), 0), sticky="n")
         self.symbolSelectorP1.on_symbol_change = self.__updateSymbolsP1__
 
@@ -141,7 +180,7 @@ class FirstSettings(Page):
         self.colorSelectorP2.grid(row=1, column=4, pady=(int(250 * heightRatio), 0), sticky="n")
         
         # Right symbol selector
-        self.symbolSelectorP2: SymbolSelector = SymbolSelector(self, symbol="circle", disabledSymbols=["cross"])
+        self.symbolSelectorP2: SymbolSelector = SymbolSelector(self, symbol="circle", disabledSymbols=[Symbols.CROSS])
         self.symbolSelectorP2.grid(row=1, column=5, pady=(int(250 * heightRatio), 0), sticky="n")
         self.symbolSelectorP2.on_symbol_change = self.__updateSymbolsP2__
 
@@ -157,31 +196,37 @@ class FirstSettings(Page):
         # Next button
         ctk.CTkButton(self, text="Next", font=("Arial", int(32 * heightRatio)), command=lambda: self.redirect(PageName.SECONDSETTINGS)).grid(row=2, column=4, columnspan=3, pady=(0, int(50 * heightRatio)), sticky="ws")
         
-        return None
+        return True
 
     @privatemethod
-    def __updateSymbolsP1__(self) -> None:
+    def __updateSymbolsP1__(self) -> bool:
         
         """
         Updates the symbols for player 2 based on player 1's selection.
         
         Returns:
-            None
+            bool: True if the function succeeds.
         """
         
+        # Disable the symbol selected by player 1 for player 2
         self.symbolSelectorP2.disableSymbols([self.symbolSelectorP1.getSymbol()])
+        
+        return True
 
     @privatemethod
-    def __updateSymbolsP2__(self) -> None:
+    def __updateSymbolsP2__(self) -> bool:
         
         """
         Updates the symbols for player 1 based on player 2's selection.
         
         Returns:
-            None
+            bool: True if the function succeeds.
         """
         
+        # Disable the symbol selected by player 2 for player 1
         self.symbolSelectorP1.disableSymbols([self.symbolSelectorP2.getSymbol()])
+        
+        return True
 
     def resetSettings(self) -> bool:
         
@@ -189,20 +234,25 @@ class FirstSettings(Page):
         Resets the settings for both players to default values.
         
         Returns:
-            bool: True if the function succeeds, False otherwise.
+            bool: True if the function succeeds.
         """
         
+        # Reset the settings for player 1
         if self.nameP1.get() != "":
             self.nameP1.delete(0, "end")
         self.colorSelectorP1.setColor("#FFFFFF")
-        self.symbolSelectorP1.setSymbol("cross")
+        self.symbolSelectorP1.disableSymbols([Symbols.CIRCLE])
+        self.symbolSelectorP1.setSymbol(Symbols.CROSS)
         self.__updateSymbolsP2__()
-        self.typeSelectorP1.setType("human")
+        self.typeSelectorP1.setType(Types.HUMAN)
         
+        # Reset the settings for player 2
         if self.nameP2.get() != "":
             self.nameP2.delete(0, "end")
         self.colorSelectorP2.setColor("#FFFFFF")
-        self.symbolSelectorP2.setSymbol("circle")
+        self.symbolSelectorP2.disableSymbols([Symbols.CROSS])
+        self.symbolSelectorP2.setSymbol(Symbols.CIRCLE)
         self.__updateSymbolsP1__()
-        self.typeSelectorP2.setType("easy")
+        self.typeSelectorP2.setType(Types.EASY)
+        
         return True

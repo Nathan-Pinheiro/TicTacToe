@@ -41,10 +41,23 @@ class GameOutcome:
             state (GameState) : The current state of the game (UNFINISHED, DRAW, or VICTORY).
             winner (int) : The ID of the winning player if applicable. None for UNFINISHED or DRAW.
             
+        Raises :
+            ValueError : If state is not a GameOutcomeStatus enum value.
+            ValueError : If winner is not an integer value.
+            
         Returns :
             None
         """
         
+        # Check if state is a GameOutcomeStatus enum value
+        if not isinstance(state, GameOutcomeStatus): 
+            raise ValueError("state must be a GameOutcomeStatus enum value")
+        
+        # Check if winner is an integer value
+        if winner is not None and not isinstance(winner, int):
+            raise ValueError("winner must be an integer value")
+        
+        # Define the state and winner attributes
         self.__state__ = state
         self.__winner__ = winner
         

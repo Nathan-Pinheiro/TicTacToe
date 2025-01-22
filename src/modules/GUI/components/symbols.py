@@ -22,18 +22,23 @@ def drawShape(canvas: tk.Canvas, points: list[float], color: str, weight: int) -
         bool: True if the function succeeds, False otherwise.
     """
     
+    # Check if the canvas is a tk.Canvas instance
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     
+    # Check if the points are a list of numbers
     if not isinstance(points, list) or not all(isinstance(point, (int, float)) for point in points):
         raise TypeError("points must be a list of numbers")
     
+    # Check if the color is a string
     if not isinstance(color, str):
         raise TypeError("color must be a string")
     
+    # Check if the weight is an integer
     if not isinstance(weight, int):
         raise TypeError("weight must be an integer")
     
+    # Draw the shape
     canvas.create_polygon(points, outline=color, width=weight, fill="")
     
     return True
@@ -60,20 +65,27 @@ def drawCross(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#fffff
     Returns:
         bool: True if the cross is drawn successfully.
     """
+    
+    # Check if the canvas is a tk.Canvas instance
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     
+    # Check if x, y, and size are integers
     if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
         raise TypeError("x, y, and size must be integers")
     
+    # Check if color is a string
     if not isinstance(color, str):
         raise TypeError("color must be a string")
     
+    # Check if weight is an integer
     if not isinstance(weight, int):
         raise TypeError("weight must be an integer")
     
+    # Calculate the margin
     margin: float = size * 0.2
     
+    # Draw the cross
     canvas.create_line(x + margin, y + margin, x + size - margin, y + size - margin, fill=color, width=weight)
     canvas.create_line(x + margin, y + size - margin, x + size - margin, y + margin, fill=color, width=weight)
     
@@ -102,20 +114,26 @@ def drawCircle(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffff
         bool: True if the circle is drawn successfully.
     """
     
+    # Check if the canvas is a tk.Canvas instance
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     
+    # Check if x, y, and size are integers
     if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
         raise TypeError("x, y, and size must be integers")
     
+    # Check if color is a string
     if not isinstance(color, str):
         raise TypeError("color must be a string")
     
+    # Check if weight is an integer
     if not isinstance(weight, int):
         raise TypeError("weight must be an integer")
     
+    # Calculate the margin
     margin: float = size * 0.2
     
+    # Draw the circle
     canvas.create_oval(x + margin, y + margin, x + size - margin, y + size - margin, outline=color, width=weight)
     
     return True
@@ -138,36 +156,42 @@ def drawTriangle(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ff
         TypeError: If x, y, and size are not integers
         TypeError: If color is not a string
         TypeError: If weight is not an integer
-        RuntimeError: If the triangle cannot be drawn
     
     Returns:
         bool: True if the triangle is drawn successfully.
     """
     
+    # Check if the canvas is a tk.Canvas instance
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     
+    # Check if x, y, and size are integers
     if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
         raise TypeError("x, y, and size must be integers")
     
+    # Check if color is a string
     if not isinstance(color, str):
         raise TypeError("color must be a string")
     
+    # Check if weight is an integer
     if not isinstance(weight, int):
         raise TypeError("weight must be an integer")
     
+    # Calculate the half size
     half: int = size // 2
     
+    # Calculate the margin
     margin: float = size * 0.2
     
+    # Define the points of the triangle
     points: list[float] = [
         x + half, y + margin,
         x + margin, y + size - margin,
         x + size - margin, y + size - margin
     ]
     
-    if not drawShape(canvas, points, color, weight):
-        raise RuntimeError("Failed to draw shape")
+    # Draw the triangle
+    drawShape(canvas, points, color, weight)
     
     return True
 
@@ -189,44 +213,53 @@ def drawStar(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff
         TypeError: If x, y, and size are not integers
         TypeError: If color is not a string
         TypeError: If weight is not an integer
-        RuntimeError: If the star cannot be drawn
         
     Returns:
         bool: True if the star is drawn successfully.
     """
     
+    # Check if the canvas is a tk.Canvas instance
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     
+    # Check if x, y, and size are integers
     if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
         raise TypeError("x, y, and size must be integers")
     
+    # Check if color is a string
     if not isinstance(color, str):
         raise TypeError("color must be a string")
     
+    # Check if weight is an integer
     if not isinstance(weight, int):
         raise TypeError("weight must be an integer")
     
-    center_x: int = x + size // 2
-    center_y: int = y + size // 2
+    # Calculate the center
+    centerX: int = x + size // 2
+    centerY: int = y + size // 2
     
-    outer_radius: float = size * 0.4
-    inner_radius: float = size * 0.2
+    # Calculate the outer and inner radius
+    outerRadius: float = size * 0.4
+    innerRadius: float = size * 0.2
     
-    num_points: int = 5
+    # Calculate the number of points
+    numPoints: int = 5
     
-    angle_step: float = math.pi / num_points
+    # Calculate the angle step
+    angleStep: float = math.pi / numPoints
     
+    # Define the points of the star
     points: list[float] = []
     
-    for i in range(2 * num_points):
-        radius: float = outer_radius if i % 2 == 0 else inner_radius
-        angle: float = i * angle_step - math.pi / 2
-        points.append(center_x + radius * math.cos(angle))
-        points.append(center_y + radius * math.sin(angle))
+    # Calculate the points of the star and add them to the list
+    for indexPoint in range(2 * numPoints):
+        radius: float = outerRadius if indexPoint % 2 == 0 else innerRadius
+        angle: float = indexPoint * angleStep - math.pi / 2
+        points.append(centerX + radius * math.cos(angle))
+        points.append(centerY + radius * math.sin(angle))
         
-    if not drawShape(canvas, points, color, weight):
-        raise RuntimeError("Failed to draw shape")
+    # Draw the star
+    drawShape(canvas, points, color, weight)
     
     return True
 
@@ -253,20 +286,26 @@ def drawSquare(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffff
         bool: True if the square is drawn successfully.
     """
     
+    # Check if the canvas is a tk.Canvas instance
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
     
+    # Check if x, y, and size are integers
     if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
         raise TypeError("x, y, and size must be integers")
     
+    # Check if color is a string
     if not isinstance(color, str):
         raise TypeError("color must be a string")
 
+    # Check if weight is an integer
     if not isinstance(weight, int):
         raise TypeError("weight must be an integer")
     
+    # Calculate the margin
     margin: float = size * 0.2
     
+    # Draw the square
     canvas.create_rectangle(x + margin, y + margin, x + size - margin, y + size - margin, outline=color, width=weight)
     
     return True
@@ -284,21 +323,39 @@ def drawHexagon(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#fff
         color (str): The color of the hexagon.
         weight (int): The weight of the hexagon.
         
+    Raises:
+        TypeError: If canvas is not a tk.Canvas instance.
+        TypeError: If x, y, and size are not integers.
+        TypeError: If color is not a string.
+        TypeError: If weight is not an integer.
+        
     Returns:
         bool: True if the hexagon is drawn successfully.
     """
     
+    # Check if the canvas is a tk.Canvas instance
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
+    
+    # Check if x, y, and size are integers
     if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
         raise TypeError("x, y, and size must be integers")
+    
+    # Check if color is a string
     if not isinstance(color, str):
         raise TypeError("color must be a string")
+    
+    # Check if weight is an integer
     if not isinstance(weight, int):
         raise TypeError("weight must be an integer")
     
+    # Calculate the half of the size
     half: int = size // 2
+    
+    # Calculate the margin
     margin: float = size * 0.2
+    
+    # Define the points of the hexagon
     points: list[float] = [
         x + half, y + margin,
         x + size - margin, y + margin + (size - 2 * margin) / 4,
@@ -307,8 +364,10 @@ def drawHexagon(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#fff
         x + margin, y + margin + 3 * (size - 2 * margin) / 4,
         x + margin, y + margin + (size - 2 * margin) / 4
     ]
-    if not drawShape(canvas, points, color, weight):
-        raise RuntimeError("Failed to draw shape")
+    
+    # Draw the hexagon
+    drawShape(canvas, points, color, weight)
+    
     return True
 
 def drawRhombus(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#ffffff", weight: int = 1) -> bool:
@@ -324,29 +383,49 @@ def drawRhombus(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#fff
         color (str): The color of the rhombus.
         weight (int): The weight of the rhombus.
         
+    Raises:
+        TypeError: If canvas is not a tk.Canvas instance.
+        TypeError: If x, y, and size are not integers.
+        TypeError: If color is not a string.
+        TypeError: If weight is not an integer.
+        
     Returns:
         bool: True if the rhombus is drawn successfully.
     """
     
+    # Check if the canvas is a tk.Canvas instance
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
+    
+    # Check if x, y, and size are integers
     if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
         raise TypeError("x, y, and size must be integers")
+    
+    # Check if color is a string
     if not isinstance(color, str):
         raise TypeError("color must be a string")
+    
+    # Check if weight is an integer
     if not isinstance(weight, int):
         raise TypeError("weight must be an integer")
     
+    # Calculate the half of the size
     half: int = size // 2
+    
+    # Calculate the margin
     margin: float = size * 0.2
+    
+    # Define the points of the rhombus
     points: list[float] = [
         x + half, y + margin,
         x + size - margin, y + half,
         x + half, y + size - margin,
         x + margin, y + half
     ]
-    if not drawShape(canvas, points, color, weight):
-        raise RuntimeError("Failed to draw shape")
+    
+    # Draw the rhombus
+    drawShape(canvas, points, color, weight)
+    
     return True
 
 def drawGrayCase(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#5c5c5c") -> bool:
@@ -361,18 +440,30 @@ def drawGrayCase(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#5c
         size (int): The size of the gray case.
         color (str): The color of the gray case.
         
+    Raises:
+        TypeError: If canvas is not a tk.Canvas instance.
+        TypeError: If x, y, and size are not integers.
+        TypeError: If color is not a string.
+        
     Returns:
         bool: True if the gray case is drawn successfully.
     """
     
+    # Check if the canvas is a tk.Canvas instance
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
+    
+    # Check if x, y, and size are integers
     if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
         raise TypeError("x, y, and size must be integers")
+    
+    # Check if color is a string
     if not isinstance(color, str):
         raise TypeError("color must be a string")
     
+    # Draw the gray case
     canvas.create_rectangle(x + 1, y + 1, x + size, y + size, fill=color, outline="")
+    
     return True
 
 def drawGreenCase(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#005500") -> bool:
@@ -387,16 +478,28 @@ def drawGreenCase(canvas: tk.Canvas, x: int, y: int, size: int, color: str = "#0
         size (int): The size of the green case.
         color (str): The color of the green case.
         
+    Raises:
+        TypeError: If canvas is not a tk.Canvas instance.
+        TypeError: If x, y, and size are not integers.
+        TypeError: If color is not a string.
+        
     Returns:
         bool: True if the green case is drawn successfully.
     """
     
+    # Check if the canvas is a tk.Canvas instance
     if not isinstance(canvas, tk.Canvas):
         raise TypeError("canvas must be a tk.Canvas instance")
+    
+    # Check if x, y, and size are integers
     if not isinstance(x, int) or not isinstance(y, int) or not isinstance(size, int):
         raise TypeError("x, y, and size must be integers")
+    
+    # Check if color is a string
     if not isinstance(color, str):
         raise TypeError("color must be a string")
     
+    # Draw the green case
     canvas.create_rectangle(x + 1, y + 1, x + size, y + size, fill=color, outline = "")
+    
     return True

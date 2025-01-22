@@ -38,6 +38,9 @@ class WinCondition(ABC) :
         Parameters:
             board (Board): The board to check.
             
+        Raises:
+            TypeError: If board is not a Board object.
+            
         Returns:
             GameOutcome: The outcome of the game.
         """
@@ -54,6 +57,11 @@ class WinCondition(ABC) :
             playerIndex (int): The index of the player to check.
             board (Board): The board to check.
             
+        Raises:
+            TypeError: If board is not a Board object.
+            TypeError: If playerIndex is not an integer.
+            ValueError: If playerIndex is less than 0 or greater than the number of players.
+            
         Returns:
             GameOutcome: The outcome of the game.
         """
@@ -69,6 +77,11 @@ class WinCondition(ABC) :
         Parameters:
             playerIndex (int): The index of the player to evaluate.
             board (Board): The board to evaluate.
+            
+        Raises:
+            TypeError: If board is not a Board object.
+            TypeError: If playerIndex is not an integer.
+            ValueError: If playerIndex is less than 0 or greater than the number of players.
             
         Returns:
             int: The evaluation of the

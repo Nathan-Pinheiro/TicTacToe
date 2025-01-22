@@ -20,7 +20,7 @@ class GameAnalyser(ABC):
     for analyzing moves and determining the best move for a particular game.
     """    
 
-    def __init__(self, depth : int, isDebugOn : bool = False):
+    def __init__(self, depth : int, isDebugOn : bool = False) -> None:
         
         """
         Initializes a new GameAnalyser instance.
@@ -29,10 +29,23 @@ class GameAnalyser(ABC):
             depth (int): The depth of analysis (e.g., search depth).
             isDebugOn (bool): Optional flag to enable debugging output (default is False).
             
+        Raises:
+            ValueError: If depth is not a non-negative integer.
+            ValueError: If isDebugOn is not a boolean value.
+            
         Returns:
             None
         """
+        
+        # Check if depth is a positive integer
+        if not isinstance(depth, int) or depth < 0:
+            raise ValueError("depth must be a non-negative integer")
+        
+        # Check if isDebugOn is a boolean value
+        if not isinstance(isDebugOn, bool):
+            raise ValueError("isDebugOn must be a boolean value")
 
+        # Define the depth and isDebugOn attributes
         self.__depth__ : bool = depth
         self.__isDebugOn__ : bool = isDebugOn
         
@@ -46,6 +59,9 @@ class GameAnalyser(ABC):
         
         Parameters:
             gameState (GameState): The current state of the game.
+            
+        Raises:
+            TypeError: If gameState is not a GameState instance.
 
         Returns:
             dict[Move, int]: A dictionary where keys are Move objects and values are their corresponding evaluation scores.
@@ -61,6 +77,9 @@ class GameAnalyser(ABC):
         
         Parameters:
             gameState (GameState): The current state of the game.
+            
+        Raises:
+            TypeError: If gameState is not a GameState instance.
 
         Returns:
             Move: The best move according to the evaluation.

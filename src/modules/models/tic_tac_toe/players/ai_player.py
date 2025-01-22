@@ -2,7 +2,7 @@ from modules.models.tic_tac_toe.tic_tac_toe_game_state import TicTacToeGameState
 from modules.models.board_game.components.move import Move
 from modules.models.tic_tac_toe.tic_tac_toe_player import Player
 from modules.models.board_game.game.game_analyser import GameAnalyser
-from modules.models.board_game.game.game_analysers.minimax_alpha_beta_pruning_analyser import AlphaBetaPruningAnalyser
+from modules.models.board_game.game.game_analysers.minmax_alpha_beta_pruning_analyser import AlphaBetaPruningAnalyser
 
 # ************************************************
 # CLASS AIPlayer
@@ -28,21 +28,36 @@ class AIPlayer(Player):
         Parameters:
             name (str): The name of the player.
             
+        Raises:
+            ValueError: If the name is not a string.
+            
         Returns:
             None
         """
         
+        # Check if the name is a string
+        if not isinstance(name, str):
+            raise ValueError("The name must be a string.")
+        
+        # Call the parent constructor
         super().__init__(name)
         
-        self.__game_analyser__ : GameAnalyser = AlphaBetaPruningAnalyser(3)
+        # Initialize the game analyser
+        self.__gameAnalyser__ : GameAnalyser = AlphaBetaPruningAnalyser(3)
+        
+        return None
 
-    def get_choice(self, gameState : TicTacToeGameState) -> Move:
+    def getChoice(self, gameState : TicTacToeGameState) -> Move:
         
         """
         Selects the best move for the current game state based on the scores
         
         Parameters:
             gameState (TicTacToeGameState): The current state of the Tic-Tac-Toe game.
+            
+        Raises:
+            ValueError: If the game state is not a TicTacToeGameState object.
+            ValueError: Can't play as there is no moves to play
             
         Returns:
             Move: The move that the AI will make.

@@ -29,7 +29,7 @@ class BoardShape(ABC):
         return None
 
     @abstractmethod
-    def apply_shape(self, board: Board) -> None:
+    def applyShape(self, board: Board) -> bool:
         
         """
         Apply a specific shape to the given board.
@@ -38,7 +38,7 @@ class BoardShape(ABC):
             board (Board): The board to which the shape will be applied.
 
         Returns:
-            None
+            bool: True if the shape is applied.
         """
         
         pass

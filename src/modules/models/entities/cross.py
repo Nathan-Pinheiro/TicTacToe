@@ -15,6 +15,7 @@ class Cross(Entity):
             None
         """
         
-        super().__init__("X", None)
+        # Call the parent constructor
+        super().__init__("X")
         
         return None

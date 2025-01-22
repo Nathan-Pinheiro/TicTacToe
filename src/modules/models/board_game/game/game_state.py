@@ -1,6 +1,5 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Type
 
 from modules.models.board_game.board.board import Board
 from modules.models.board_game.components.win_condition import WinCondition
@@ -36,10 +35,33 @@ class GameState(ABC):
             playersData (list[PlayerData]): Data for all players.
             startingPlayer (int): Index of the player who starts the game (default is 0).
             
+        Raises:
+            ValueError: If board is not a Board object.
+            ValueError: If winCondition is not a WinCondition object.
+            ValueError: If playersData is not a list of PlayerData objects.
+            ValueError: If startingPlayer is not a valid player index.
+            
         Returns:
             None
         """
         
+        # Check if board is a Board object
+        if not isinstance(board, Board):
+            raise ValueError("board must be a Board object")
+        
+        # Check if winCondition is a WinCondition object
+        if not isinstance(winCondition, WinCondition):
+            raise ValueError("winCondition must be a WinCondition object")
+        
+        # Check if playersData is a list of PlayerData objects
+        if not isinstance(playersData, list) or not all(isinstance(playerData, PlayerData) for playerData in playersData):
+            raise ValueError("playersData must be a list of PlayerData objects")
+        
+        # Check if startingPlayer is a valid player index
+        if not isinstance(startingPlayer, int) or startingPlayer < 0 or startingPlayer >= len(playersData):
+            raise ValueError("startingPlayer must be a valid player index")
+        
+        # Define the board, playerToPlayIndex, winCondition, playersData, and gameHistory attributes
         self.__board__: Board = board
         self.__playerToPlayIndex__: int = startingPlayer
         self.__winCondition__: WinCondition = winCondition
@@ -56,6 +78,9 @@ class GameState(ABC):
         
         Parameters:
             move (Move): The move to execute.
+            
+        Raises:
+            TypeError: If move is not a Move object.
         
         Returns:
             GameOutcome: The result after the move.
@@ -64,7 +89,7 @@ class GameState(ABC):
         pass
 
     @abstractmethod
-    def undo(self, move: Move) -> None:
+    def undo(self, move: Move) -> bool:
         
         """
         Undo a move, restoring the previous game state.
@@ -72,32 +97,35 @@ class GameState(ABC):
         Parameters:
             move (Move): The move to undo.
             
+        Raises:
+            TypeError: If move is not a Move object.
+            
         Returns:
-            None
+            bool: True if the move was undone.
         """
         
         pass
 
     @abstractmethod
-    def goBack(self) -> None:
+    def goBack(self) -> bool:
         
         """
         Navigate back to a previous move in the game history.
             
         Returns:
-            None
+            bool: True if the move was undone.
         """
         
         pass
 
     @abstractmethod
-    def goNext(self) -> None:
+    def goNext(self) -> bool:
         
         """
         Navigate forward to a subsequent move in the game history.
         
         Returns:
-            None
+            bool: True if the move was undone.
         """
         
         pass
@@ -145,37 +173,40 @@ class GameState(ABC):
         Parameters:
             playerIndex (int): The index of the player.
             
+        Raises:
+            ValueError: If playerIndex is not a valid player index.
+            
         Returns:
             PlayerData: The data for the player.
         """
         
         pass
 
-    def __nextTurn__(self) -> None:
+    def __nextTurn__(self) -> bool:
         
         """
         Advances to the next player's turn.
         
         Returns:
-            None
+            bool: True if the turn is advanced.
         """
         
         self.__playerToPlayIndex__ = (self.__playerToPlayIndex__ + 1) % len(self.__playersData__)
         
-        return None
+        return True
 
-    def __previousTurn__(self) -> None:
+    def __previousTurn__(self) -> bool:
         
         """
         Reverts to the previous player's turn.
         
         Returns:
-            None
+            bool: True if the turn is reverted.
         """
         
         self.__playerToPlayIndex__ = (self.__playerToPlayIndex__ - 1 + len(self.__playersData__)) % len(self.__playersData__)
         
-        return None
+        return True
 
     def getPlayerToPlayIndex(self) -> int:
         
@@ -188,7 +219,7 @@ class GameState(ABC):
         
         return self.__playerToPlayIndex__
 
-    def setPlayerToPlayIndex(self, player_index: int) -> None:
+    def setPlayerToPlayIndex(self, player_index: int) -> bool:
         
         """
         Sets the index of the player whose turn it is.
@@ -196,13 +227,21 @@ class GameState(ABC):
         Parameters:
             player_index (int): The index of the player.
             
+        Raises:
+            ValueError: If player_index is not a valid player index.
+            
         Returns:
-            None
+            bool: True if the player index is set.
         """
         
+        # Check if player_index is a valid player index
+        if not isinstance(player_index, int) or player_index < 0 or player_index >= len(self.__playersData__):
+            raise ValueError("player_index must be a valid player index")
+        
+        # Set the player to play index
         self.__playerToPlayIndex__ = player_index
         
-        return None
+        return True
 
     def getGameHistory(self) -> GameHistory:
         
@@ -215,7 +254,7 @@ class GameState(ABC):
         
         return self.__gameHistory__
 
-    def setWinCondition(self, win_condition: WinCondition) -> None:
+    def setWinCondition(self, win_condition: WinCondition) -> bool:
         
         """
         Sets the win condition for the game.
@@ -223,13 +262,21 @@ class GameState(ABC):
         Parameters:
             win_condition (WinCondition): The win condition logic.
             
+        Raises:
+            ValueError: If win_condition is not a WinCondition object.
+            
         Returns:
-            None
+            bool: True if the win condition is set.
         """
         
+        # Check if win_condition is a WinCondition object
+        if not isinstance(win_condition, WinCondition):
+            raise ValueError("win_condition must be a WinCondition object")
+        
+        # Set the win condition
         self.__winCondition__ = win_condition
         
-        return None
+        return True
 
     def checkWin(self) -> GameOutcome:
         
@@ -250,9 +297,16 @@ class GameState(ABC):
         Parameters:
             playerIndex (int): The index of the player to check.
             
+        Raises:
+            ValueError: If playerIndex is not a valid player index.
+            
         Returns:
             GameOutcome: The outcome of the game.
         """
+        
+        # Check if the player index is valid
+        if playerIndex < 0 or playerIndex >= len(self.__playersData__):
+            raise ValueError("playerIndex must be a valid player index")
         
         return self.__winCondition__.checkWinForPlayer(playerIndex, self.__board__)
 
@@ -275,9 +329,16 @@ class GameState(ABC):
         Parameters:
             playerIndex (int): The index of the player.
             
+        Raises:
+            ValueError: If playerIndex is not a valid player index.
+            
         Returns:
             GameOutcome: The outcome of the evaluation.
         """
+        
+        # Check if the player index is valid
+        if playerIndex < 0 or playerIndex >= len(self.__playersData__):
+            raise ValueError("playerIndex must be a valid player index")
         
         return self.__winCondition__.evaluateForPlayer(playerIndex, self.__board__)
 

@@ -3,7 +3,7 @@ from PIL import Image
 
 from modules.GUI.page import Page
 from modules.GUI.render import PageName
-from modules.utils.decorator import privatemethod
+from modules.utils.decorator import privatemethod, override
 
 # ************************************************
 # CLASS Welcome
@@ -29,20 +29,40 @@ class Welcome(Page):
         Parameters:
             parent (ctk.CTkFrame): The parent frame.
             controller (ctk.CTk): The main controller.
+            
+        Raises:
+            TypeError: If parent is not a ctk.CTkFrame instance.
+            TypeError: If controller is not a ctk.CTk instance.
 
         Returns:
             None
         """
         
+        # Check if the parent is a ctk.CTkFrame instance
+        if not isinstance(parent, ctk.CTkFrame):
+            raise TypeError("parent must be a ctk.CTkFrame instance")
+        
+        # Check if the controller is a ctk.CTk instance
+        if not isinstance(controller, ctk.CTk):
+            raise TypeError("controller must be a ctk.CTk instance")
+        
+        # Call the parent constructor
         super().__init__(parent, controller)
+        
+        # Configure the grid
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
+        
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
         self.grid_rowconfigure(2, weight=1)
+        
+        # Create the widgets
         self.__createWidgets__()
+        
         return None
     
+    @override
     def redirect(self) -> bool:
         
         """
@@ -52,10 +72,12 @@ class Welcome(Page):
             bool: True if the function succeeds, False otherwise.
         """
         
+        # Show the first settings page
         self.controller.showFrame(PageName.FIRSTSETTINGS)
+        
         return True
     
-    @privatemethod
+    @override
     def __createWidgets__(self) -> bool:
         
         """
@@ -65,6 +87,7 @@ class Welcome(Page):
             bool: True if the function succeeds, False otherwise.
         """
         
+        # Get the screen ratio
         widthRatio: float
         heightRatio: float
         widthRatio, heightRatio = self.getScreenRatio()

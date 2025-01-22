@@ -26,26 +26,37 @@ class DiamondShape(BoardShape):
             None
         """
         
+        # Call the parent constructor
         super()
+        
         return None
     
-    def apply_shape(self, board: Board) -> None:
+    def applyShape(self, board: Board) -> bool:
         
         """
         Applies a diamond shape to the board, blocking cells outside the diamond.
         
         Parameters:
             board (Board): The board to which the shape will be applied.
+            
+        Raises:
+            TypeError: If board is not an instance of Board.
 
         Returns:
-            None
+            bool: True if the diamond shape is applied.
         """
         
+        # Check if the board is an instance of Board
+        if not isinstance(board, Board):
+            raise TypeError("board must be an instance of Board")
+        
+        # Define the center and the maximum distance from the center
         center_x = (board.getWidth() - 1) / 2
         center_y = (board.getHeight() - 1) / 2
         max_distance_x = center_x + 1
         max_distance_y = center_y + 1
 
+        # Block cells outside the diamond
         for line in range(board.getHeight()):
             for column in range(board.getWidth()):
                 
@@ -54,5 +65,5 @@ class DiamondShape(BoardShape):
                 if scaled_x + scaled_y >= 1:
                     board.setIsCaseBlocked(line, column, True)
                     
-        return None
+        return True
 

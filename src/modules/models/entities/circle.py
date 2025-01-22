@@ -15,6 +15,7 @@ class Circle(Entity):
             None
         """
         
-        super().__init__("O", None)
+        # Call the parent constructor
+        super().__init__("O")
         
         return None

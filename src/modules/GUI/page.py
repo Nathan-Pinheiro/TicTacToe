@@ -33,8 +33,20 @@ class Page(ctk.CTkFrame, ABC):
             None
         """
         
+        # Check if the parent is a ctk.CTkFrame instance
+        if not isinstance(parent, ctk.CTkFrame):
+            raise TypeError("Parent must be an instance of ctk.CTkFrame")
+        
+        # Check if the controller is a ctk.CTk instance
+        if not isinstance(controller, ctk.CTk):
+            raise TypeError("Controller must be an instance of ctk.CTk")
+        
+        # Call the parent constructor
         super().__init__(parent, border_width=0)
+        
+        # Define the controller
         self.controller = controller
+        
         return None
     
     @abstractmethod
@@ -64,7 +76,7 @@ class Page(ctk.CTkFrame, ABC):
     def getScreenRatio(self) -> tuple:
         
         """
-        Returns the screen ratio.
+        Returns the screen ratio based on a 1920x1080 resolution.
         
         Returns:
             tuple: The screen ratio.

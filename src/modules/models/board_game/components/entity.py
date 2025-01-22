@@ -4,121 +4,93 @@ from abc import ABC, abstractmethod
 # ************************************************
 # CLASS Entity
 # ************************************************
-# ROLE : This class is used to represent the entity for a player, that will be drawn on the screen
+# ROLE : This class is used to represent an entity
 # ************************************************
 # VERSION : 1.0
 # AUTHOR : Nathan PINHEIRO
 # DATE : 13/01/2025
 # ************************************************
 
-class Entity(ABC) :
+class Entity:
     
     """
-    A class that represent a generic entity
+    A class that represents an entity.
     """
 
-    def __init__(self, name : str, iconPath : str = None) -> None:
+    def __init__(self, symbol: str) -> None:
         
         """
-        Constructor for the Pawn class.
+        Constructor for the Entity class.
 
         Parameters:
-            name (str): The name of the pawn.
-            iconPath (str): The path of the pawn.
+            symbol (str): The symbol representing the entity.
             
+        Raises:
+            TypeError: If symbol is not a string.
+            ValueError: If symbol is an empty string.
+
         Returns:
             None
         """
-
-        self.__name__ : str = name
-        self.__iconPath__ : str = iconPath
+        
+        # Check if symbol is a string and not empty
+        if not isinstance(symbol, str):
+            raise TypeError("symbol must be a string")
+        
+        if not symbol:
+            raise ValueError("symbol must not be an empty string")
+        
+        # Initialize the symbol attribute
+        self.__symbol__ = symbol
         
         return None
-
-    def getName(self) -> str:
+        
+    def getSymbol(self) -> str:
         
         """
-        Get the name of the entity.
-        
+        Get the symbol of the entity.
+
         Returns:
-            str: The line of the coordinate.
+            str: The symbol of the entity.
         """
         
-        return self.__name__
+        return self.__symbol__
     
-    def setName(self, name : str) -> None: 
-        """Get the name of the entity.
-
-        Args:
-            name (str): The name of the entity.
-        
-        Returns: 
-            None
-        """
-        
-        self.__name__ = name
-        
-        return None
-    
-    def getIconPath(self) -> str:
+    def setSymbol(self, symbol: str) -> bool:
         
         """
-        Get the icon path of the entity.
-        
-        Returns:
-            str: The icon path of the coordinate.
-        """
-        
-        return self.__name__
-
-    def setIconPath(self, iconPath : str) -> None: 
-        
-        """
-        Set the icon path of the entity to a given value.
+        Set the symbol of the entity.
 
         Parameters:
-            iconPath (str): The icon path of the entity.
-        
+            symbol (str): The symbol representing the entity.
+            
+        Raises:
+            TypeError: If symbol is not a string.
+            ValueError: If symbol is an empty string.
+
         Returns:
-            None
+            bool: True if the symbol is set successfully.
         """
         
-        self.__name__ = iconPath
-        return None
-    
-    def __eq__(self, other: object) -> bool:
+        # Check if symbol is a string and not empty
+        if not isinstance(symbol, str):
+            raise TypeError("symbol must be a string")
         
-        """
-        Allow comparing the value of the entity with another objects.
+        if not symbol:
+            raise ValueError("symbol must not be an empty string")
         
-        Parameters:
-            the second object to compare with.
+        # Set the symbol
+        self.__symbol__ = symbol
         
-        Returns: 
-            bool : if the two objects have the same content
-        """
+        return True
         
-        if not isinstance(other, Entity): return False
-        return self.__name__ == other.__name__ and self.__iconPath__ == other.__iconPath__
-    
     def __str__(self) -> str:
         
         """
         Return the string value of the entity.
         
         Returns:
-            str: The string value of the entity
+            str: The string value of the entity.
         """
         
-        return self.getName()
-
-    def copy(self) -> Entity:
-        
-        """
-        Create a copy of the current Entity object.
-
-        Returns:
-            Entity: A new instance of Entity with the same attributes.
-        """
-        
-        return Entity(self.__name__, self.__iconPath__)
+        return self.__symbol__

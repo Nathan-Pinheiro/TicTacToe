@@ -30,15 +30,23 @@ class ImpossibleAIPlayer(AIPlayer):
         Parameters:
             name (str): The name of the player.
             
+        Raises:
+            ValueError: If the name is not a string.
+            
         Returns:
             None
         """
         
+        # Check if the name is a string
+        if not isinstance(name, str):
+            raise ValueError("The name must be a string.")
+        
+        # Call the parent constructor
         super().__init__(name)
         
         return None
     
-    def get_choice(self, gameState: TicTacToeGameState) -> Move:
+    def getChoice(self, gameState: TicTacToeGameState) -> Move:
         
         """
         Selects the best move for the current game state based on the scores 
@@ -47,9 +55,16 @@ class ImpossibleAIPlayer(AIPlayer):
 
         Parameters:
             gameState (TicTacToeGameState): The current state of the Tic-Tac-Toe game.
+            
+        Raises:
+            ValueError: If the game state is not a TicTacToeGameState object.
 
         Returns:
             Move: The move that the AI will make.
         """
+        
+        # Check if the game state is a TicTacToeGameState instance
+        if not isinstance(gameState, TicTacToeGameState):
+            raise ValueError("The game state must be a TicTacToeGameState instance.")
 
-        return self.__game_analyser__.getBestMove(gameState)
+        return self.__gameAnalyser__.getBestMove(gameState)

@@ -2,6 +2,8 @@ from modules.models.tic_tac_toe.players.ai_player import AIPlayer
 from modules.models.tic_tac_toe.tic_tac_toe_game_state import TicTacToeGameState
 from modules.models.board_game.components.move import Move
 
+from modules.utils.decorator import override
+
 import numpy as np
 import random
 
@@ -30,17 +32,27 @@ class HardAIPlayer(AIPlayer):
         Parameters:
             name (str): The name of the player.
             
+        Raises:
+            ValueError: If the name is not a string.
+            
         Returns:
             None
         """
         
+        # Check if the name is a string
+        if not isinstance(name, str):
+            raise ValueError("The name must be a string.")
+        
+        # Call the parent constructor
         super().__init__(name)
         
+        # Define the strength of the AI
         self.__strength__ : int = 5
         
         return None
     
-    def get_choice(self, gameState: TicTacToeGameState) -> Move:
+    @override
+    def getChoice(self, gameState: TicTacToeGameState) -> Move:
         
         """
         Selects the best move for the current game state based on the scores 
@@ -49,50 +61,64 @@ class HardAIPlayer(AIPlayer):
 
         Parameters:
             gameState (TicTacToeGameState): The current state of the Tic-Tac-Toe game.
+            
+        Raises:
+            TypeError: If the game state is not a TicTacToeGameState instance.
+            ValueError: If there are no moves to play.
 
         Returns:
             Move: The move that the AI will make.
         """
         
-        print("========================")
+        # Check if the game state is a TicTacToeGameState instance
+        if not isinstance(gameState, TicTacToeGameState):
+            raise TypeError("The game state must be a TicTacToeGameState instance.")
 
-        moveScores : dict[Move, int] = self.__game_analyser__.getMovesScores(gameState)
+        # Get the scores of the moves
+        moveScores : dict[Move, int] = self.__gameAnalyser__.getMovesScores(gameState)
 
+        # Check if there are moves to play
         if not moveScores : raise ValueError("Can't play as there is no moves to play")
-        
-        print("analyse :", moveScores)
 
+        # Set the strength of the AI for each move
         for move, score in moveScores.items(): moveScores[move] = score ** self.__strength__
 
-        print("after powered up :", moveScores)
+        # Calculate the probabilities of each move
+        moveProbabilities = self.__softmax__(list(moveScores.values()))
 
-        moveProbabilities = self.__softmax(list(moveScores.values()))
-        
-        print("proba :", moveProbabilities)
-
-        selectedMove = self.__select_move_based_on_probability(dict(zip(moveScores.keys(), moveProbabilities)))
-
-        print("========================")
+        # Select a move based on the probabilities
+        selectedMove = self.__selectMoveBasedOnProbability__(dict(zip(moveScores.keys(), moveProbabilities)))
         
         return selectedMove
 
-    def __softmax(self, scores: list[int]) -> list[float]:
+    def __softmax__(self, scores: list[int | float]) -> list[float]:
         
         """
-        Applies the softmax function to a list of scores, transforming them into probabilities.
+        Calculates the softmax of a list of scores.
         
         Parameters:
-            scores (list[int]): A list of raw scores (logits).
-        
+            scores (list[int]): The list of scores.
+            
+        Raises:
+            ValueError: If the scores are not a list of integers or floats.
+            
         Returns:
-            list[float]: A list of probabilities corresponding to each score.
+            list[float]: The list of probabilities.
         """
         
-        scores = np.array(scores)
+        # Check if the scores are a list of integers
+        if not all(isinstance(score, (int, float)) for score in scores):
+            raise ValueError("The scores must be a list of integers.")
+        
+        # Set the scores as a numpy array
+        scores = np.array(scores, dtype=float)
+        
+        # Calculate the exponential of the scores
         exp_scores = np.exp(scores - np.max(scores))
+        
         return exp_scores / exp_scores.sum()
 
-    def __select_move_based_on_probability(self, moveProbabilities: dict[Move, float]) -> Move:
+    def __selectMoveBasedOnProbability__(self, moveProbabilities: dict[Move, float]) -> Move:
         
         """
         Selects a move based on the probabilities of each move being chosen.
@@ -104,4 +130,15 @@ class HardAIPlayer(AIPlayer):
             Move: The selected move based on the probabilities.
         """
         
-        return random.choices(list(moveProbabilities.keys()), weights = moveProbabilities.values(), k = 1)[0]
+        # Check if the moveProbabilities is a dictionary
+        if not isinstance(moveProbabilities, dict):
+            raise ValueError("The moveProbabilities must be a dictionary.")
+        
+        # Ensure all probabilities are finite
+        finiteProbabilities = {move: prob for move, prob in moveProbabilities.items() if np.isfinite(prob)}
+        
+        # Select a move based on the probabilities
+        if not finiteProbabilities:
+            return random.choice(list(moveProbabilities.keys()))
+
+        return random.choices(list(finiteProbabilities.keys()), weights=finiteProbabilities.values(), k=1)[0]

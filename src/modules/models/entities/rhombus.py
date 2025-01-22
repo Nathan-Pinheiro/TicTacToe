@@ -15,6 +15,7 @@ class Rhombus(Entity):
             None
         """
         
-        super().__init__("◊", None)
+        # Call the parent constructor
+        super().__init__("◊")
         
         return None
