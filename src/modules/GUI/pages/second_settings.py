@@ -335,6 +335,8 @@ class SecondSettings(Page):
         self.startingPlayerOptionMenu.configure(values=["Nan"])
         self.startingPlayerVar.set("Nan")
         
+        self.__handleShapeChange__("No special shape")
+        
         self.gamemodeVar.set("No mod")
         
         return True
