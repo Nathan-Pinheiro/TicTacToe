@@ -304,14 +304,21 @@ class Game(Page):
                 if isinstance(moveType, BombMove):
                     self.__playExplosion__(moveType.getCoordinate().getLine(), moveType.getCoordinate().getColumn())
                     
-                # Set the current player
-                self.currentPlayer = self.game.getPlayerToPlay()
-                    
                 # Update the board
                 self.__drawBoard__()
                 
                 # Update the move history
                 self.__updateMoveHistory__()
+                
+                # Check if the game is finished and show the result
+                if self.gameOutCome.getGameStatus() != GameOutcomeStatus.UNFINISHED:
+                    
+                    self.__showGameResult__()
+                    
+                    return True
+                
+                # Get the next player
+                self.currentPlayer = self.game.getPlayerToPlay()
                 
                 # Update the buttons
                 self.__updateButtons__()
@@ -321,15 +328,7 @@ class Game(Page):
                 
                 self.__setPlayerTurn__()
                 
-                # Check if the game is finished and show the result else check if next player is an AI
-                if self.gameOutCome.getGameStatus() != GameOutcomeStatus.UNFINISHED:
-                    
-                    self.__showGameResult__()
-                    
-                    return True
-                
-                else:
-                    self.__checkAndPlayAi__()
+                self.__checkAndPlayAi__()
                     
         return True
         
@@ -709,15 +708,22 @@ class Game(Page):
         move = self.game.getGameHistory().getCurrentMove()
         if isinstance(move, BombMove):
             self.__playExplosion__(move.getCoordinate().getLine(), move.getCoordinate().getColumn())
-            
-        # Set the current player
-        self.currentPlayer = self.game.getPlayerToPlay()
 
         # Update the board
         self.__drawBoard__()
         
         # Update the move history
         self.__updateMoveHistory__()
+        
+        # Check if the game is finished and show the result
+        if self.gameOutCome.getGameStatus() != GameOutcomeStatus.UNFINISHED:
+                    
+            self.__showGameResult__()
+            
+            return True
+        
+        # Get the next player
+        self.currentPlayer = self.game.getPlayerToPlay()
         
         # Update the buttons
         self.__updateBombButton__()
@@ -731,15 +737,7 @@ class Game(Page):
 
         self.__setPlayerTurn__()
         
-        # Check if the game is finished and show the result else check if next player is an AI
-        if self.gameOutCome.getGameStatus() != GameOutcomeStatus.UNFINISHED:
-            
-            self.__showGameResult__()
-            
-            return True
-        
-        else:
-            self.__checkAndPlayAi__()
+        self.__checkAndPlayAi__()
             
         return True
         
