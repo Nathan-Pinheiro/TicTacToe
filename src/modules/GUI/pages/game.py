@@ -4,6 +4,7 @@ from PIL import Image
 
 import customtkinter as ctk
 from modules.models.tic_tac_toe.moves.power_ups.bomb_move import BombMove
+from modules.models.tic_tac_toe.players.ai_players.impossible_ai_player import ImpossibleAIPlayer
 from modules.utils.decorator import privatemethod, override
 from modules.GUI.page import Page
 from modules.GUI.render import PageName
@@ -686,7 +687,7 @@ class Game(Page):
         """
         
         # Check if the current player is an AI and play the next move with a delay of 500ms
-        if isinstance(self.game.getPlayerToPlay(), EasyAIPlayer) or isinstance(self.game.getPlayerToPlay(), MediumAIPlayer) or isinstance(self.game.getPlayerToPlay(), HardAIPlayer):
+        if isinstance(self.game.getPlayerToPlay(), EasyAIPlayer) or isinstance(self.game.getPlayerToPlay(), MediumAIPlayer) or isinstance(self.game.getPlayerToPlay(), HardAIPlayer) or isinstance(self.game.getPlayerToPlay(), ImpossibleAIPlayer):
             self.after(500, self.__playNextAiMove__)
         
         return True

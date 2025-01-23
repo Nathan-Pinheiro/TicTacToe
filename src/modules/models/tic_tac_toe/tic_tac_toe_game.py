@@ -34,6 +34,7 @@ from modules.models.tic_tac_toe.players.ai_player import AIPlayer
 from modules.models.tic_tac_toe.players.ai_players.easy_ai_player import EasyAIPlayer
 from modules.models.tic_tac_toe.players.ai_players.medium_ai_player import MediumAIPlayer
 from modules.models.tic_tac_toe.players.ai_players.hard_ai_player import HardAIPlayer
+from modules.models.tic_tac_toe.players.ai_players.impossible_ai_player import ImpossibleAIPlayer
 from modules.models.tic_tac_toe.moves.power_ups.bomb_move import BombMove
 
 from modules.utils.decorator import privatemethod
@@ -106,14 +107,27 @@ class TicTacToeGame:
             'Pyramidal': PyramidalShape(),
             'Circular': CircularShape(),
             'Diamond': DiamondShape(),
-            'Random': random.choice([PyramidalShape(), CircularShape(), DiamondShape()]),
+            'Random shape': random.choice([PyramidalShape(), CircularShape(), DiamondShape()]),
+            'Random block': 'block',
             'No special shape': None
         }[self.settings['board']['shape']]
         
-        if shape:
+        # If shape is not None and not block random cases, set the shape and build the optimized board
+        if shape and shape != 'block':
             board.setShape(shape)
+            return board.buildOptimizedBoard()
         
-        return board.buildOptimizedBoard()
+        # If shape is block random cases, build the optimized board and block random cases
+        elif shape == 'block':
+            board = board.buildOptimizedBoard()
+            for _ in range(self.settings['board']['blockedCases']):
+                board.blockRandomCase()
+            
+        # If shape is None, build the optimized board
+        else:
+            board = board.buildOptimizedBoard()
+            
+        return board
     
     @privatemethod
     def __createPlayers__(self) -> List[Player]:
@@ -130,7 +144,8 @@ class TicTacToeGame:
             'human': HumanGUIPlayer,
             'easy': EasyAIPlayer,
             'medium': MediumAIPlayer,
-            'hard': HardAIPlayer
+            'hard': HardAIPlayer,
+            'impossible': ImpossibleAIPlayer
         }
         
         playerOne = playerType[self.settings['player1']['type']](self.settings['player1']['name'])

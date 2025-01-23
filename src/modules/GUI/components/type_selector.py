@@ -28,6 +28,7 @@ class Types(Enum):
     EASY = "easy"
     MEDIUM = "medium"
     HARD = "hard"
+    IMPOSSIBLE = "impossible"
 
 class TypeSelector(ctk.CTkFrame):
     
@@ -124,7 +125,8 @@ class TypeSelector(ctk.CTkFrame):
             "human": ImageTk.PhotoImage(Image.open("./assets/Human.png").resize((100, 100))),
             "easy": ImageTk.PhotoImage(Image.open("./assets/Easy.png").resize((100, 100))),
             "medium": ImageTk.PhotoImage(Image.open("./assets/Medium.png").resize((100, 100))),
-            "hard": ImageTk.PhotoImage(Image.open("./assets/Hard.png").resize((100, 100)))
+            "hard": ImageTk.PhotoImage(Image.open("./assets/Hard.png").resize((100, 100))),
+            "impossible": ImageTk.PhotoImage(Image.open("./assets/Impossible.png").resize((100, 100)))
         }
         
         return True

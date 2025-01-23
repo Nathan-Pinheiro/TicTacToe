@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import tkinter as tk
 from typing import Optional
 
 from modules.GUI.page import Page
@@ -96,7 +97,8 @@ class SecondSettings(Page):
         settings["board"] = {
             "width": self.widthSelector.getValue(),
             "height": self.heightSelector.getValue(),
-            "shape": self.shapeVar.get()
+            "shape": self.shapeVar.get(),
+            "blockedCases": self.blockSelector.getValue()
         }
         
         settings["game"] = {
@@ -134,9 +136,9 @@ class SecondSettings(Page):
         self.settings = settings
         
         # Set the values of the settings in the widgets
-        self.startingPlayerCombobox.configure(values=[settings["player1"]["name"], settings["player2"]["name"], "Random"])
+        self.startingPlayerOptionMenu.configure(values=[settings["player1"]["name"], settings["player2"]["name"], "Random"])
         
-        self.startingPlayerVar.set(settings["player1"]["name"])
+        self.startingPlayerVar.set("Random")
         
         return True
     
@@ -176,34 +178,39 @@ class SecondSettings(Page):
         self.heightSelector: IntSelector = IntSelector(self, minValue=3, maxValue=7, initialValue=3, width=int(50 * widthRatio), height=int(50 * heightRatio))
         self.heightSelector.grid(row=1, column=1, pady=(int(260 * heightRatio),0), sticky="n")
         
-        # Combobox for shape
+        # OptionMenu for shape
         ctk.CTkLabel(self, text="Shape :", font=("Arial", int(32 * heightRatio), "bold"), text_color="#FFFFFF").grid(row=1, column=0, pady=(int(380 * heightRatio),0), sticky="en")
         self.shapeVar: ctk.StringVar = ctk.StringVar(value="No special shape")
-        ctk.CTkComboBox(self, values=["No special shape", "Pyramidal", "Circular", "Diamond", 'Random'], variable=self.shapeVar).grid(row=1, column=1, padx=(int(20 * widthRatio), 0), pady=(int(387 * heightRatio),0), sticky="wn")
+        self.shapeOptionMenu: ctk.CTkOptionMenu = ctk.CTkOptionMenu(self, values=["No special shape", "Pyramidal", "Circular", "Diamond", 'Random shape', 'Random block'], variable=self.shapeVar, command=self.__handleShapeChange__)
+        self.shapeOptionMenu.grid(row=1, column=1, padx=(int(20 * widthRatio), 0), pady=(int(387 * heightRatio),0), sticky="wn")
         self.shapeVar.set("No special shape")
+        
+        # Block selector
+        self.blockLabel: ctk.CTkLabel = ctk.CTkLabel(self, text="Blocked cases :", font=("Arial", int(32 * heightRatio), "bold"), text_color="#FFFFFF")
+        self.blockSelector: IntSelector = IntSelector(self, minValue=1, maxValue=9, initialValue=1, width=int(50 * widthRatio), height=int(50 * heightRatio))
         
         # Symbols to align selector
         ctk.CTkLabel(self, text="Symbols to align :", font=("Arial", int(32 * heightRatio), "bold"), text_color="#FFFFFF").grid(row=1, column=3, pady=(int(180 * heightRatio),0), sticky="n")
-        self.nbSymbolsSelector: IntSelector = IntSelector(self, minValue=3, maxValue=7, initialValue=3, width=int(50 * widthRatio), height=int(50 * heightRatio))
+        self.nbSymbolsSelector: IntSelector = IntSelector(self, minValue=3, maxValue=3, initialValue=3, width=int(50 * widthRatio), height=int(50 * heightRatio))
         self.nbSymbolsSelector.grid(row=1, column=4, pady=(int(160 * heightRatio),0), sticky="n")
         
         # Checkbox for align to win condition
         self.alignToWinVar: ctk.BooleanVar = ctk.BooleanVar(value=True)
-        ctk.CTkLabel(self, text="Align to win :", font=("Arial", int(32 * heightRatio), "bold"), text_color="#FFFFFF").grid(row=1, column=3, columnspan=2, pady=(int(10 * heightRatio),0), padx=(int(300 * widthRatio),0), sticky="w")
+        ctk.CTkLabel(self, text="Align to win :", font=("Arial", int(32 * heightRatio), "bold"), text_color="#FFFFFF").grid(row=1, column=3, pady=(int(260 * heightRatio),0), sticky="en")
         self.alignToWinSelector: ctk.CTkCheckBox = ctk.CTkCheckBox(self, text="", variable=self.alignToWinVar, onvalue=True, offvalue=False)
-        self.alignToWinSelector.grid(row=1, column=3, columnspan=2, pady=(int(10 * heightRatio),0), padx=(0, int(250 * widthRatio)), sticky="e")
+        self.alignToWinSelector.grid(row=1, column=4, pady=(int(267 * heightRatio),0), padx=(int(20 * widthRatio), 0), sticky="wn")
         
-        # Combobox for starting player, values will be initialized in setValues
+        # OptionMenu for starting player, values will be initialized in setValues
         ctk.CTkLabel(self, text="Starting player :", font=("Arial", int(32 * heightRatio), "bold"), text_color="#FFFFFF").grid(row=1, column=3, pady=(int(460 * heightRatio),0), sticky="en")
         self.startingPlayerVar: ctk.StringVar = ctk.StringVar(value="Nan")
-        self.startingPlayerCombobox: ctk.CTkComboBox = ctk.CTkComboBox(self, values=["Nan"], variable=self.startingPlayerVar)
-        self.startingPlayerCombobox.grid(row=1, column=4, padx=(int(20 * widthRatio), 0), pady=(int(467 * heightRatio),0), sticky="wn")
+        self.startingPlayerOptionMenu: ctk.CTkOptionMenu = ctk.CTkOptionMenu(self, values=["Nan"], variable=self.startingPlayerVar)
+        self.startingPlayerOptionMenu.grid(row=1, column=4, padx=(int(20 * widthRatio), 0), pady=(int(467 * heightRatio),0), sticky="wn")
         self.startingPlayerVar.set("Nan")
         
-        # Combobox for gamemode
+        # OptionMenu for gamemode
         ctk.CTkLabel(self, text="Gamemode :", font=("Arial", int(32 * heightRatio), "bold"), text_color="#FFFFFF").grid(row=1, column=3, pady=(int(520 * heightRatio),0), sticky="en")
         self.gamemodeVar: ctk.StringVar = ctk.StringVar(value="No mod")
-        ctk.CTkComboBox(self, values=["No mod", "Bomb mod"], variable=self.gamemodeVar).grid(row=1, column=4, padx=(int(20 * widthRatio), 0), pady=(int(527 * heightRatio),0), sticky="wn")
+        ctk.CTkOptionMenu(self, values=["No mod", "Bomb mod"], variable=self.gamemodeVar).grid(row=1, column=4, padx=(int(20 * widthRatio), 0), pady=(int(527 * heightRatio),0), sticky="wn")
         self.gamemodeVar.set("No mod")
         
         # Line
@@ -215,8 +222,96 @@ class SecondSettings(Page):
         # Next button
         ctk.CTkButton(self, text="Next", font=("Arial", int(32 * heightRatio)), command=lambda: self.redirect(pageName=PageName.GAME)).grid(row=2, column=3, columnspan=2, pady=(int(100 * heightRatio),0), sticky="w")
         
+        # Set click event on the size selectors
+        self.widthSelector.decrementButton.bind("<Button-1>", self.__handleClick__)
+        self.widthSelector.incrementButton.bind("<Button-1>", self.__handleClick__)
+        self.heightSelector.decrementButton.bind("<Button-1>", self.__handleClick__)
+        self.heightSelector.incrementButton.bind("<Button-1>", self.__handleClick__)
+        
         return True
     
+    @privatemethod
+    def __handleClick__(self, event: tk.Event) -> bool:
+        
+        """
+        Handles the click event on the size selectors.
+        
+        Parameters:
+            event (tk.Event): The event object.
+            
+        Raises:
+            TypeError: If event is not an instance of tk.Event.
+            
+        Returns:
+            bool: True if the function succeeds.
+        """
+        
+        # Check if event is an instance of tk.Event
+        if not isinstance(event, tk.Event):
+            raise TypeError("event must be an instance of tk.Event")
+        
+        # Update the values of the selectors
+        self.__updateValues__()
+        
+        return True
+        
+    @privatemethod
+    def __updateValues__(self) -> bool:
+        
+        """
+        Updates the values of the selectors.
+        
+        Returns:
+            bool: True if the function succeeds.
+        """
+        
+        self.nbSymbolsSelector.setMaxValue(max(self.widthSelector.getValue(), self.heightSelector.getValue()))
+        self.nbSymbolsSelector.updateButtons()
+        self.blockSelector.setMaxValue(self.widthSelector.getValue() * self.heightSelector.getValue() - max(self.widthSelector.getValue(), self.heightSelector.getValue()))
+        self.blockSelector.updateButtons()
+        
+        return True
+        
+    @privatemethod
+    def __handleShapeChange__(self, value: str) -> bool:
+        
+        """
+        Handles the change of shape.
+        
+        Parameters:
+            value (str): The new value of the shape.
+            
+        Raises:
+            TypeError: If value is not a string.
+        
+        Returns:
+            bool: True if the function succeeds.
+        """
+        
+        # Check if value is a string 
+        if not isinstance(value, str):
+            raise TypeError("value must be a string")
+        
+        # If the value is not "Random shape", we hide the block selector
+        if value == "Random block":
+            
+            # Get the screen ratio
+            widthRatio: float
+            heightRatio: float
+            widthRatio, heightRatio = self.getScreenRatio()
+        
+            # Set the block selector and label visible
+            self.blockLabel.grid(row=1, column=0, pady=(int(480 * heightRatio),0), sticky="en")
+            self.blockSelector.grid(row=1, column=1, padx=(int(20 * widthRatio), 0), pady=(int(470 * heightRatio),0), sticky="wn")
+            
+        else:
+            
+            # Set the block selector and label invisible
+            self.blockLabel.grid_forget()
+            self.blockSelector.grid_forget()
+            
+        return True
+
     def resetSettings(self) -> bool:
         
         """
@@ -230,12 +325,14 @@ class SecondSettings(Page):
         self.widthSelector.setValue(3)
         self.heightSelector.setValue(3)
         self.shapeVar.set("No special shape")
+        self.blockSelector.setValue(1)
         
         self.nbSymbolsSelector.setValue(3)
+        self.__updateValues__()
         
         self.alignToWinVar.set(True)
         
-        self.startingPlayerCombobox.configure(values=["Nan"])
+        self.startingPlayerOptionMenu.configure(values=["Nan"])
         self.startingPlayerVar.set("Nan")
         
         self.gamemodeVar.set("No mod")

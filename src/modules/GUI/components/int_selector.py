@@ -63,6 +63,9 @@ class IntSelector(ctk.CTkFrame):
         # Create the widgets
         self.__createWidgets__()
         
+        # Update the buttons
+        self.updateButtons()
+        
         return None
 
     @privatemethod
@@ -102,6 +105,8 @@ class IntSelector(ctk.CTkFrame):
         if self.value < self.maxValue:
             self.value += 1
             self.valueDisplay.configure(text=str(self.value))
+            self.updateButtons()
+            
             return True
         
         return False
@@ -120,9 +125,34 @@ class IntSelector(ctk.CTkFrame):
         if self.value > self.minValue:
             self.value -= 1
             self.valueDisplay.configure(text=str(self.value))
+            self.updateButtons()
+            
             return True
         
         return False
+    
+    def updateButtons(self) -> bool:
+        
+        """
+        Updates the buttons based on the current value.
+        
+        Returns:
+            bool: True if the function succeeds, False otherwise.
+        """
+        
+        # Check if the value is less than the maximum value
+        if self.value < self.maxValue:
+            self.incrementButton.configure(state="normal", fg_color = "#1f6aa5", hover_color = "#144870")
+        else:
+            self.incrementButton.configure(state="disabled", fg_color = "#666666", hover_color = "#666666")
+            
+        # Check if the value is greater than the minimum value
+        if self.value > self.minValue:
+            self.decrementButton.configure(state="normal", fg_color = "#1f6aa5", hover_color = "#144870")
+        else:
+            self.decrementButton.configure(state="disabled", fg_color = "#666666", hover_color = "#666666")
+        
+        return True
     
     def getMinValue(self) -> int:
         
@@ -179,6 +209,7 @@ class IntSelector(ctk.CTkFrame):
         # Check if the minValue is less than the current value
         if minValue > self.value:
             self.value = minValue
+            self.valueDisplay.configure(text=str(self.value))
             
         # Check if the minValue is less than the maxValue
         if minValue > self.maxValue:
@@ -186,6 +217,9 @@ class IntSelector(ctk.CTkFrame):
         
         # Set the minValue
         self.minValue = minValue
+        
+        # Update the buttons
+        self.updateButtons()
         
         return True
     
@@ -211,6 +245,7 @@ class IntSelector(ctk.CTkFrame):
         # Check if the maxValue is greater than the current value
         if maxValue < self.value:
             self.value = maxValue
+            self.valueDisplay.configure(text=str(self.value))
             
         # Check if the maxValue is greater than the minValue
         if maxValue < self.minValue:
@@ -218,6 +253,9 @@ class IntSelector(ctk.CTkFrame):
         
         # Set the maxValue
         self.maxValue = maxValue
+        
+        # Update the buttons
+        self.updateButtons()
         
         return
 
@@ -260,5 +298,8 @@ class IntSelector(ctk.CTkFrame):
         self.value = value
         
         self.valueDisplay.configure(text=str(self.value))
+        
+        # Update the buttons
+        self.updateButtons()
         
         return True

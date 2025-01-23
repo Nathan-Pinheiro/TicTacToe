@@ -262,6 +262,10 @@ class AlphaBetaPruningAnalyser(GameAnalyser):
 
         # Print the depth, best score, and best move if debugging is enabled
         if(self.__isDebugOn__): print(f"depth : {depth}, bestScore : {bestScore}, bestMove : {bestMove}")
+        
+        # If no move was found, return the first move possible
+        if bestMove == None:
+            return bestScore, possibleMoves[0]
 
         return bestScore, bestMove
 
