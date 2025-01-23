@@ -110,6 +110,10 @@ class HardAIPlayer(AIPlayer):
         if not all(isinstance(score, (int, float)) for score in scores):
             raise ValueError("The scores must be a list of integers.")
         
+        # Check if the scores contains nan values
+        if not scores or any(np.isnan(score) for score in scores):
+            raise ValueError("The scores contain NaN or invalid values.")
+
         # Set the scores as a numpy array
         scores = np.array(scores, dtype=float)
         

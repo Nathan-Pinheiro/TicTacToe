@@ -1,6 +1,6 @@
 from modules.models.tic_tac_toe.tic_tac_toe_game_state import GameState
 from modules.models.board_game.components.move import Move
-from modules.models.board_game.game.game_outcome import GameOutcomeStatus
+from modules.models.board_game.game.game_outcome import GameOutcomeStatus, GameOutcome
 from modules.models.board_game.game.game_analyser import GameAnalyser
 
 class AlphaBetaPruningAnalyser(GameAnalyser):
@@ -72,7 +72,7 @@ class AlphaBetaPruningAnalyser(GameAnalyser):
         for moveIndex, move in enumerate(gameState.getPossibleMoves()):
             
             # Play the move and get the game outcome
-            gameOutcome : GameOutcomeStatus = gameState.play(move)
+            gameOutcome : GameOutcome = gameState.play(move)
 
             # Check if the game is finished
             if(gameOutcome.getGameStatus() != GameOutcomeStatus.UNFINISHED) : 
@@ -193,15 +193,16 @@ class AlphaBetaPruningAnalyser(GameAnalyser):
         if depth == 0 : return gameState.evaluateForPlayer(playerIndex), None
 
         # Initialize the best score and move
-        bestScore = float('-inf') if playerIndex == gameState.getPlayerToPlayIndex() else float('inf')
-        bestMove = None
+        bestScore : int = None
+        bestMove : Move = None
+        e : int = 0
 
         # Get the possible moves and order them
-        possibleMoves = gameState.getPossibleMoves()
+        possibleMoves : list[int] = gameState.getPossibleMoves()
         possibleMoves = self.orderMoves(possibleMoves, gameState.getBoard().getWidth(), gameState.getBoard().getHeight())
 
         # Iterate over the possible moves
-        moveIndex = 0
+        moveIndex  : int = 0
         while moveIndex < len(possibleMoves) and alpha < beta:
             
             # Get the current move and play it to get the game outcome
@@ -239,8 +240,11 @@ class AlphaBetaPruningAnalyser(GameAnalyser):
                     if bestScore == None or nextScore > bestScore:
                         
                         # Update the best score and move
+                        if(bestScore is not None) : e += self.getMoveStrengthToAdd(bestScore) 
                         bestScore = nextScore
                         bestMove = currentMove
+
+                    else : e += self.getMoveStrengthToAdd(nextScore)
                         
                     # Update alpha
                     alpha = max(alpha, bestScore)
@@ -251,8 +255,11 @@ class AlphaBetaPruningAnalyser(GameAnalyser):
                     if bestScore == None or nextScore < bestScore:
                         
                         # Update the best score and move
+                        if(bestScore is not None) : e += self.getMoveStrengthToAdd(bestScore)
                         bestScore = nextScore
                         bestMove = currentMove
+                        
+                    else : e += self.getMoveStrengthToAdd(nextScore)
                         
                     # Update beta
                     beta = min(beta, bestScore)
@@ -262,12 +269,8 @@ class AlphaBetaPruningAnalyser(GameAnalyser):
 
         # Print the depth, best score, and best move if debugging is enabled
         if(self.__isDebugOn__): print(f"depth : {depth}, bestScore : {bestScore}, bestMove : {bestMove}")
-        
-        # If no move was found, return the first move possible
-        if bestMove == None:
-            return bestScore, possibleMoves[0]
 
-        return bestScore, bestMove
+        return bestScore + e, bestMove
 
     def orderMoves(self, moves : list[Move], boardWidth : int, boardHeight : int) -> list[Move] :
         
@@ -354,3 +357,23 @@ class AlphaBetaPruningAnalyser(GameAnalyser):
         score : int = ((maxMoves + 3) - gameState.getBoard().getPieceCount()) // 2
 
         return score
+
+    def getMoveStrengthToAdd(self, score : int) -> int: 
+
+        """
+        Give a small value that represent the move potential
+        
+        Parameters :
+            score (int) : the score of the move
+            
+        Raises :
+            TypeError : If the score is not an integer
+        
+        Returns :
+            strength (int) : a small value that represent the move potential
+        """        
+
+        # Check if the score is an integer
+        if not (isinstance(score, int) or isinstance(score, float)): raise TypeError("score must be an integer")
+
+        return score / 100
