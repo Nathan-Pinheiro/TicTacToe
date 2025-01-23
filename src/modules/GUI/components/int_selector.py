@@ -123,6 +123,103 @@ class IntSelector(ctk.CTkFrame):
             return True
         
         return False
+    
+    def getMinValue(self) -> int:
+        
+        """
+        Gets the minimum value.
+        
+        Returns:
+            int: The minimum value.
+        """
+        
+        return self.minValue
+    
+    def getMaxValue(self) -> int:
+        
+        """
+        Gets the maximum value.
+        
+        Returns:
+            int: The maximum value.
+        """
+        
+        return self.maxValue
+    
+    def getRange(self) -> tuple[int, int]:
+        
+        """
+        Gets the range of values.
+        
+        Returns:
+            tuple[int, int]: The range of values.
+        """
+        
+        return (self.minValue, self.maxValue)
+    
+    def setMinValue(self, minValue: int) -> bool:
+        
+        """
+        Sets the minimum value.
+        
+        Parameters:
+            minValue (int): The minimum value.
+            
+        Raises:
+            TypeError: If minValue is not an integer.
+
+        Returns:
+            bool: True if the minimum value is set successfully.
+        """
+        
+        # Check if the minValue is an integer
+        if not isinstance(minValue, int):
+            raise TypeError("minValue must be an integer")
+        
+        # Check if the minValue is less than the current value
+        if minValue > self.value:
+            self.value = minValue
+            
+        # Check if the minValue is less than the maxValue
+        if minValue > self.maxValue:
+            self.maxValue = minValue
+        
+        # Set the minValue
+        self.minValue = minValue
+        
+        return True
+    
+    def setMaxValue(self, maxValue: int) -> bool:
+        
+        """
+        Sets the maximum value.
+        
+        Parameters:
+            maxValue (int): The maximum value.
+            
+        Raises:
+            TypeError: If maxValue is not an integer.
+
+        Returns:
+            bool: True if the maximum value is set successfully.
+        """
+        
+        # Check if the maxValue is an integer
+        if not isinstance(maxValue, int):
+            raise TypeError("maxValue must be an integer")
+        
+        # Check if the maxValue is greater than the current value
+        if maxValue < self.value:
+            self.value = maxValue
+            
+        # Check if the maxValue is greater than the minValue
+        if maxValue < self.minValue:
+            self.minValue = maxValue
+        
+        # Set the maxValue
+        self.maxValue = maxValue
+        
+        return
 
     def getValue(self) -> int:
         

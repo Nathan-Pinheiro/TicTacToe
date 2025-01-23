@@ -70,6 +70,8 @@ class Game(Page):
         self.turn: int = 0
         self.bombMove: bool = False
         self.gameOutCome: Optional[GameOutcomeStatus] = None
+        self.undo: bool = False
+        self.currentPlayer: Optional[HumanGUIPlayer] = None
         
         # Configure the grid
         self.grid_columnconfigure(0, weight=2)
@@ -265,12 +267,9 @@ class Game(Page):
         # Check if the event is a tk.Event instance
         if not isinstance(event, tk.Event):
             raise TypeError("event must be a tk.Event instance")
-
-        # Get the current player to play
-        currentPlayer: Optional[HumanGUIPlayer] = self.game.getPlayerToPlay()
         
-        # Check if the current player is a human player
-        if not isinstance(currentPlayer, HumanGUIPlayer):
+        # Check if the current player is a human player and it's his turn
+        if not isinstance(self.currentPlayer, HumanGUIPlayer) or self.currentPlayer != self.game.getPlayerToPlay():
             return False
             
         # Check if the game is finished
@@ -303,6 +302,9 @@ class Game(Page):
                 
                 if isinstance(moveType, BombMove):
                     self.__playExplosion__(moveType.getCoordinate().getLine(), moveType.getCoordinate().getColumn())
+                    
+                # Set the current player
+                self.currentPlayer = self.game.getPlayerToPlay()
                     
                 # Update the board
                 self.__drawBoard__()
@@ -400,17 +402,20 @@ class Game(Page):
             bool: True if the function succeeds, False otherwise.
         """
         
-        # Get the current player
-        currentPlayer: Optional[HumanGUIPlayer] = self.game.getPlayerToPlay()
-        
         # Check if the current player is a human player and has power up moves
-        isHuman: bool = isinstance(currentPlayer, HumanGUIPlayer)
+        isHuman: bool = isinstance(self.currentPlayer, HumanGUIPlayer)
         hasPowerUp: bool = isHuman and self.game.getPlayerPowerUpMoves(self.game.getGameState().getPlayerToPlayIndex())
         
         # Update the bomb button state
-        state: str = "normal" if hasPowerUp else "disabled"
-        fgColor: str = "#1f6aa5" if hasPowerUp else "#666666"
-        hoverColor: str = "#144870" if hasPowerUp else "#666666"
+        if self.currentPlayer == self.game.getPlayerToPlay():
+            state: str = "normal" if hasPowerUp else "disabled"
+            fgColor: str = "#1f6aa5" if hasPowerUp else "#666666"
+            hoverColor: str = "#144870" if hasPowerUp else "#666666"
+            
+        else: 
+            state: str = "disabled"
+            fgColor: str = "#666666"
+            hoverColor: str = "#666666"
         
         self.bombButton.configure(state=state, fg_color=fgColor, hover_color=hoverColor)
         
@@ -426,13 +431,15 @@ class Game(Page):
             bool: True if the function succeeds, False otherwise.
         """
         
-        # Get the current player
-        currentPlayer: Optional[HumanGUIPlayer] = self.game.getPlayerToPlay()
-        
         # Update the undo and redo buttons state
-        if isinstance(currentPlayer, HumanGUIPlayer):
+        if isinstance(self.currentPlayer, HumanGUIPlayer):
             self.undoButton.configure(state="normal", fg_color="#1f6aa5", hover_color="#144870")
-            self.redoButton.configure(state="normal", fg_color="#1f6aa5", hover_color="#144870")
+            
+            # Check if the game has moves to redo
+            if self.game.getGameHistoryList() == [] or self.game.getGameHistory().getCurrentMove() == self.game.getGameHistoryList()[-1]:
+                self.redoButton.configure(state="disabled", fg_color="#666666", hover_color="#666666")
+            else:
+                self.redoButton.configure(state="normal", fg_color="#1f6aa5", hover_color="#144870")
         else:
             self.undoButton.configure(state="disabled", fg_color="#666666", hover_color="#666666")
             self.redoButton.configure(state="disabled", fg_color="#666666", hover_color="#666666")
@@ -449,11 +456,8 @@ class Game(Page):
             bool: True if the function succeeds, False otherwise.
         """
         
-        # Get the current player
-        currentPlayer: Optional[HumanGUIPlayer] = self.game.getPlayerToPlay()
-        
         # Update the bulb button state
-        if isinstance(currentPlayer, HumanGUIPlayer):
+        if isinstance(self.currentPlayer, HumanGUIPlayer) and self.currentPlayer == self.game.getPlayerToPlay():
             self.bulbButton.configure(state="normal", fg_color="#1f6aa5", hover_color="#144870")
         else:
             self.bulbButton.configure(state="disabled", fg_color="#666666", hover_color="#666666")
@@ -501,20 +505,15 @@ class Game(Page):
         # Update the buttons
         self.__updateButtons__()
         
-        # Update the turn label and player turn label
+        # Update the turn label
         if self.turn >= 2:
             self.turn -= 2
         else: 
             self.turn = 1
         self.__setTurnLabel__()
         
-        self.__setPlayerTurn__()
-        
         # Update the move history
         self.__updateMoveHistory__()
-        
-        # Check if the current player is an AI and play the next move with a delay of 500ms
-        self.after(500, self.__checkAndPlayAi__)
         
         return True
     
@@ -538,16 +537,11 @@ class Game(Page):
         # Update the buttons
         self.__updateButtons__()
         
-        # Update the turn label and player turn label
+        # Update the turn label
         self.__setTurnLabel__()
-        
-        self.__setPlayerTurn__()
         
         # Update the move history
         self.__updateMoveHistory__()
-        
-        # Check if the current player is an AI and play the next move with a delay of 500ms
-        self.after(500, self.__checkAndPlayAi__)
         
         return True
     
@@ -645,6 +639,9 @@ class Game(Page):
             self.bombButton.configure(state="disabled")
             self.bombButton.configure(fg_color="#666666", hover_color="#666666")
             
+        # Set the current player
+        self.currentPlayer = self.game.getPlayerToPlay()
+            
         # Draw the board
         self.__drawBoard__()
         
@@ -711,6 +708,9 @@ class Game(Page):
         move = self.game.getGameHistory().getCurrentMove()
         if isinstance(move, BombMove):
             self.__playExplosion__(move.getCoordinate().getLine(), move.getCoordinate().getColumn())
+            
+        # Set the current player
+        self.currentPlayer = self.game.getPlayerToPlay()
 
         # Update the board
         self.__drawBoard__()

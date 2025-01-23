@@ -101,10 +101,10 @@ def drawGrid(canvas: tk.Canvas, width: int, height: int, cellSize: int, board: l
                 x0: int = col * cellSize
                 y0: int = row * cellSize
                 symbol: str = board[row][col]
-                if symbol == '#':
-                    drawGrayCase(canvas, x0, y0, cellSize)
                 if len(advice) == 2 and [row, col] == [advice[0], advice[1]]:
                     drawGreenCase(canvas, x0, y0, cellSize)
+                if symbol == '#':
+                    drawGrayCase(canvas, x0, y0, cellSize)
                 else:
                     drawSymbol(canvas, x0, y0, cellSize, symbol, playerSymbols, playerColors)
 

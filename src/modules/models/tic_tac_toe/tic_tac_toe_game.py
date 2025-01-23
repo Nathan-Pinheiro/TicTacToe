@@ -78,7 +78,7 @@ class TicTacToeGame:
         self.board: OptimizedBoard = self.__createBoard__()
         self.gameDirector: GameDirector = self.__initializeGame__()
         self.gameState: TicTacToeGameState = self.gameDirector.getGameState()
-        self.analyser: GameAnalyser = AlphaBetaPruningAnalyser(self.__getDepth__())
+        self.analyser: GameAnalyser = AlphaBetaPruningAnalyser(3)
         
         return None
     
@@ -195,26 +195,6 @@ class TicTacToeGame:
         return 0 if self.settings['game']['startingPlayer'] == self.settings['player1']['name'] else 1
     
     @privatemethod
-    def __getDepth__(self) -> int:
-        
-        """
-        Get the depth of the AI based on the board size.
-        
-        Returns:
-            int: The depth of the AI.
-        """
-        
-        # Determine the depth of the AI based on board size
-        boardSize = self.settings['board']['width'] * self.settings['board']['height']
-        if boardSize <= 9:
-            depth = 8
-        elif boardSize <= 25:
-            depth = 6
-        else:
-            depth = 4
-        return depth
-    
-    @privatemethod
     def __initializeGame__(self) -> GameDirector:
         
         """
@@ -317,7 +297,9 @@ class TicTacToeGame:
             Move: The best move to play.
         """
         
-        return self.analyser.getBestMove(self.gameState)
+        move = self.analyser.getBestMove(self.gameState)
+        
+        return move
     
     def getPlayerToPlay(self) -> Player:
         

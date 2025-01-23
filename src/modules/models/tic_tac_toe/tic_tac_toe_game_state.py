@@ -2,6 +2,7 @@ from __future__ import annotations
 from modules.models.board_game.board.board import Board
 from modules.models.board_game.components.win_condition import WinCondition
 from modules.models.tic_tac_toe.moves.simple_move import SimpleMove
+from modules.models.tic_tac_toe.moves.power_ups.bomb_move import BombMove
 from modules.models.board_game.components.move import Move
 from modules.models.board_game.components.coordinate import Coordinate
 from modules.models.board_game.game.game_outcome import GameOutcome
@@ -96,7 +97,8 @@ class TicTacToeGameState(GameState):
         
         # Play the move and check for a win condition
         move.play(self.getBoard(), self.getPlayerToPlayIndex())
-        if move.__class__ != SimpleMove : self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().remove(move.__class__) 
+        if move.__class__ != SimpleMove: 
+            self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().remove(move.__class__) 
 
         gameOutcome : GameOutcome = self.checkWinForCurrentPlayer()
         
@@ -155,7 +157,7 @@ class TicTacToeGameState(GameState):
         move.undo(self.getBoard(), self.getPlayerToPlayIndex())
         
         # If the move is not a simple move, add it back to the player's power-up moves
-        if move.__class__ != SimpleMove : self.getPlayerData(self.getPlayerToPlayIndex()).getPowerUpMoves().append(move.__class__)
+        if move.__class__ != SimpleMove : self.getPlayerData(1 - self.getPlayerToPlayIndex()).getPowerUpMoves().append(move.__class__)
         
         # Go back in the game history
         self.getGameHistory().goBack()
