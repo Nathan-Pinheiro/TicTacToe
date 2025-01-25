@@ -37,7 +37,7 @@ class App(ctk.CTk):
     The main application.
     """
     
-    def __init__(self, title: str, firstPage: PageName = PageName.WELCOME, geometry: Optional[str] = None) -> None:
+    def __init__(self, title: str, firstPage: PageName = PageName.WELCOME, geometry: Optional[str] = None, fullscreen: bool = True) -> None:
         
         """
         Initializes the application.
@@ -51,6 +51,7 @@ class App(ctk.CTk):
             TypeError: If title is not a string.
             TypeError: If firstPage is not a PageName.
             TypeError: If geometry is not a string or None.
+            TypeError: If fullscreen is not a boolean.
 
         Returns:
             None
@@ -67,6 +68,10 @@ class App(ctk.CTk):
         # Check if geometry is a string or None
         if geometry is not None and not isinstance(geometry, str):
             raise TypeError("geometry must be a string or None")
+        
+        # Check if fullscreen is a boolean
+        if not isinstance(fullscreen, bool):
+            raise TypeError("fullscreen must be a boolean")
 
         # Call the parent constructor
         super().__init__()
@@ -78,7 +83,7 @@ class App(ctk.CTk):
             self.geometry(geometry)
             
         else:
-            self.attributes("-fullscreen", False)
+            self.attributes("-fullscreen", fullscreen)
             
         # Bind the escape key to close the window
         self.bind("<Escape>", self.__closeWindow__)

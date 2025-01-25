@@ -101,6 +101,7 @@ class HardAIPlayer(AIPlayer):
             
         Raises:
             ValueError: If the scores are not a list of integers or floats.
+            ValueError: If the scores contain NaN values.
             
         Returns:
             list[float]: The list of probabilities.
