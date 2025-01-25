@@ -37,7 +37,7 @@ class App(ctk.CTk):
     The main application.
     """
     
-    def __init__(self, title: str, firstPage: PageName = PageName.WELCOME, geometry: Optional[str] = None, fullscreen: bool = True) -> None:
+    def __init__(self, title: str, firstPage: PageName = PageName.WELCOME, geometry: Optional[str] = None, fullscreen: bool = False) -> None:
         
         """
         Initializes the application.
