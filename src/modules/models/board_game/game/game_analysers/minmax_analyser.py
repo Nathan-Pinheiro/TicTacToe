@@ -187,7 +187,8 @@ class MinimaxAnalyser(GameAnalyser):
         self.__nodeExplored__ += 1
 
         # If the depth is 0, return the evaluation of the game state
-        if depth == 0 : return gameState.evaluateForPlayer(playerIndex), None
+        if depth == 0 : 
+            return gameState.evaluateForPlayer(playerIndex), None
 
         # Initialize the best score and best move
         bestScore : int = None
@@ -206,9 +207,14 @@ class MinimaxAnalyser(GameAnalyser):
                 score : int
                 
                 # Calculate the score based on the game outcome
-                if gameOutcome.getGameStatus() == GameOutcomeStatus.DRAW : score = 0                 
-                elif gameOutcome.getWinner() == playerIndex : score : int = self.getWinReward(gameState)
-                else : score : int = - self.getWinReward(gameState)
+                if gameOutcome.getGameStatus() == GameOutcomeStatus.DRAW : 
+                    score = 0
+                    
+                elif gameOutcome.getWinner() == playerIndex : 
+                    score : int = self.getWinReward(gameState)
+                    
+                else : 
+                    score : int = - self.getWinReward(gameState)
 
                 # Undo the move and return the score
                 gameState.undo(move)
@@ -228,7 +234,8 @@ class MinimaxAnalyser(GameAnalyser):
 
                     if bestScore == None or nextScore > bestScore:
                         
-                        if(bestScore is not None) : e += self.getMoveStrengthToAdd(bestScore) 
+                        if(bestScore is not None) : 
+                            e += self.getMoveStrengthToAdd(bestScore) 
                         bestScore = nextScore
                         bestMove = move
                         
@@ -240,7 +247,8 @@ class MinimaxAnalyser(GameAnalyser):
                     # Update the best score and best move based on the player index
                     if bestScore == None or nextScore < bestScore:
                         
-                        if(bestScore is not None) : e += self.getMoveStrengthToAdd(bestScore)
+                        if(bestScore is not None) : 
+                            e += self.getMoveStrengthToAdd(bestScore)
                         bestScore = nextScore
                         bestMove = move
                         
