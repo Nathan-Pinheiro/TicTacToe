@@ -23,7 +23,7 @@ from modules.models.entities.star import Star
 from modules.models.entities.triangle import Triangle
 
 from modules.models.tic_tac_toe.moves.power_up_move import PowerUpMove
-from modules.models.tic_tac_toe.tic_tac_toe_game_director import GameDirector
+from modules.models.tic_tac_toe.tic_tac_toe_console_game_director import TicTacToeConsoleGameDirector
 from modules.models.tic_tac_toe.tic_tac_toe_game_state import TicTacToeGameState
 from modules.models.tic_tac_toe.tic_tac_toe_player import Player
 from modules.models.tic_tac_toe.tic_tac_toe_player_data import TicTacToePlayerData
@@ -49,10 +49,10 @@ from modules.utils.decorator import privatemethod
 # DATE : 18/01/2025
 # ************************************************
 
-class TicTacToeGame:
+class TicTacToeGUIGameDirector:
     
     """
-    Represents a Tic Tac Toe game instance.
+    This class is used to launch a game on gui
     """
     
     def __init__(self, settings: Dict[str, Any]) -> None:
@@ -77,7 +77,7 @@ class TicTacToeGame:
         # Initialize the game attributes
         self.settings: Dict[str, Any] = settings
         self.board: OptimizedBoard = self.__createBoard__()
-        self.gameDirector: GameDirector = self.__initializeGame__()
+        self.gameDirector: TicTacToeConsoleGameDirector = self.__initializeGame__()
         self.gameState: TicTacToeGameState = self.gameDirector.getGameState()
         self.analyser: GameAnalyser = AlphaBetaPruningAnalyser(3)
         
@@ -210,7 +210,7 @@ class TicTacToeGame:
         return 0 if self.settings['game']['startingPlayer'] == self.settings['player1']['name'] else 1
     
     @privatemethod
-    def __initializeGame__(self) -> GameDirector:
+    def __initializeGame__(self) -> TicTacToeConsoleGameDirector:
         
         """
         Initializes the game director.
@@ -225,7 +225,7 @@ class TicTacToeGame:
         playersData = self.__createPlayersData__(len(players))
         startingPlayer = self.__createStartingPlayer__()
         
-        return GameDirector(self.board, winCondition, players, playersData, startingPlayer)
+        return TicTacToeConsoleGameDirector(self.board, winCondition, players, playersData, startingPlayer)
 
     def playHumainMove(self, line: int, column: int, bomb: bool) -> GameOutcome:
         
@@ -349,7 +349,7 @@ class TicTacToeGame:
         
         return self.gameState
 
-    def getGameDirector(self) -> GameDirector:
+    def getGameDirector(self) -> TicTacToeConsoleGameDirector:
         
         """
         Get the game director.

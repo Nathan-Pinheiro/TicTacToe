@@ -8,7 +8,7 @@ from modules.models.tic_tac_toe.tic_tac_toe_player import Player
 from modules.models.tic_tac_toe.tic_tac_toe_player_data import TicTacToePlayerData
 from modules.models.tic_tac_toe.moves.power_ups.bomb_move import BombMove
 
-from modules.models.tic_tac_toe.tic_tac_toe_game_director import GameDirector
+from modules.models.tic_tac_toe.tic_tac_toe_console_game_director import TicTacToeConsoleGameDirector
 
 from modules.models.tic_tac_toe.win_conditions.align_victory import AlignVictory
 from modules.models.tic_tac_toe.win_conditions.unalign_victory import UnalignVictory
@@ -39,7 +39,7 @@ if(__name__ == "__main__"):
     board : Board = BoardBuilder(playerEntities).setHeight(3).setWidth(3).buildOptimizedBoard()
     winCondition = AlignVictory(3)
 
-    game_director = GameDirector(board, winCondition, players, playersData, 1)
+    game_director = TicTacToeConsoleGameDirector(board, winCondition, players, playersData, 1)
 
     gameState : TicTacToeGameState = game_director.launchGame()
 

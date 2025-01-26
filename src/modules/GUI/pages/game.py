@@ -10,7 +10,7 @@ from modules.GUI.page import Page
 from modules.GUI.render import PageName
 from modules.GUI.components.grid import drawGrid
 
-from modules.models.tic_tac_toe.tic_tac_toe_game import TicTacToeGame
+from modules.models.tic_tac_toe.tic_tac_toe_gui_game_director import TicTacToeGUIGameDirector
 from modules.models.board_game.game.game_outcome import GameOutcomeStatus
 from modules.models.tic_tac_toe.players.human_GUI_player import HumanGUIPlayer
 from modules.models.tic_tac_toe.moves.simple_move import SimpleMove
@@ -65,7 +65,7 @@ class Game(Page):
         
         # Define the attributes of the game page
         self.settings: Optional[dict] = None
-        self.game: Optional[TicTacToeGame] = None
+        self.game: Optional[TicTacToeGUIGameDirector] = None
         self.board: Optional[object] = None
         self.cellSize: int = 100
         self.turn: int = 0
@@ -627,7 +627,7 @@ class Game(Page):
         self.settings = settings
         
         # Create a new game and get the board
-        self.game = TicTacToeGame(self.settings)
+        self.game = TicTacToeGUIGameDirector(self.settings)
 
         self.board = self.game.getBoard()
         

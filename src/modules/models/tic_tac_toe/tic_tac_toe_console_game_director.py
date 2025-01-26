@@ -23,10 +23,10 @@ import time
 # DATE : 10/01/2025
 # ************************************************
 
-class GameDirector :
+class TicTacToeConsoleGameDirector :
     
     """
-    This class is used to launch a game
+    This class is used to launch a game on console
     """
 
     def __init__(self, board : Board, winCondition : WinCondition, players : list[Player], playersData : list[PlayerData], startingPlayer : int = -1) -> None:
