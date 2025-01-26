@@ -135,7 +135,7 @@ class Game(Page):
         self.gridCanvas.grid(row=0, rowspan=3, column=0)
         
         # Right frame
-        self.rightFrame: ctk.CTkFrame = ctk.CTkFrame(self, fg_color="#333333")
+        self.rightFrame: ctk.CTkFrame = ctk.CTkFrame(self, fg_color="#424242")
         self.rightFrame.grid(row=0, rowspan=3, column=1, sticky="nsew")
         self.rightFrame.grid_columnconfigure(0, weight=1)
         self.rightFrame.grid_columnconfigure(1, weight=1)
@@ -158,7 +158,7 @@ class Game(Page):
         self.scrollFrame.grid(row=1, column=0, columnspan=4, padx=int(60 * self.widthRatio), sticky="nsew")
         
         # Frame for buttons
-        self.buttonsFrame: ctk.CTkFrame = ctk.CTkFrame(self.rightFrame, height=80, fg_color="#333333")
+        self.buttonsFrame: ctk.CTkFrame = ctk.CTkFrame(self.rightFrame, height=80, fg_color="#424242")
         self.buttonsFrame.grid(row=2, column=0, columnspan=4, pady=(0, int(60 * self.heightRatio)), sticky="nsew")
         self.buttonsFrame.grid_columnconfigure(0, weight=1)
         self.buttonsFrame.grid_columnconfigure(1, weight=1)
