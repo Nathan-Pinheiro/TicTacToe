@@ -52,7 +52,7 @@ from modules.utils.decorator import privatemethod
 class TicTacToeGUIGameDirector:
     
     """
-    This class is used to launch a game on gui
+    This class is used to launch a game on gui  
     """
     
     def __init__(self, settings: Dict[str, Any]) -> None:
